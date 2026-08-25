@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yepii | Cotação Online V9.8</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,700;1,800&display=swap');
+:root{
+  --yepii-orange:#FF6600;
+  --yepii-orange-soft:#FFF4EC;
+  --yepii-text:#242424;
+  --yepii-muted:#6f6f73;
+  --yepii-border:#E6E3DF;
+  --yepii-bg:#F7F7F8;
+  --yepii-card:#FFFFFF;
+  --yepii-green:#19A957;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:linear-gradient(180deg,#f7f7f8 0%,#f1f1f2 100%);font-family:Montserrat,Arial,Helvetica,sans-serif;color:var(--yepii-text)}
+a{color:inherit}
+.page{width:min(1220px,96vw);margin:20px auto;background:var(--yepii-card);border:1px solid #eceaea;border-radius:20px;padding:24px;box-shadow:0 10px 35px rgba(0,0,0,.05)}
+.hidden{display:none!important}
+.login{max-width:520px;margin:40px auto}
+.login .card{padding:0}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:26px;margin-bottom:18px}
+.brand{display:flex;align-items:center;gap:0;min-width:0}
+.brand-mark{display:none!important}
+.brand-mark::before,.brand-mark::after{content:'';position:absolute;left:0;border-radius:999px;background:linear-gradient(135deg,#ff8b2f,#ff6600)}
+.brand-mark::before{width:58px;height:14px;top:5px;transform:skewX(-30deg) rotate(-12deg)}
+.brand-mark::after{width:40px;height:12px;top:19px;left:10px;transform:skewX(-30deg) rotate(-12deg)}
+.wordmark{display:flex;align-items:center;gap:16px;min-width:0}
+.logo{font-size:44px;line-height:1;font-family:'Montserrat',Arial,sans-serif;font-weight:800;font-style:italic;color:var(--yepii-orange);letter-spacing:-1.6px;text-transform:none}
+.tag{padding-left:18px;border-left:1px solid #D7D7DA;font-size:17px;line-height:1.35;color:#2d2d30;max-width:260px}
+.meta{display:grid;grid-template-columns:auto 190px;gap:10px 14px;align-items:center}
+.meta label{font-weight:500;color:#333}
+.meta input{height:44px;padding:0 14px;border:1px solid #D9D9DC;border-radius:10px;background:#fff;color:#444;font-family:Montserrat,Arial,sans-serif}
+.hero{display:flex;justify-content:space-between;align-items:center;gap:18px;border:1px solid var(--yepii-border);border-radius:14px;background:#fff;padding:20px 24px;margin-bottom:28px}
+.hero-copy{display:flex;align-items:center;gap:16px}
+.hero-icon{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;border:2px solid rgba(255,102,0,.25);color:var(--yepii-orange);font-size:24px;background:var(--yepii-orange-soft);flex:0 0 auto}
+.hero-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.hero-text{font-size:14px;color:var(--yepii-muted);line-height:1.45}
+.hero a{display:inline-flex;align-items:center;gap:10px;padding:12px 24px;border:1.5px solid rgba(255,102,0,.45);border-radius:12px;text-decoration:none;font-weight:700;color:var(--yepii-orange);background:#fff}
+.status{display:none;margin-bottom:18px;background:#EDF9F1;border:1px solid #CDEED7;color:#176B35;padding:14px 16px;border-radius:12px;font-weight:600}
+.layout{display:grid;grid-template-columns:310px minmax(0,1fr);gap:22px;align-items:start}
+.left-column{display:flex;flex-direction:column;gap:18px}
+.card{border:1px solid var(--yepii-border);border-radius:14px;background:#fff;overflow:hidden}
+.title{display:flex;align-items:center;gap:12px;padding:18px 20px;border-bottom:1px solid var(--yepii-border);font-size:17px;font-weight:700;color:#D96A18}
+.title-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:var(--yepii-orange-soft);color:var(--yepii-orange);font-size:17px;flex:0 0 auto}
+.body{padding:18px 20px}
+.field{margin-bottom:14px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:12px;font-weight:600;color:#6b6b70;margin-bottom:6px;text-transform:none}
+.field input,.field textarea,.cell,.desc-editor{width:100%;border:1px solid #DBDBDE;border-radius:10px;padding:10px 12px;font:inherit;background:#fff;color:#2e2e32;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.field textarea{resize:vertical;min-height:78px}
+.client-card .field input,.client-card .field textarea{padding-left:0;padding-right:0;border:0;border-bottom:1px dashed #CFCFD2;border-radius:0;background:transparent}
+.note{padding:18px;background:linear-gradient(180deg,#FFF8F3 0%,#FFF4EC 100%);border:1px solid #F2D8C2;border-radius:14px;min-height:294px;display:flex;flex-direction:column;justify-content:space-between}
+.note h3{margin:0 0 8px;font-size:18px;line-height:1.3}
+.note p{margin:0;color:#4c4c50;line-height:1.45}
+.envelope-art{margin-top:18px;display:flex;justify-content:center;align-items:center;min-height:110px;color:#f5b17b;font-size:74px;opacity:.9}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;table-layout:fixed;min-width:760px}
+col.sel{width:72px} col.item{width:112px} col.desc{width:auto} col.qty{width:82px} col.unit{width:136px} col.total{width:142px} col.del{width:56px}
+th{padding:14px 10px;border-bottom:1px solid var(--yepii-border);text-align:left;color:var(--yepii-orange);font-size:13px;font-weight:700;white-space:nowrap;background:#fff}
+td{padding:12px 10px;border-bottom:1px solid #F0EFEE;vertical-align:middle}
+.center{text-align:center} .num{text-align:right} .nowrap{white-space:nowrap}
+.client-help{padding:12px 18px;background:#FFF9F4;border-bottom:1px solid #F3DFCF;font-size:13px;color:#5f5f63}
+.admin-note{margin:0 18px 14px;padding:12px 14px;border-radius:10px;background:#FFF7F0;border:1px solid #FFD9BC;font-size:13px;line-height:1.45;color:#614B3A}
+.thumb{width:70px;height:70px;object-fit:contain;border:1px solid #E1E1E3;border-radius:10px;background:#fff;display:block;margin:0 auto 6px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.desc-editor{min-height:56px;line-height:1.35;white-space:pre-wrap;overflow-wrap:anywhere}
+.selectbox{width:20px;height:20px;accent-color:var(--yepii-orange);cursor:pointer}
+.unselected{opacity:.46}
+.actions{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px;border-top:1px solid var(--yepii-border)}
+.btn{appearance:none;border:0;border-radius:10px;padding:11px 15px;font-weight:700;font-family:Montserrat,Arial,sans-serif;cursor:pointer;transition:.18s ease}
+.btn:hover{transform:translateY(-1px)}
+.primary{background:linear-gradient(180deg,#ff7d1d,#ff6600);color:#fff;box-shadow:0 8px 16px rgba(255,102,0,.18)}
+.outline{background:#fff;color:var(--yepii-orange);border:1px solid rgba(255,102,0,.45)}
+.muted{background:#F2F2F3;color:#35353A;border:1px solid #E2E2E5}
+.danger{background:#FFF2F2;color:#B32222;border:1px solid #F0C5C5}
+.linkbox{margin:0 18px 16px;padding:13px 14px;background:#fafafa;border:1px solid #E1E1E3;border-radius:10px;font-size:13px;line-height:1.45;word-break:break-all}
+.summary{width:400px;max-width:100%;margin-left:auto;padding:12px 20px 18px}
+#selectedCount{text-align:right;color:var(--yepii-orange);font-size:12px;font-weight:700;margin-bottom:10px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;gap:12px}
+.row input{width:118px;text-align:right}
+.total{margin-top:8px;padding-top:14px;border-top:1px solid #D8D8DA;color:var(--yepii-orange);font-size:18px;font-weight:800}
+.total #grand{font-size:24px;line-height:1}
+.commercial{margin-top:22px}
+#notificationSettings .body{padding-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px 34px}
+#acceptanceDetails{margin-top:22px!important;padding-top:18px!important;border-top:1px solid var(--yepii-border)!important}
+#acceptanceDetails h3{margin:0 0 14px;color:var(--yepii-orange);font-size:18px}
+.terms{display:flex;justify-content:space-between;align-items:center;gap:18px;border-top:1px solid var(--yepii-border);margin-top:18px;padding-top:16px}
+.terms label{font-size:15px;color:#3a3a3e}
+.buy{min-width:340px;font-size:18px;padding:15px 22px}
+.support-bar{margin-top:22px;border:1px solid var(--yepii-border);border-radius:16px;background:linear-gradient(180deg,#fff 0%,#fbfffc 100%);padding:18px 20px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.support-left,.support-center{display:flex;align-items:center;gap:14px}
+.support-sep{width:1px;height:72px;background:#D7D7DA;justify-self:center}
+.whats-icon{width:54px;height:54px;border-radius:50%;background:#F6F7F8;color:#6C7077;display:grid;place-items:center;font-size:26px;border:1px solid #DFE2E5}
+.qr{width:86px;height:86px;border-radius:10px;border:1px solid #DEDEE1;background:#fff;object-fit:cover;padding:0;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+.support-title{font-size:14px;font-weight:700;line-height:1.35}
+.support-text{font-size:13px;color:var(--yepii-muted);line-height:1.45}
+.whats-btn{display:inline-flex;align-items:center;gap:10px;border:1.5px solid rgba(25,169,87,.55);color:#fff;background:linear-gradient(180deg,#32d16c,#21b458);padding:12px 20px;border-radius:12px;font-weight:700;text-decoration:none;box-shadow:0 8px 18px rgba(33,180,88,.18)}
+.whats-btn i{font-size:18px}
+.footer{margin-top:22px;padding:18px 20px;background:#FAFAFA;border:1px solid #EDEDED;border-radius:14px;display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:16px;align-items:center;text-align:center}
+.footer-brand{text-align:left;display:flex;align-items:center;gap:14px}
+.footer .logo{font-size:28px}
+.footer small{color:#55585e;line-height:1.35}
+.footer-item{display:flex;flex-direction:column;align-items:center;gap:6px;color:#33363b}
+.footer-item span{font-size:22px;color:#2d2f33}
+.client-view .admin{display:none!important}
+.client-view .editable,.client-view .desc-editor{border-color:transparent!important;background:transparent!important;box-shadow:none!important;padding-left:0!important;pointer-events:none}
+.client-view .client-card .field input,.client-view .client-card .field textarea{border-bottom:1px dashed #D4D4D7!important}
+.client-view .hero{margin-bottom:24px}
+@media (max-width:980px){
+  .page{width:100%;margin:0;border-radius:0;padding:14px}
+  .top,.hero{flex-direction:column;align-items:flex-start}
+  .meta{width:100%;grid-template-columns:110px 1fr}
+  .layout{grid-template-columns:1fr}
+  .grid2{grid-template-columns:1fr}
+  .support-bar{grid-template-columns:1fr;gap:14px}
+  .support-sep,.support-center{display:none}
+  .footer{grid-template-columns:1fr 1fr}
+  .footer-brand{grid-column:1/-1}
+  .terms{flex-direction:column;align-items:stretch}
+  .buy{min-width:0;width:100%}
+}
+@media (max-width:640px){
+  .wordmark{flex-direction:column;align-items:flex-start;gap:8px}
+  .tag{border-left:0;padding-left:0}
+  .hero a{width:100%;justify-content:center}
+  .footer{grid-template-columns:1fr}
+}
+@page{size:A4 landscape;margin:9mm}
+@media print{
+  body{background:#fff}
+  .page{width:100%;margin:0;padding:0;border:0;border-radius:0;box-shadow:none}
+  .admin,.support-bar{display:none!important}
+  .layout{grid-template-columns:290px minmax(0,1fr);gap:12px}
+  .table-wrap{overflow:visible}
+  table{min-width:0;width:100%;table-layout:fixed}
+  col.sel{width:7%} col.item{width:13%} col.desc{width:31%} col.qty{width:8%} col.unit{width:15%} col.total{width:16%} col.del{width:0}
+  th,td{padding:7px 5px;font-size:10.5pt}
+  .thumb{width:55px;height:55px}
+  .desc-editor,.field input,.field textarea,.cell,.meta input{border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important}
+  .field{margin-bottom:10px}
+  .hero,.card,.footer,.note{box-shadow:none!important}
+}
+
+.terms-link{color:var(--yepii-orange);font-weight:700;text-decoration:none;border-bottom:1px dashed rgba(255,102,0,.45)}
+.terms-link:hover{text-decoration:none;opacity:.9}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:1000}
+.modal-overlay.show{display:flex}
+.modal-card{width:min(780px,96vw);max-height:88vh;overflow:auto;background:#fff;border-radius:18px;border:1px solid #e8e4df;box-shadow:0 20px 50px rgba(0,0,0,.18)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid var(--yepii-border)}
+.modal-header h3{margin:0;color:var(--yepii-orange);font-size:22px}
+.modal-close{border:0;background:#f4f4f5;border-radius:10px;width:38px;height:38px;font-size:18px;cursor:pointer}
+.modal-body{padding:20px 22px 24px;line-height:1.6;color:#3b3b40}
+.modal-body h4{margin:16px 0 8px;color:#26262a}
+.modal-body p{margin:0 0 10px}
+.modal-note{margin-top:14px;padding:12px 14px;background:#fff8f2;border:1px solid #f4d7be;border-radius:12px;font-size:14px;color:#6a5646}
+.social-bar{margin-top:18px;border:1px solid var(--yepii-border);border-radius:16px;background:linear-gradient(180deg,#fff 0%,#fbfbfb 100%);padding:18px 20px;display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+.social-headline{display:flex;align-items:center;gap:14px}
+.social-mark{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--yepii-orange-soft);color:var(--yepii-orange);font-size:18px;border:1px solid #ffd8bd;flex:0 0 auto}
+.social-title{font-weight:700;color:#313136;font-size:15px;line-height:1.25}
+.social-subtitle{font-size:13px;color:var(--yepii-muted);margin-top:3px}
+.social-links{display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-end;align-items:center}
+.social-chip{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;border-radius:50%;border:1px solid #ebe4dc;background:#fff;text-decoration:none;color:#353840;box-shadow:0 2px 8px rgba(0,0,0,.03);transition:.18s ease}
+.social-chip i{display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:transparent;color:#4F5661;font-size:20px;border:0}
+.social-chip span{display:none!important}
+.social-chip:hover{transform:translateY(-2px);box-shadow:0 10px 18px rgba(0,0,0,.08);border-color:#dfd4c8;background:#fff7f1}
+
+.social-chip.facebook i{color:#1877F2}
+.social-chip.instagram i{color:#E4405F}
+.social-chip.whatsapp i{color:#25D366}
+.social-chip.linkedin i{color:#0A66C2}
+.social-chip.blog i{color:#FF6600}
+.whats-btn{display:inline-flex;align-items:center;gap:10px;border:1.5px solid rgba(25,169,87,.55);color:#fff;background:linear-gradient(180deg,#32d16c,#21b458);padding:12px 20px;border-radius:12px;font-weight:700;text-decoration:none;box-shadow:0 8px 18px rgba(33,180,88,.18)}
+.whats-btn i{font-size:18px;color:#fff}
+
+@media (max-width:860px){.social-bar{grid-template-columns:1fr}.social-links{justify-content:flex-start}}
+@media (max-width:700px){.social-links{width:100%}.social-chip{width:44px;height:44px}}
+@media print{.social-bar,.modal-overlay{display:none!important}}
+
+
+/* V9.8 - histórico, numeração automática e impressão do aceite */
+.admin-history-card{margin:18px 0;border:1px solid var(--yepii-border);border-radius:14px;background:#fff;padding:16px 18px}
+.admin-history-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.admin-history-head h3{margin:0;font-size:17px;color:#303035}
+.history-table-wrap{margin-top:14px;overflow:auto;border:1px solid #ececee;border-radius:12px}
+.history-table{width:100%;border-collapse:collapse;min-width:820px;font-size:13px}
+.history-table th,.history-table td{padding:11px 12px;border-bottom:1px solid #eeeeef;text-align:left;white-space:nowrap}
+.history-table th{background:#fafafa;color:#55585f;font-size:12px;text-transform:uppercase;letter-spacing:.02em}
+.history-table tr:last-child td{border-bottom:0}
+.status-pill{display:inline-flex;align-items:center;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:700;background:#f1f2f3;color:#50545a}
+.status-pill.accepted{background:#eaf8ef;color:#16743e}.status-pill.viewed{background:#eef5ff;color:#315f9f}.status-pill.sent{background:#fff4ec;color:#a54d13}.status-pill.draft{background:#f3f3f4;color:#65666a}
+.history-actions{display:flex;gap:7px}.mini-btn{border:1px solid #dedee2;background:#fff;border-radius:8px;padding:7px 9px;cursor:pointer;font:600 11px Montserrat,Arial;color:#45484d}.mini-btn:hover{background:#f7f7f8}
+.accept-status-wrap{display:flex;justify-content:space-between;align-items:center;gap:18px}
+.accept-status-copy{min-width:0}
+.print-accept-btn{border:0;background:transparent;color:#24673e;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:104px;padding:4px 10px;cursor:pointer;font:700 12px Montserrat,Arial}
+.print-accept-btn i{font-size:25px}.print-accept-btn:hover{color:#0f4f2b}
+#acceptReceipt{display:none}
+@media(max-width:700px){.accept-status-wrap{align-items:flex-start}.print-accept-btn{min-width:86px}.admin-history-card{padding:14px}}
+@media print{
+ body.print-acceptance *{visibility:hidden!important}
+ body.print-acceptance #acceptReceipt,body.print-acceptance #acceptReceipt *{visibility:visible!important}
+ body.print-acceptance #acceptReceipt{display:block!important;position:absolute;left:0;top:0;width:100%;padding:22mm 18mm;background:#fff;color:#222}
+ body.print-acceptance .receipt-head{display:flex;justify-content:space-between;gap:20px;border-bottom:2px solid #FF6600;padding-bottom:14px;margin-bottom:18px}
+ body.print-acceptance .receipt-logo{font-size:34px;font-weight:800;font-style:italic;color:#FF6600}
+ body.print-acceptance .receipt-title{font-size:22px;font-weight:700;margin:0 0 4px}.receipt-muted{color:#666;font-size:12px}
+ body.print-acceptance .receipt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;margin:15px 0}
+ body.print-acceptance .receipt-box{border:1px solid #ddd;border-radius:10px;padding:14px;margin:14px 0}
+ body.print-acceptance .receipt-items{width:100%;border-collapse:collapse;margin-top:10px}
+ body.print-acceptance .receipt-items th,body.print-acceptance .receipt-items td{border-bottom:1px solid #ddd;padding:8px;text-align:left;font-size:12px}
+ body.print-acceptance .receipt-items .num{text-align:right}
+ body.print-acceptance .receipt-total{font-size:19px;font-weight:800;text-align:right;margin-top:15px;color:#174f2d}
+ body.print-acceptance .receipt-foot{margin-top:24px;padding-top:12px;border-top:1px solid #ddd;font-size:11px;color:#666}
+}
+
+</style>
+</head>
+<body>
+<div id="loginView" class="login hidden">
+  <div class="card">
+    <div class="title"><span class="title-icon"><i class="fa-solid fa-lock"></i></span> Acesso interno Yepii</div>
+    <div class="body">
+      <div class="field"><label>E-mail</label><input id="loginEmail" type="email"></div>
+      <div class="field"><label>Senha</label><input id="loginPassword" type="password"></div>
+      <button id="loginBtn" class="btn primary" type="button">Entrar</button>
+      <div id="loginMsg" style="margin-top:12px;color:#a00000"></div>
+    </div>
+  </div>
+</div>
+
+<div id="app" class="page hidden">
+  <div class="top">
+    <div class="brand">
+      <div class="wordmark">
+        <div class="logo">Yepii</div>
+        <div class="tag">O marketplace B2B<br>para sua empresa.</div>
+      </div>
+    </div>
+    <div class="meta">
+      <label>Data:</label><input id="date" type="date" class="editable">
+      <label>Cotação nº:</label><input id="number" value="" class="editable" readonly title="Numeração automática">
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-copy">
+      <div class="hero-icon"><i class="fa-solid fa-arrow-pointer"></i></div>
+      <div>
+        <div class="hero-title">Acesse e conheça o Yepii</div>
+        <div class="hero-text">Encontre milhares de produtos e fornecedores para o seu negócio.</div>
+      </div>
+    </div>
+    <a href="https://www.yepii.com.br" target="_blank" rel="noopener">www.yepii.com.br &nbsp; ↗</a>
+  </div>
+
+  <div id="status" class="status"></div>
+
+  <div class="layout">
+    <div class="left-column">
+      <div class="card client-card">
+        <div class="title"><span class="title-icon"><i class="fa-regular fa-address-card"></i></span> Dados do Cliente</div>
+        <div class="body">
+          <div class="field"><label>ID CLIENTE:</label><input id="clientId" class="editable"></div>
+          <div class="field"><label>CNPJ:</label><input id="cnpj" class="editable"></div>
+          <div class="field"><label>Empresa:</label><input id="company" class="editable"></div>
+          <div class="field"><label>Endereço:</label><textarea id="address" rows="3" class="editable"></textarea></div>
+          <div class="field"><label>Telefone:</label><input id="phone" class="editable"></div>
+        </div>
+      </div>
+
+      <div class="note">
+        <div>
+          <h3>Ao fechar a compra,</h3>
+          <p>você receberá a confirmação e os detalhes por e-mail.</p>
+        </div>
+        <div class="envelope-art" aria-hidden="true">✉</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="title"><span class="title-icon"><i class="fa-solid fa-cart-shopping"></i></span> Carrinho de Cotação</div>
+      <div class="client-help"><strong>Cliente:</strong> marque os itens que deseja comprar. O total será recalculado automaticamente.</div>
+
+      <div class="table-wrap">
+        <table id="items">
+          <colgroup>
+            <col class="sel"><col class="item"><col class="desc"><col class="qty"><col class="unit"><col class="total"><col class="del">
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="center">Selecionar</th>
+              <th>Item</th>
+              <th>Descrição</th>
+              <th class="center">Qtd.</th>
+              <th class="num">Preço Unit.</th>
+              <th class="num">Preço Total</th>
+              <th class="admin"></th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="admin admin-note"><strong>Modo interno:</strong> adicione os produtos, salve a cotação e gere o link do cliente.</div>
+      <div class="actions admin">
+        <button id="newQuoteBtn" type="button" class="btn outline"><i class="fa-solid fa-file-circle-plus"></i> Nova cotação</button>
+        <button id="addBtn" type="button" class="btn outline">+ Adicionar produto</button>
+        <button id="saveBtn" type="button" class="btn primary">Salvar cotação</button>
+        <button id="historyBtn" type="button" class="btn muted"><i class="fa-solid fa-clock-rotate-left"></i> Histórico</button>
+        <button type="button" class="btn muted" onclick="window.print()">Imprimir / PDF</button>
+        <button id="logoutBtn" type="button" class="btn muted">Sair</button>
+      </div>
+      <div id="publicLinkBox" class="linkbox admin hidden"></div>
+      <div id="historyCard" class="admin admin-history-card hidden">
+        <div class="admin-history-head">
+          <h3><i class="fa-solid fa-clock-rotate-left" style="color:var(--yepii-orange)"></i> Histórico de cotações</h3>
+          <button id="refreshHistoryBtn" type="button" class="mini-btn">Atualizar</button>
+        </div>
+        <div class="history-table-wrap">
+          <table class="history-table">
+            <thead><tr><th>Cotação</th><th>Cliente</th><th>Data</th><th>Valor</th><th>Status</th><th>Visualizada</th><th>Aceita</th><th>Ações</th></tr></thead>
+            <tbody id="historyBody"><tr><td colspan="8">Carregando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="summary">
+        <div id="selectedCount">0 itens selecionados</div>
+        <div class="row"><span>Subtotal:</span><b id="subtotal">R$ 0,00</b></div>
+        <div class="row"><span>Imposto:</span><input id="tax" class="cell editable" value="0,00"></div>
+        <div class="row"><span>Outros:</span><input id="other" class="cell editable" value="0,00"></div>
+        <div class="row"><span>Frete:</span><input id="freight" class="cell editable" value="0,00"></div>
+        <div class="row total"><span>Total:</span><span id="grand">R$ 0,00</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card commercial admin" id="notificationSettings">
+    <div class="title"><span class="title-icon"><i class="fa-regular fa-bell"></i></span> Configurações de Notificação</div>
+    <div class="body">
+      <div class="grid2">
+        <div class="field"><label>E-mail principal</label><input id="notifyEmail1" value="cotacaodireta@yepii.com.br"></div>
+        <div class="field"><label>E-mail secundário</label><input id="notifyEmail2"></div>
+        <div class="field"><label>Terceiro e-mail</label><input id="notifyEmail3"></div>
+        <div class="field"><label>WhatsApp Yepii</label><input id="notifyWhatsapp" placeholder="5521999999999"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card commercial">
+    <div class="title"><span class="title-icon"><i class="fa-regular fa-file-lines"></i></span> Condições Comerciais</div>
+    <div class="body">
+      <div class="grid2">
+        <div class="field"><label>Prazo de Entrega</label><input id="delivery" class="editable"></div>
+        <div class="field"><label>Vendido por</label><input id="seller" class="editable"></div>
+        <div class="field"><label>Forma de Pagamento</label><input id="payment" class="editable"></div>
+        <div class="field"><label>Outras Informações</label><textarea id="notes" rows="3" class="editable"></textarea></div>
+      </div>
+
+      <div id="acceptanceDetails">
+        <h3>Dados de quem está aprovando</h3>
+        <div class="grid2">
+          <div class="field"><label>Nome do responsável *</label><input id="approverName"></div>
+          <div class="field"><label>Cargo / Função</label><input id="approverRole"></div>
+          <div class="field"><label>E-mail *</label><input id="approverEmail" type="email"></div>
+          <div class="field"><label>Telefone / WhatsApp *</label><input id="approverPhone"></div>
+        </div>
+      </div>
+
+      <div class="terms">
+        <label><input type="checkbox" id="terms"> Aceitar <a href="#" id="openTermsLink" class="terms-link">Termos e Política</a></label>
+        <button id="acceptBtn" type="button" class="btn primary buy">🔒 &nbsp; Fechar itens selecionados</button>
+      </div>
+      <div id="acceptStatus" class="status" style="display:none;margin-top:16px"></div>
+      <section id="acceptReceipt" aria-hidden="true"></section>
+    </div>
+  </div>
+
+  <div class="support-bar">
+    <div class="support-left">
+      <div class="whats-icon"><i class="fa-regular fa-circle-question"></i></div>
+      <div>
+        <div class="support-title">Precisa de ajuda?</div>
+        <div class="support-text">Fale com nosso time pelo WhatsApp.</div>
+      </div>
+    </div>
+    <a class="whats-btn" href="https://wa.me/message/YCV4XP2IHX4NE1" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Falar no WhatsApp</a>
+  </div>
+
+  <div class="social-bar">
+    <div class="social-headline">
+      <div class="social-mark"><i class="fa-solid fa-share-nodes"></i></div>
+      <div>
+        <div class="social-title">Acompanhe a Yepii nas redes sociais e no blog</div>
+        <div class="social-subtitle">Canais oficiais da marca, todos clicáveis.</div>
+      </div>
+    </div>
+    <div class="social-links">
+      <a class="social-chip facebook" href="https://www.facebook.com/profile.php?id=61558149196508&locale=pt_BR" target="_blank" rel="noopener" aria-label="Facebook Yepii" title="Facebook"><i class="fa-brands fa-facebook-f"></i><span>Facebook</span></a>
+      <a class="social-chip instagram" href="https://www.instagram.com/yepiibrasil/" target="_blank" rel="noopener" aria-label="Instagram Yepii" title="Instagram"><i class="fa-brands fa-instagram"></i><span>Instagram</span></a>
+      <a class="social-chip whatsapp" href="https://wa.me/message/YCV4XP2IHX4NE1" target="_blank" rel="noopener" aria-label="WhatsApp Yepii" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span></a>
+      <a class="social-chip linkedin" href="https://www.linkedin.com/company/yepii/?viewAsMember=true" target="_blank" rel="noopener" aria-label="LinkedIn Yepii" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i><span>LinkedIn</span></a>
+      <a class="social-chip blog" href="https://newsb2b.com.br/" target="_blank" rel="noopener" aria-label="Blog Yepii" title="Blog"><i class="fa-solid fa-newspaper"></i><span>Blog</span></a>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-brand">
+      <div>
+        <div class="logo" style="font-size:28px">Yepii</div>
+        <small>Marketplace B2B completo para compras inteligentes da sua empresa.</small>
+      </div>
+    </div>
+    <div class="footer-item"><span>🛡️</span><small>Fornecedores<br>verificados</small></div>
+    <div class="footer-item"><span>💳</span><small>Pagamento<br>facilitado</small></div>
+    <div class="footer-item"><span>🚚</span><small>Entrega<br>segura</small></div>
+    <div class="footer-item"><span>🎧</span><small>Atendimento<br>especializado</small></div>
+  </div>
+</div>
+<div id="termsModal" class="modal-overlay" aria-hidden="true">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="termsModalTitle">
+    <div class="modal-header">
+      <h3 id="termsModalTitle">Termos e Política</h3>
+      <button type="button" class="modal-close" id="closeTermsModal" aria-label="Fechar">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>Ao prosseguir com o aceite da cotação, o cliente declara que leu e concorda com os termos comerciais e com a política aplicável à Yepii.</p>
+      <h4>Termos comerciais</h4>
+      <p>As condições apresentadas na cotação são válidas apenas para os itens selecionados, dentro do prazo e das condições comerciais informadas na própria cotação.</p>
+      <p>Preços, disponibilidade, frete, prazo de entrega e demais condições podem depender de confirmação final da operação.</p>
+      <h4>Política de tratamento de dados</h4>
+      <p>Os dados informados pelo cliente são utilizados para análise, confirmação do pedido, contato comercial, emissão dos documentos e andamento da operação da Yepii.</p>
+      <p>A Yepii poderá utilizar os dados fornecidos para comunicação sobre a cotação, atendimento e execução da compra, respeitando a legislação aplicável.</p>
+      <div class="modal-note">
+        <strong>Observação:</strong> esta área já está pronta para o clique do cliente. Quando você me enviar o documento final de Termos e Política (PDF, link ou texto oficial), eu posso trocar este conteúdo pelo material definitivo.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';const supabase=createClient('https://szcahilagrdnlvogngxg.supabase.co','sb_publishable_9OnuKQOmBQR7TArHu3-X7g_HXbQpQoc');const $=id=>document.getElementById(id);const money=new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});const placeholder='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64"><rect width="100%" height="100%" fill="%23f3f3f3"/><text x="50%" y="54%" text-anchor="middle" font-size="11" fill="%23888" font-family="Arial">Produto</text></svg>';let quoteId=null,publicToken=null,publicMode=false;function num(v){v=(v||'').toString().replace('R$','').trim();if(v.includes(','))v=v.replace(/\./g,'').replace(',','.');return Number(v)||0}function br(v){return (Number(v)||0).toFixed(2).replace('.',',')}function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}async function compressImage(file,max=600,quality=.78){return new Promise((resolve,reject)=>{const r=new FileReader();r.onerror=reject;r.onload=()=>{const img=new Image();img.onerror=reject;img.onload=()=>{let w=img.width,h=img.height;const s=Math.min(1,max/Math.max(w,h));w=Math.max(1,Math.round(w*s));h=Math.max(1,Math.round(h*s));const c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);resolve(c.toDataURL('image/jpeg',quality));};img.src=r.result;};r.readAsDataURL(file);})}function addItem(d={}){const tr=document.createElement('tr');tr.innerHTML=`<td class="center"><input type="checkbox" class="selectbox" ${d.selected===false?'':'checked'}></td><td><img class="thumb" src="${d.image_url||d.image_data||placeholder}"><input type="hidden" class="imageData" value="${d.image_data||''}"><input type="hidden" class="imageUrl" value="${d.image_url||''}"><label class="btn muted admin" style="display:inline-block;margin-top:6px;padding:7px 9px;font-size:11px;cursor:pointer">Enviar foto<input type="file" accept="image/*" class="imageUpload" style="display:none"></label></td><td><div class="desc-editor" contenteditable="true">${escapeHtml(d.description||'')}</div></td><td><input class="cell editable qty" value="${d.quantity||d.qty||1}" style="text-align:center"></td><td><input class="cell editable unit" value="${br(d.unit_price??d.unit??0)}" style="text-align:right"></td><td class="num nowrap lineTotal"></td><td class="admin"><button type="button" class="btn danger removeRow">×</button></td>`;$('items').querySelector('tbody').appendChild(tr);tr.querySelector('.selectbox').addEventListener('change',calc);tr.querySelector('.qty').addEventListener('input',calc);tr.querySelector('.unit').addEventListener('input',calc);tr.querySelector('.removeRow').addEventListener('click',()=>{tr.remove();calc()});tr.querySelector('.imageUpload').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;const data=await compressImage(f);tr.querySelector('.thumb').src=data;tr.querySelector('.imageData').value=data;tr.querySelector('.imageUrl').value='';});calc()}function calc(){let s=0,c=0;$('items').querySelectorAll('tbody tr').forEach(tr=>{const t=num(tr.querySelector('.qty').value)*num(tr.querySelector('.unit').value);const sel=tr.querySelector('.selectbox').checked;tr.querySelector('.lineTotal').textContent=money.format(t);tr.classList.toggle('unselected',!sel);if(sel){s+=t;c++}});$('subtotal').textContent=money.format(s);const extras=c?num($('tax').value)+num($('other').value)+num($('freight').value):0;$('grand').textContent=money.format(s+extras);$('selectedCount').textContent=c+(c===1?' item selecionado':' itens selecionados')}function collect(){return {quote_number:$('number').value,quote_date:$('date').value,client_id:$('clientId').value,cnpj:$('cnpj').value,company:$('company').value,address:$('address').value,phone:$('phone').value,tax:num($('tax').value),other_amount:num($('other').value),freight:num($('freight').value),delivery_terms:$('delivery').value,seller:$('seller').value,payment_terms:$('payment').value,notes:$('notes').value,notify_email_1:$('notifyEmail1').value,notify_email_2:$('notifyEmail2').value,notify_email_3:$('notifyEmail3').value,notify_whatsapp:$('notifyWhatsapp').value,items:[...$('items').querySelectorAll('tbody tr')].map((tr,idx)=>({position:idx+1,selected:tr.querySelector('.selectbox').checked,image_data:tr.querySelector('.imageData').value,image_url:tr.querySelector('.imageUrl').value,description:tr.querySelector('.desc-editor').innerText.trim(),quantity:num(tr.querySelector('.qty').value),unit_price:num(tr.querySelector('.unit').value)}))}}function loadQuote(q){$('number').value=q.quote_number||'';$('date').value=q.quote_date||'';$('clientId').value=q.client_id||'';$('cnpj').value=q.cnpj||'';$('company').value=q.company||'';$('address').value=q.address||'';$('phone').value=q.phone||'';$('tax').value=br(q.tax);$('other').value=br(q.other_amount);$('freight').value=br(q.freight);$('delivery').value=q.delivery_terms||'';$('seller').value=q.seller||'';$('payment').value=q.payment_terms||'';$('notes').value=q.notes||'';$('items').querySelector('tbody').innerHTML='';(q.items||[]).forEach(addItem);calc()}async function api(path,opts={}){const res=await fetch(path,{headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||'Erro na operação');return data}
+function authHeaders(session){return {Authorization:'Bearer '+session.access_token}}
+async function getSessionOrThrow(){const {data:{session}}=await supabase.auth.getSession();if(!session)throw new Error('Sessão expirada. Entre novamente.');return session}
+async function loadNextNumber(){if(publicMode||quoteId)return;try{const session=await getSessionOrThrow();const d=await api('/api/next-quote-number',{headers:authHeaders(session)});$('number').value=d.quote_number||''}catch(e){console.warn('Não foi possível obter próximo número:',e.message)}}
+function resetQuoteForm(){quoteId=null;publicToken=null;$('publicLinkBox').classList.add('hidden');$('publicLinkBox').innerHTML='';$('status').style.display='none';['clientId','cnpj','company','address','phone','delivery','seller','payment','notes','notifyEmail2','notifyEmail3','notifyWhatsapp'].forEach(id=>$(id).value='');$('notifyEmail1').value='cotacaodireta@yepii.com.br';['tax','other','freight'].forEach(id=>$(id).value='0,00');$('items').querySelector('tbody').innerHTML='';addItem();$('date').value=new Date().toISOString().slice(0,10);calc();loadNextNumber();window.scrollTo({top:0,behavior:'smooth'})}
+function statusLabel(s){return ({draft:'Rascunho',sent:'Enviada',viewed:'Visualizada',accepted:'Aceita',expired:'Expirada',cancelled:'Cancelada'})[s]||s||'-'}
+function fmtDate(v){if(!v)return '-';const d=new Date(v);return Number.isNaN(d.getTime())?'-':d.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}
+async function loadHistory(){try{const session=await getSessionOrThrow();$('historyBody').innerHTML='<tr><td colspan="8">Carregando...</td></tr>';const d=await api('/api/list-quotes',{headers:authHeaders(session)});const rows=d.quotes||[];if(!rows.length){$('historyBody').innerHTML='<tr><td colspan="8">Nenhuma cotação encontrada.</td></tr>';return}$('historyBody').innerHTML=rows.map(q=>{const link=location.origin+location.pathname+'?q='+encodeURIComponent(q.public_token);return `<tr><td><b>${escapeHtml(q.quote_number||'')}</b></td><td>${escapeHtml(q.company||'-')}</td><td>${escapeHtml(fmtDate(q.quote_date||q.created_at))}</td><td>${escapeHtml(money.format(Number(q.total||0)))}</td><td><span class="status-pill ${escapeHtml(q.status||'')}">${escapeHtml(statusLabel(q.status))}</span></td><td>${escapeHtml(fmtDate(q.first_viewed_at))}</td><td>${escapeHtml(fmtDate(q.accepted_at))}</td><td><div class="history-actions"><button class="mini-btn hist-open" data-link="${escapeHtml(link)}">Abrir</button><button class="mini-btn hist-copy" data-link="${escapeHtml(link)}">Copiar link</button></div></td></tr>`}).join('');document.querySelectorAll('.hist-open').forEach(b=>b.onclick=()=>window.open(b.dataset.link,'_blank','noopener'));document.querySelectorAll('.hist-copy').forEach(b=>b.onclick=async()=>{await navigator.clipboard.writeText(b.dataset.link);b.textContent='Copiado';setTimeout(()=>b.textContent='Copiar link',1200)})}catch(e){$('historyBody').innerHTML='<tr><td colspan="8">'+escapeHtml(e.message)+'</td></tr>'}}
+function buildAcceptanceReceipt(acceptedTotal,acceptedAt){const selected=[...$('items').querySelectorAll('tbody tr')].filter(tr=>tr.querySelector('.selectbox').checked).map((tr,i)=>({description:tr.querySelector('.desc-editor').innerText.trim(),quantity:num(tr.querySelector('.qty').value),unit:num(tr.querySelector('.unit').value),total:num(tr.querySelector('.qty').value)*num(tr.querySelector('.unit').value)}));$('acceptReceipt').innerHTML=`<div class="receipt-head"><div><div class="receipt-logo">Yepii</div><div class="receipt-muted">O marketplace B2B para sua empresa.</div></div><div style="text-align:right"><h1 class="receipt-title">Comprovante de aceite</h1><div class="receipt-muted">Cotação nº ${escapeHtml($('number').value)}</div></div></div><div class="receipt-grid"><div><b>Empresa:</b> ${escapeHtml($('company').value||'-')}</div><div><b>CNPJ:</b> ${escapeHtml($('cnpj').value||'-')}</div><div><b>Responsável:</b> ${escapeHtml($('approverName').value||'-')}</div><div><b>Cargo:</b> ${escapeHtml($('approverRole').value||'-')}</div><div><b>E-mail:</b> ${escapeHtml($('approverEmail').value||'-')}</div><div><b>Telefone:</b> ${escapeHtml($('approverPhone').value||'-')}</div><div><b>Data do aceite:</b> ${escapeHtml(fmtDate(acceptedAt||new Date().toISOString()))}</div><div><b>Status:</b> Aceita</div></div><div class="receipt-box"><b>Itens aceitos</b><table class="receipt-items"><thead><tr><th>Descrição</th><th>Qtd.</th><th class="num">Unitário</th><th class="num">Total</th></tr></thead><tbody>${selected.map(i=>`<tr><td>${escapeHtml(i.description)}</td><td>${escapeHtml(String(i.quantity))}</td><td class="num">${escapeHtml(money.format(i.unit))}</td><td class="num">${escapeHtml(money.format(i.total))}</td></tr>`).join('')}</tbody></table><div class="receipt-total">Total aceito: ${escapeHtml(money.format(Number(acceptedTotal||0)))}</div></div><div class="receipt-foot">Aceite eletrônico registrado na plataforma Yepii. Este comprovante resume os itens e dados informados no momento do aceite.</div>`}
+function printAcceptance(){document.body.classList.add('print-acceptance');window.print();setTimeout(()=>document.body.classList.remove('print-acceptance'),300)}
+async function init(){const token=new URLSearchParams(location.search).get('q');if(token){publicMode=true;publicToken=token;document.body.classList.add('client-view');$('app').classList.remove('hidden');try{const d=await api('/api/get-quote?token='+encodeURIComponent(token));loadQuote(d.quote);quoteId=d.quote.id}catch(e){$('status').textContent=e.message;$('status').style.display='block'}return}const {data:{session}}=await supabase.auth.getSession();if(session)showAdmin();else $('loginView').classList.remove('hidden')}function showAdmin(){publicMode=false;$('loginView').classList.add('hidden');$('app').classList.remove('hidden');if(!$('items').querySelector('tbody').children.length)addItem();loadNextNumber()}$('loginBtn').addEventListener('click',async()=>{$('loginMsg').textContent='';const {error}=await supabase.auth.signInWithPassword({email:$('loginEmail').value,password:$('loginPassword').value});if(error){$('loginMsg').textContent=error.message;return}showAdmin()});$('logoutBtn').addEventListener('click',async()=>{await supabase.auth.signOut();location.reload()});$('addBtn').addEventListener('click',()=>addItem());$('newQuoteBtn').addEventListener('click',()=>{if(confirm('Iniciar uma nova cotação?'))resetQuoteForm()});$('historyBtn').addEventListener('click',async()=>{$('historyCard').classList.toggle('hidden');if(!$('historyCard').classList.contains('hidden'))await loadHistory()});$('refreshHistoryBtn').addEventListener('click',loadHistory);['tax','other','freight'].forEach(id=>$(id).addEventListener('input',calc));$('saveBtn').addEventListener('click',async()=>{try{const session=await getSessionOrThrow();$('saveBtn').disabled=true;$('saveBtn').textContent='Salvando...';const d=await api('/api/save-quote',{method:'POST',headers:{Authorization:'Bearer '+session.access_token},body:JSON.stringify({quote_id:quoteId,quote:collect()})});quoteId=d.quote_id;publicToken=d.public_token;if(d.quote_number)$('number').value=d.quote_number;const link=location.origin+location.pathname+'?q='+encodeURIComponent(publicToken);$('publicLinkBox').classList.remove('hidden');$('publicLinkBox').innerHTML='<b>Link do cliente:</b><br>'+escapeHtml(link)+'<br><br><button id="copyLinkBtn" class="btn outline" type="button">Copiar link</button>';$('copyLinkBtn').addEventListener('click',async()=>{await navigator.clipboard.writeText(link);alert('Link copiado.')});$('status').textContent='Cotação salva com sucesso.';$('status').style.display='block';if(!$('historyCard').classList.contains('hidden'))loadHistory()}catch(e){alert(e.message)}finally{$('saveBtn').disabled=false;$('saveBtn').textContent='Salvar cotação'}});$('acceptBtn').addEventListener('click',async()=>{if(!publicMode){alert('O aceite é feito na versão do cliente.');return}const positions=[...$('items').querySelectorAll('tbody tr')].map((tr,i)=>tr.querySelector('.selectbox').checked?i+1:null).filter(Boolean);if(!positions.length){alert('Selecione pelo menos um item.');return}if(!$('approverName').value.trim()||!$('approverEmail').value.trim()||!$('approverPhone').value.trim()){alert('Preencha nome, e-mail e telefone de quem está aprovando.');return}if(!$('terms').checked){alert('Aceite os Termos e Política.');return}try{const d=await api('/api/accept-quote',{method:'POST',body:JSON.stringify({token:publicToken,approver_name:$('approverName').value,approver_role:$('approverRole').value,approver_email:$('approverEmail').value,approver_phone:$('approverPhone').value,selected_positions:positions})});buildAcceptanceReceipt(d.accepted_total,d.accepted_at);$('acceptStatus').innerHTML='<div class="accept-status-wrap"><div class="accept-status-copy"><strong>✓ Cotação aceita com sucesso.</strong><br>Total aceito: '+money.format(d.accepted_total)+'</div><button id="printAcceptBtn" type="button" class="print-accept-btn" title="Imprimir comprovante de aceite"><i class="fa-solid fa-print"></i><span>Imprimir aceite</span></button></div>';$('acceptStatus').style.display='block';$('acceptBtn').disabled=true;$('printAcceptBtn').addEventListener('click',printAcceptance);$('acceptStatus').scrollIntoView({behavior:'smooth',block:'center'})}catch(e){alert(e.message)}});if(!$('date').value)$('date').value=new Date().toISOString().slice(0,10);init();</script>
+
+<script>
+(function(){
+  const modal = document.getElementById('termsModal');
+  const openBtn = document.getElementById('openTermsLink');
+  const closeBtn = document.getElementById('closeTermsModal');
+  function openModal(e){ if(e) e.preventDefault(); if(modal){ modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); } }
+  function closeModal(){ if(modal){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); } }
+  if(openBtn) openBtn.addEventListener('click', openModal);
+  if(closeBtn) closeBtn.addEventListener('click', closeModal);
+  if(modal) modal.addEventListener('click', function(e){ if(e.target === modal) closeModal(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeModal(); });
+})();
+</script>
+
+</body>
+</html>

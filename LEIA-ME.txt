@@ -1,0 +1,10 @@
+YEPII COTAÇÃO V9.8
+
+Novidades:
+- Numeração automática de cotações novas.
+- Histórico administrativo com status, datas, valores e links.
+- Impressão exclusiva do comprovante de aceite, sem imprimir a página inteira.
+- Mensagem de aceite permanece embaixo, com botão de impressora no canto direito.
+
+No Netlify, mantenha SUPABASE_URL e SUPABASE_SECRET_KEY configuradas.
+Faça upload/commit de TODOS os arquivos desta pasta no GitHub, preservando netlify/functions.
