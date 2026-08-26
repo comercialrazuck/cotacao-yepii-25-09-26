@@ -21,3 +21,18 @@
   from = "/api/list-quotes"
   to = "/.netlify/functions/list-quotes"
   status = 200
+
+[[redirects]]
+  from = "/api/next-quote-number"
+  to = "/.netlify/functions/next-quote-number"
+  status = 200
+
+[[redirects]]
+  from = "/admin"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/"
+  to = "/index.html"
+  status = 200
