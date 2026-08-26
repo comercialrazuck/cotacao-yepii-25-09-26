@@ -17,32 +17,17 @@ exports.handler = async (event) => {
       return json(405, { error: 'Method not allowed' });
     }
 
-    // This endpoint only returns the next display number.
-    // It intentionally does not require an authenticated browser session.
-    // The Supabase secret remains server-side in Netlify.
-    const supabase = createClient(
-      process.env.SUPABASE_URL,
-      process.env.SUPABASE_SECRET_KEY,
-      { auth: { persistSession: false, autoRefreshToken: false } }
-    );
+    const supabaseUrl = process.env.SUPABASE_URL || 'https://szcahilagrdnlvogngxg.supabase.co';
+    const publishableKey = 'sb_publishable_9OnuKQOmBQR7TArHu3-X7g_HXbQpQoc';
 
-    const { data, error } = await supabase
-      .from('quotes')
-      .select('quote_number')
-      .order('quote_number', { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const supabase = createClient(supabaseUrl, publishableKey, {
+      auth: { persistSession: false, autoRefreshToken: false }
+    });
 
+    const { data, error } = await supabase.rpc('get_next_quote_number');
     if (error) throw error;
 
-    const lastN = parseInt(
-      String(data?.quote_number || '0').replace(/\D/g, ''),
-      10
-    ) || 0;
-
-    return json(200, {
-      quote_number: String(lastN + 1).padStart(7, '0')
-    });
+    return json(200, { quote_number: data });
   } catch (e) {
     return json(500, { error: e.message || 'Erro inesperado' });
   }
