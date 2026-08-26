@@ -1,10 +1,16 @@
-YEPII COTAÇÃO V9.8
+YEPII COTACAO - V9.9.4 COMPLETA
 
-Novidades:
-- Numeração automática de cotações novas.
-- Histórico administrativo com status, datas, valores e links.
-- Impressão exclusiva do comprovante de aceite, sem imprimir a página inteira.
-- Mensagem de aceite permanece embaixo, com botão de impressora no canto direito.
+Esta versao consolida as alteracoes mais recentes:
+- Numeracao aleatoria no padrao Y26-XXXXX, gerada pelo Supabase sem repeticao.
+- Historico de cotacoes.
+- Impressao exclusiva do comprovante de aceite, sem paginas brancas extras.
+- Condicoes comerciais no comprovante de aceite.
+- Campo Endereco de entrega nas Condicoes Comerciais, salvo no banco e exibido no comprovante.
+- Acesso administrativo em /admin.
+- A raiz do dominio redireciona para https://yepii.com.br.
+- Links publicos de cotacao continuam em /?q=TOKEN.
 
-No Netlify, mantenha SUPABASE_URL e SUPABASE_SECRET_KEY configuradas.
-Faça upload/commit de TODOS os arquivos desta pasta no GitHub, preservando netlify/functions.
+IMPORTANTE:
+- Mantenha a estrutura netlify/functions ao enviar ao GitHub.
+- Variaveis do Netlify necessarias: SUPABASE_URL e SUPABASE_SECRET_KEY.
+- O banco Supabase ja foi atualizado com delivery_address e com a funcao get_next_quote_number().
