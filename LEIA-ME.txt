@@ -1,16 +1,42 @@
-YEPII COTACAO - V9.9.4 COMPLETA
+YEPII COTACAO - VERSAO OPERACIONAL FINAL CONSOLIDADA
 
-Esta versao consolida as alteracoes mais recentes:
-- Numeracao aleatoria no padrao Y26-XXXXX, gerada pelo Supabase sem repeticao.
-- Historico de cotacoes.
-- Impressao exclusiva do comprovante de aceite, sem paginas brancas extras.
-- Condicoes comerciais no comprovante de aceite.
-- Campo Endereco de entrega nas Condicoes Comerciais, salvo no banco e exibido no comprovante.
-- Acesso administrativo em /admin.
-- A raiz do dominio redireciona para https://yepii.com.br.
-- Links publicos de cotacao continuam em /?q=TOKEN.
+Recursos desta versão:
+- / redireciona para https://yepii.com.br
+- /admin abre o login administrativo
+- Links de cliente em /c/Y26-XXXXX-XXXXXX
+- Numeração aleatória Y26-XXXXX
+- Salvar rascunho sem liberar link público nem disparar notificações
+- Finalizar e gerar link: trava a cotação para edição e inicia o fluxo com o comprador
+- Validade da cotação e expiração automática
+- Status: Rascunho, Enviada, Visualizada, Aceita, Recusada, Expirada e Cancelada
+- Histórico com filtros por empresa, CNPJ, ID cliente/cotação, status e período
+- Relatório por empresa ou geral por período
+- Exportação Excel com abas Resumo e Cotacoes
+- Resumo com quantidade, valor cotado, aceitas, pendentes e taxa de conversão
+- Responsável pela cotação
+- Observação interna invisível ao comprador
+- Indicador de dias sem resposta no histórico
+- Reabrir cotação para consulta
+- Duplicar cotação para criar nova versão com novo número
+- Excluir rascunho
+- Imprimir cotação pelo administrativo
+- Timeline completa de eventos
+- Impressão do aceite com condições comerciais, endereço de entrega, validade e versão dos termos
+- Registro da versão e snapshot dos Termos no aceite
+- E-mails internos para criação/envio, primeira visualização, aceite e recusa
+- Lembretes ao comprador: 2 dias após o envio e 7 dias após o primeiro lembrete
+- Expiração diária automática das cotações vencidas
+- Campos internos e destinatários de notificação não são expostos pela API pública do comprador
 
-IMPORTANTE:
-- Mantenha a estrutura netlify/functions ao enviar ao GitHub.
-- Variaveis do Netlify necessarias: SUPABASE_URL e SUPABASE_SECRET_KEY.
-- O banco Supabase ja foi atualizado com delivery_address e com a funcao get_next_quote_number().
+Variáveis necessárias no Netlify:
+SUPABASE_URL
+SUPABASE_SECRET_KEY
+SECRETS_SCAN_OMIT_KEYS=SUPABASE_URL
+
+Para os e-mails:
+RESEND_API_KEY
+RESEND_FROM_EMAIL
+PUBLIC_SITE_URL=https://cotacaoyepii.com.br
+
+Observação importante:
+Os Termos atuais continuam provisórios. O sistema já registra a versão e uma cópia exata do texto mostrado no momento do aceite. Quando os Termos oficiais forem fornecidos, basta substituir o conteúdo e atualizar o identificador da versão no index.html.
