@@ -6,33 +6,19 @@
   from = "/api/save-quote"
   to = "/.netlify/functions/save-quote"
   status = 200
-
 [[redirects]]
   from = "/api/get-quote"
   to = "/.netlify/functions/get-quote"
   status = 200
-
 [[redirects]]
   from = "/api/accept-quote"
   to = "/.netlify/functions/accept-quote"
   status = 200
-
 [[redirects]]
   from = "/api/list-quotes"
   to = "/.netlify/functions/list-quotes"
   status = 200
-
 [[redirects]]
   from = "/api/next-quote-number"
   to = "/.netlify/functions/next-quote-number"
-  status = 200
-
-[[redirects]]
-  from = "/admin"
-  to = "/index.html"
-  status = 200
-
-[[redirects]]
-  from = "/admin/"
-  to = "/index.html"
   status = 200
