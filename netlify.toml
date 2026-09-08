@@ -2,6 +2,9 @@
   publish = "."
   functions = "netlify/functions"
 
+[functions]
+  included_files = ["index.html"]
+
 [[redirects]]
   from = "/api/save-quote"
   to = "/.netlify/functions/save-quote"
@@ -56,13 +59,13 @@
   status = 200
 [[redirects]]
   from = "/admin"
-  to = "/index.html"
+  to = "/.netlify/functions/app-shell"
   status = 200
 [[redirects]]
   from = "/admin/"
-  to = "/index.html"
+  to = "/.netlify/functions/app-shell"
   status = 200
 [[redirects]]
   from = "/c/*"
-  to = "/index.html"
+  to = "/.netlify/functions/app-shell"
   status = 200
