@@ -35,6 +35,26 @@
   to = "/.netlify/functions/next-quote-number"
   status = 200
 [[redirects]]
+  from = "/api/reports"
+  to = "/.netlify/functions/reports"
+  status = 200
+[[redirects]]
+  from = "/api/team-users"
+  to = "/.netlify/functions/team-users"
+  status = 200
+[[redirects]]
+  from = "/api/resend-webhook"
+  to = "/.netlify/functions/resend-webhook"
+  status = 200
+[[redirects]]
+  from = "/relatorios"
+  to = "/reports.html"
+  status = 200
+[[redirects]]
+  from = "/relatorios/"
+  to = "/reports.html"
+  status = 200
+[[redirects]]
   from = "/admin"
   to = "/index.html"
   status = 200
