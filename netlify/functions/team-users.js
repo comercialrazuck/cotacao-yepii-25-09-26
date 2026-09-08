@@ -1,3 +1,31 @@
 const { getActor,canManageUsers } = require('../lib/auth');
 function json(statusCode,body){return{statusCode,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}}
-exports.handler=async(event)=>{try{const actor=await getActor(event);if(!actor)return json(401,{error:'Sessão inválida'});const {supabase,member}=actor;if(event.httpMethod==='GET'){if(!canManageUsers(actor))return json(403,{error:'Sem permissão'});const {data,error}=await supabase.from('yepii_team_members').select('user_id,full_name,email,role,active').order('full_name');if(error)throw error;return json(200,{profile:member,users:data||[]})}if(event.httpMethod==='POST'){if(!canManageUsers(actor))return json(403,{error:'Sem permissão'});const b=JSON.parse(event.body||'{}'),email=String(b.email||'').trim().toLowerCase(),password=String(b.password||''),fullName=String(b.full_name||'').trim(),role=String(b.role||'visualizacao');if(!email||!password||password.length<8)return json(400,{error:'Informe e-mail e senha com pelo menos 8 caracteres.'});if(!['administrador','comercial','gestor_comercial','visualizacao'].includes(role))return json(400,{error:'Perfil inválido'});const {data:created,error:createErr}=await supabase.auth.admin.createUser({email,password,email_confirm:true,user_metadata:{full_name:fullName}});if(createErr)throw createErr;const {error:memberErr}=await supabase.from('yepii_team_members').upsert({user_id:created.user.id,full_name:fullName||email,email,role,active:true});if(memberErr)throw memberErr;return json(201,{ok:true,user_id:created.user.id})}if(event.httpMethod==='PATCH'){if(!canManageUsers(actor))return json(403,{error:'Sem permissão'});const b=JSON.parse(event.body||'{}');if(!b.user_id)return json(400,{error:'Usuário inválido'});const patch={};if(b.full_name!==undefined)patch.full_name=String(b.full_name||'').trim();if(b.role!==undefined){if(!['administrador','comercial','gestor_comercial','visualizacao'].includes(String(b.role)))return json(400,{error:'Perfil inválido'});patch.role=String(b.role)}if(b.active!==undefined)patch.active=!!b.active;const {error}=await supabase.from('yepii_team_members').update(patch).eq('user_id',b.user_id);if(error)throw error;return json(200,{ok:true})}return json(405,{error:'Method not allowed'})}catch(e){return json(500,{error:e.message||'Erro inesperado'})}};
+exports.handler=async(event)=>{try{
+  const actor=await getActor(event);if(!actor)return json(401,{error:'Sessão inválida'});const {supabase,member,user}=actor;
+  if(event.httpMethod==='GET'){
+    if(!canManageUsers(actor))return json(403,{error:'Sem permissão'});
+    const {data,error}=await supabase.from('yepii_team_members').select('user_id,full_name,email,role,active').order('full_name');if(error)throw error;return json(200,{profile:member,users:data||[]});
+  }
+  if(event.httpMethod==='POST'){
+    if(!canManageUsers(actor))return json(403,{error:'Sem permissão'});
+    const b=JSON.parse(event.body||'{}'),email=String(b.email||'').trim().toLowerCase(),password=String(b.password||''),fullName=String(b.full_name||'').trim(),role=String(b.role||'visualizacao');
+    if(!email||!password||password.length<8)return json(400,{error:'Informe e-mail e senha com pelo menos 8 caracteres.'});
+    if(!['administrador','comercial','gestor_comercial','visualizacao'].includes(role))return json(400,{error:'Perfil inválido'});
+    const {data:created,error:createErr}=await supabase.auth.admin.createUser({email,password,email_confirm:true,user_metadata:{full_name:fullName}});if(createErr)throw createErr;
+    const {error:memberErr}=await supabase.from('yepii_team_members').upsert({user_id:created.user.id,full_name:fullName||email,email,role,active:true});
+    if(memberErr){await supabase.auth.admin.deleteUser(created.user.id).catch(()=>{});throw memberErr}
+    return json(201,{ok:true,user_id:created.user.id});
+  }
+  if(event.httpMethod==='PATCH'){
+    if(!canManageUsers(actor))return json(403,{error:'Sem permissão'});
+    const b=JSON.parse(event.body||'{}');if(!b.user_id)return json(400,{error:'Usuário inválido'});
+    const isSelf=b.user_id===user.id;
+    if(isSelf&&b.active===false)return json(409,{error:'Você não pode desativar o próprio usuário administrador.'});
+    if(isSelf&&b.role!==undefined&&String(b.role)!=='administrador')return json(409,{error:'Você não pode retirar o próprio perfil de administrador.'});
+    const patch={};if(b.full_name!==undefined)patch.full_name=String(b.full_name||'').trim();
+    if(b.role!==undefined){if(!['administrador','comercial','gestor_comercial','visualizacao'].includes(String(b.role)))return json(400,{error:'Perfil inválido'});patch.role=String(b.role)}
+    if(b.active!==undefined)patch.active=!!b.active;
+    const {error}=await supabase.from('yepii_team_members').update(patch).eq('user_id',b.user_id);if(error)throw error;return json(200,{ok:true});
+  }
+  return json(405,{error:'Method not allowed'});
+}catch(e){return json(500,{error:e.message||'Erro inesperado'})}};
