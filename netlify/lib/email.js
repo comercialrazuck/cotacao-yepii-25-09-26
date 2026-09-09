@@ -18,8 +18,8 @@ async function sendQuoteEmail(q,{headline,message,detailsHtml='',toOverride=null
   const button=includeButton?`<p style="margin:26px 0"><a href="${esc(link)}" style="display:inline-block;background:#ff6600;color:#fff;text-decoration:none;padding:13px 20px;border-radius:8px;font-weight:700">${esc(buttonLabel)}</a></p>`:'';
   const html=`<div style="font-family:Arial,sans-serif;color:#242424;max-width:720px;margin:auto;line-height:1.55">${brandHeader()}<h2 style="margin:0 0 14px;color:#242424">${esc(headline)}</h2><p>${esc(message)}</p><p><strong>Empresa:</strong> ${esc(q.company||'-')}<br><strong>Cotação:</strong> ${esc(q.quote_number||'-')}${q.valid_until?`<br><strong>Validade:</strong> ${esc(fmtDate(q.valid_until))}`:''}</p>${detailsHtml}${button}${includeButton?`<p style="font-size:12px;color:#777;margin-top:20px;word-break:break-all">Link: ${esc(link)}</p>`:''}${signature()}</div>`;
   const attachments=[
-    {path:LOGO_URL,filename:'yepii-logo.png',content_id:'yepii-logo'},
-    {path:SIGNATURE_URL,filename:'yepii-assinatura.png',content_id:'yepii-signature'}
+    {path:LOGO_URL,filename:'yepii-logo.png',contentId:'yepii-logo'},
+    {path:SIGNATURE_URL,filename:'yepii-assinatura.png',contentId:'yepii-signature'}
   ];
   const r=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({from,to,subject,html,attachments})});
   const payload=await r.json().catch(()=>({}));if(!r.ok)throw new Error(`Resend ${r.status}: ${JSON.stringify(payload)}`);
