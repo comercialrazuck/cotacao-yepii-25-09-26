@@ -1,11 +1,15 @@
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+const PREVIEW_BASE='https://deploy-preview-1--funny-pegasus-2cf760.netlify.app';
+const PROD_BASE='https://cotacaoyepii.com.br';
+const LOGO_URL='https://raw.githubusercontent.com/comercialrazuck/cotacao-yepii-25-09-26/9978cd6410b6f64a3a808709c06080c98c4f4e9b/assets/yepii-logo.png';
+const SIGNATURE_URL='https://raw.githubusercontent.com/comercialrazuck/cotacao-yepii-25-09-26/9978cd6410b6f64a3a808709c06080c98c4f4e9b/assets/yepii-email-signature.png';
 function recipients(q){return [...new Set([q.notify_email_1,q.notify_email_2,q.notify_email_3].filter(Boolean).map(x=>String(x).trim()).filter(Boolean))]}
 function quoteSubject(q){return `${q.company||'Cliente'} — Cotação ${q.quote_number||''}`.trim()}
-function clientLink(q){const base=(process.env.PUBLIC_SITE_URL||'https://cotacaoyepii.com.br').replace(/\/+$/,'');const suffix=String(q.short_token||'').slice(0,6).toUpperCase();return suffix?`${base}/c/${encodeURIComponent(q.quote_number)}-${suffix}`:`${base}/?q=${encodeURIComponent(q.public_token||'')}`}
+function siteBase(){return process.env.CONTEXT==='deploy-preview'?PREVIEW_BASE:(process.env.PUBLIC_SITE_URL||PROD_BASE).replace(/\/+$/,'')}
+function clientLink(q){const base=siteBase();const suffix=String(q.short_token||'').slice(0,6).toUpperCase();return suffix?`${base}/c/${encodeURIComponent(q.quote_number)}-${suffix}`:`${base}/?q=${encodeURIComponent(q.public_token||'')}`}
 function fmtDate(v){if(!v)return '-';if(/^\d{4}-\d{2}-\d{2}$/.test(v)){const [y,m,d]=v.split('-');return `${d}/${m}/${y}`}const d=new Date(v);return Number.isNaN(d.getTime())?'-':d.toLocaleDateString('pt-BR')}
-function assetUrl(path){const base=(process.env.PUBLIC_SITE_URL||'https://cotacaoyepii.com.br').replace(/\/+$/,'');return `${base}${path}`}
-function brandHeader(){const logo=process.env.YEPII_LOGO_URL||assetUrl('/assets/yepii-logo.png');return `<div style="margin:0 0 22px"><img src="${esc(logo)}" alt="Yepii" style="display:block;max-width:150px;height:auto"></div>`}
-function signature(){const sig=process.env.YEPII_EMAIL_SIGNATURE_URL||assetUrl('/assets/yepii-email-signature.png');return `<div style="margin-top:30px;padding-top:18px;border-top:1px solid #eee"><img src="${esc(sig)}" alt="Equipe Yepii" style="display:block;max-width:520px;width:100%;height:auto"></div>`}
+function brandHeader(){return `<div style="margin:0 0 22px"><img src="${LOGO_URL}" alt="Yepii" width="150" style="display:block;width:150px;max-width:150px;height:auto;border:0;outline:none;text-decoration:none"></div>`}
+function signature(){return `<div style="margin-top:30px;padding-top:18px;border-top:1px solid #eee"><img src="${SIGNATURE_URL}" alt="Equipe Yepii" width="520" style="display:block;width:100%;max-width:520px;height:auto;border:0;outline:none;text-decoration:none"></div>`}
 async function sendQuoteEmail(q,{headline,message,detailsHtml='',toOverride=null,buttonLabel='Ver minha cotação',subjectOverride=null,includeButton=true}){
   const key=process.env.RESEND_API_KEY,from=process.env.RESEND_FROM_EMAIL;
   const to=toOverride?[...new Set((Array.isArray(toOverride)?toOverride:[toOverride]).filter(Boolean).map(x=>String(x).trim()).filter(Boolean))]:recipients(q);
