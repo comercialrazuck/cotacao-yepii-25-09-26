@@ -1,0 +1,15 @@
+const { Webhook } = require('svix');
+const { serviceClient } = require('../lib/auth');
+const { sendQuoteEmail } = require('../lib/email');
+function json(statusCode,body){return{statusCode,headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}}
+exports.handler=async(event)=>{try{if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed'});const secret=process.env.RESEND_WEBHOOK_SECRET;if(!secret)return json(503,{error:'Webhook secret not configured'});const wh=new Webhook(secret);let payload;try{payload=wh.verify(event.body||'',{'svix-id':event.headers['svix-id'],'svix-timestamp':event.headers['svix-timestamp'],'svix-signature':event.headers['svix-signature']})}catch{return json(400,{error:'Invalid signature'})}
+ const type=payload.type,data=payload.data||{},emailId=data.email_id||data.id;if(!emailId)return json(200,{ok:true,ignored:true});const supabase=serviceClient();const {data:qe,error}=await supabase.from('quote_emails').select('*').eq('resend_email_id',emailId).maybeSingle();if(error)throw error;if(!qe)return json(200,{ok:true,ignored:true});const now=new Date().toISOString();const patch={last_event:type,event_payload:payload,updated_at:now};let quoteField=null,eventType=null,notifyHeadline=null,notifyMessage=null;
+ if(type==='email.delivered'){patch.delivered_at=qe.delivered_at||now;eventType='buyer_email_delivered';if(qe.email_type==='initial')quoteField='buyer_email_delivered_at'}
+ if(type==='email.opened'){patch.opened_at=qe.opened_at||now;eventType='buyer_email_opened';if(qe.email_type==='initial')quoteField='buyer_email_opened_at';if(!qe.opened_at){notifyHeadline='E-mail da cotação aberto';notifyMessage='O comprador abriu o e-mail da cotação pela primeira vez.'}}
+ if(type==='email.clicked'){patch.clicked_at=qe.clicked_at||now;eventType='buyer_email_clicked';if(qe.email_type==='initial')quoteField='buyer_email_clicked_at';if(!qe.clicked_at){notifyHeadline='Link da cotação clicado';notifyMessage='O comprador clicou no link da cotação pela primeira vez.'}}
+ if(type==='email.bounced'){patch.failed_at=qe.failed_at||now;eventType='buyer_email_bounced';if(qe.email_type==='initial')quoteField='buyer_email_failed_at'}
+ if(type==='email.failed'||type==='email.suppressed'){patch.failed_at=qe.failed_at||now;eventType='buyer_email_failed';if(qe.email_type==='initial')quoteField='buyer_email_failed_at'}
+ if(type==='email.delivery_delayed')eventType='email_delivery_delayed';if(type==='email.complained')eventType='email_complained';
+ await supabase.from('quote_emails').update(patch).eq('id',qe.id);if(quoteField)await supabase.from('quotes').update({[quoteField]:now}).eq('id',qe.quote_id);if(eventType)await supabase.from('quote_events').insert({quote_id:qe.quote_id,event_type:eventType,event_data:{resend_email_id:emailId,email_type:qe.email_type}});
+ if(notifyHeadline){const {data:q}=await supabase.from('quotes').select('*').eq('id',qe.quote_id).single();if(q)try{await sendQuoteEmail(q,{headline:notifyHeadline,message:notifyMessage,includeButton:true})}catch{}}
+ return json(200,{ok:true})}catch(e){return json(500,{error:e.message||'Erro inesperado'})}};

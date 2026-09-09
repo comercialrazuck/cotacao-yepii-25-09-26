@@ -2,6 +2,9 @@
   publish = "."
   functions = "netlify/functions"
 
+[functions]
+  included_files = ["index.html"]
+
 [[redirects]]
   from = "/api/save-quote"
   to = "/.netlify/functions/save-quote"
@@ -35,14 +38,34 @@
   to = "/.netlify/functions/next-quote-number"
   status = 200
 [[redirects]]
+  from = "/api/reports"
+  to = "/.netlify/functions/reports"
+  status = 200
+[[redirects]]
+  from = "/api/team-users"
+  to = "/.netlify/functions/team-users"
+  status = 200
+[[redirects]]
+  from = "/api/resend-webhook"
+  to = "/.netlify/functions/resend-webhook"
+  status = 200
+[[redirects]]
+  from = "/relatorios"
+  to = "/reports.html"
+  status = 200
+[[redirects]]
+  from = "/relatorios/"
+  to = "/reports.html"
+  status = 200
+[[redirects]]
   from = "/admin"
-  to = "/index.html"
+  to = "/.netlify/functions/app-shell"
   status = 200
 [[redirects]]
   from = "/admin/"
-  to = "/index.html"
+  to = "/.netlify/functions/app-shell"
   status = 200
 [[redirects]]
   from = "/c/*"
-  to = "/index.html"
+  to = "/.netlify/functions/app-shell"
   status = 200
