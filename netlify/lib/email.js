@@ -1,10 +1,10 @@
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
-const PREVIEW_BASE='https://deploy-preview-1--funny-pegasus-2cf760.netlify.app';
+const PROD_BASE='https://cotacaoyepii.com.br';
 const LOGO_URL='https://raw.githubusercontent.com/comercialrazuck/cotacao-yepii-25-09-26/a4f21a40a45dae0478076d89a70a25cc90f4c145/assets/yepii-logo.png';
 const SIGNATURE_URL='https://raw.githubusercontent.com/comercialrazuck/cotacao-yepii-25-09-26/a4f21a40a45dae0478076d89a70a25cc90f4c145/assets/yepii-email-signature.png';
 function recipients(q){return [...new Set([q.notify_email_1,q.notify_email_2,q.notify_email_3].filter(Boolean).map(x=>String(x).trim()).filter(Boolean))]}
 function quoteSubject(q){return `${q.company||'Cliente'} — Cotação ${q.quote_number||''}`.trim()}
-function siteBase(){return PREVIEW_BASE}
+function siteBase(){return PROD_BASE}
 function clientLink(q){const base=siteBase();const suffix=String(q.short_token||'').slice(0,6).toUpperCase();return suffix?`${base}/c/${encodeURIComponent(q.quote_number)}-${suffix}`:`${base}/?q=${encodeURIComponent(q.public_token||'')}`}
 function fmtDate(v){if(!v)return '-';if(/^\d{4}-\d{2}-\d{2}$/.test(v)){const [y,m,d]=v.split('-');return `${d}/${m}/${y}`}const d=new Date(v);return Number.isNaN(d.getTime())?'-':d.toLocaleDateString('pt-BR')}
 function brandHeader(){return `<div style="margin:0 0 22px"><img src="${esc(LOGO_URL)}" alt="Yepii" width="150" style="display:block;width:150px;max-width:150px;height:auto;border:0;outline:none;text-decoration:none"></div>`}
