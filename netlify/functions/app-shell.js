@@ -1,5 +1,6 @@
 const fs=require('fs');
 const path=require('path');
+// Preview redeploy marker: 2026-09-09 branding/env refresh.
 
 function applyBrandingAndUi(source){
   let html=source;
