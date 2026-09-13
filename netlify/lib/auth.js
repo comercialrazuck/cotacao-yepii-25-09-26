@@ -1,7 +1,7 @@
 const { createClient } = require('@supabase/supabase-js');
 
 const PUBLISHABLE_KEY='sb_publishable_9OnuKQOmBQR7TArHu3-X7g_HXbQpQoc';
-const WRITE_ROLES=new Set(['administrador','comercial']);
+const WRITE_ROLES=new Set(['administrador','comercial','gestor_comercial']);
 const READ_ALL_ROLES=new Set(['administrador','gestor_comercial','visualizacao']);
 const REPORT_ROLES=new Set(['administrador','gestor_comercial','visualizacao','comercial']);
 
