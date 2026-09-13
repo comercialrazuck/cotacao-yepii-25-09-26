@@ -46,6 +46,14 @@
   to = "/.netlify/functions/team-users"
   status = 200
 [[redirects]]
+  from = "/api/crm-lead"
+  to = "/.netlify/functions/crm-lead"
+  status = 200
+[[redirects]]
+  from = "/api/crm-quotes"
+  to = "/.netlify/functions/crm-quotes"
+  status = 200
+[[redirects]]
   from = "/api/resend-webhook"
   to = "/.netlify/functions/resend-webhook"
   status = 200
