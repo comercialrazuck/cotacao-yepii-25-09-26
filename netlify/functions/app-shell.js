@@ -27,7 +27,8 @@ function applyBrandingAndUi(source){
     const params=new URLSearchParams(location.search),leadId=params.get('crm_lead')||sessionStorage.getItem('pending_crm_lead'),quoteToOpen=params.get('crm_quote');
     if(!leadId&&!quoteToOpen)return;
     if(leadId)sessionStorage.setItem('pending_crm_lead',leadId);
-    let done=false;
+    let done=false,authImported=false;
+    async function importCrmAuth(){if(authImported)return;authImported=true;try{const raw=String(location.hash||'').replace(/^#/,'');const hp=new URLSearchParams(raw),packed=hp.get('crm_auth');if(!packed)return;const p=new URLSearchParams(decodeURIComponent(packed)),access_token=p.get('access_token'),refresh_token=p.get('refresh_token');if(access_token&&refresh_token){const {error}=await supabase.auth.setSession({access_token,refresh_token});if(error)throw error;history.replaceState(null,'',location.pathname+location.search)}}catch(e){console.warn('CRM auth handoff:',e.message)}}
     async function getSession(){try{return (await supabase.auth.getSession()).data.session}catch{return null}}
     async function hydrateLead(){if(done||!leadId)return;const s=await getSession();if(!s)return;
       try{const r=await fetch('/api/crm-lead?lead_id='+encodeURIComponent(leadId),{headers:{Authorization:'Bearer '+s.access_token}}),d=await r.json();if(!r.ok)throw new Error(d.error||'Não foi possível carregar o cliente do CRM');const l=d.lead||{};
@@ -40,8 +41,8 @@ function applyBrandingAndUi(source){
         sessionStorage.removeItem('pending_crm_lead');done=true;
       }catch(e){const st=document.getElementById('status');if(st){st.textContent=e.message;st.style.display='block'}}
     }
-    async function run(){if(done)return;const s=await getSession();if(!s)return;if(quoteToOpen&&typeof reopenQuote==='function'){done=true;await reopenQuote(quoteToOpen,false);return}await hydrateLead()}
-    document.addEventListener('DOMContentLoaded',()=>{setTimeout(run,250)});setInterval(run,800);
+    async function run(){if(done)return;await importCrmAuth();const s=await getSession();if(!s)return;if(quoteToOpen&&typeof reopenQuote==='function'){done=true;await reopenQuote(quoteToOpen,false);return}await hydrateLead()}
+    document.addEventListener('DOMContentLoaded',()=>{setTimeout(run,150)});setInterval(run,700);
     supabase.auth.onAuthStateChange((event,session)=>{if(session)setTimeout(run,150)});
   })();</script>`;
   html=html.replace('</body>',forceClientUi+crmBridge+'</body>');
