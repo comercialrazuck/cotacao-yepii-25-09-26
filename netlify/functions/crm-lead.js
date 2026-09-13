@@ -7,11 +7,11 @@ exports.handler=async(event)=>{try{
  const actor=await getActor(event);if(!actor)return json(401,{error:'Sessão inválida'});
  const leadId=String(event.queryStringParameters?.lead_id||'').trim();if(!leadId)return json(400,{error:'lead_id obrigatório'});
  const {supabase}=actor;
- const {data:lead,error}=await supabase.from('yepii_leads').select('id,lead_code,company_name,trade_name,cnpj,street,street_number,address_complement,neighborhood,city,state,postal_code,credit_limit').eq('id',leadId).is('deleted_at',null).maybeSingle();
- if(error)throw error;if(!lead)return json(404,{error:'Cliente não encontrado no CRM'});
- const {data:contacts,error:contactErr}=await supabase.from('yepii_contacts').select('full_name,phone,whatsapp,email,is_primary,created_at').eq('lead_id',leadId).order('is_primary',{ascending:false}).order('created_at',{ascending:true});
+ const {data:lead,error}=await supabase.from('yepii_leads').select('*').eq('id',leadId).maybeSingle();
+ if(error)throw error;if(!lead||lead.deleted_at)return json(404,{error:'Cliente não encontrado no CRM'});
+ const {data:contacts,error:contactErr}=await supabase.from('yepii_contacts').select('*').eq('lead_id',leadId).order('is_primary',{ascending:false}).order('created_at',{ascending:true});
  if(contactErr)throw contactErr;const contact=(contacts||[])[0]||{};
  let credit_summary={credit_limit:Number(lead.credit_limit||0),credit_used:0,credit_available:Number(lead.credit_limit||0),active_orders:0};
  try{const {data:cs,error:csErr}=await supabase.rpc('yepii_credit_summary',{p_lead_id:leadId});if(!csErr&&Array.isArray(cs)&&cs[0])credit_summary=cs[0]}catch{}
- return json(200,{lead:{lead_id:lead.id,client_id:lead.lead_code||'',company:lead.company_name||lead.trade_name||'',cnpj:lead.cnpj||'',address:addr(lead),delivery_address:addr(lead),client_name:contact.full_name||'',phone:contact.whatsapp||contact.phone||'',client_email:contact.email||''},credit_summary});
+ return json(200,{lead:{lead_id:lead.id,client_id:lead.lead_code||'',company:lead.company_name||lead.trade_name||'',cnpj:lead.cnpj||'',address:addr(lead),delivery_address:addr(lead),client_name:contact.full_name||contact.name||'',phone:contact.whatsapp||contact.phone||'',client_email:contact.email||''},credit_summary});
 }catch(e){return json(500,{error:e.message||'Erro inesperado'})}};
