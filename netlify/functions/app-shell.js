@@ -24,25 +24,25 @@ function applyBrandingAndUi(source){
   const forceClientUi=`<script>(function(){function ensureBuyerUi(){if(!location.pathname.startsWith('/c/'))return;document.body.classList.add('client-view');var word=document.querySelector('.wordmark');if(word){var old=word.querySelector('.logo');if(old){var img=document.createElement('img');img.className='official-yepii-logo';img.alt='Yepii';img.src='${logo}';old.replaceWith(img)}else if(!word.querySelector('.official-yepii-logo')){var img2=document.createElement('img');img2.className='official-yepii-logo';img2.alt='Yepii';img2.src='${logo}';word.prepend(img2)}}var btn=document.getElementById('clientPrintQuoteBtn');if(btn&&!btn.dataset.bound){btn.dataset.bound='1';btn.addEventListener('click',function(){var original=document.getElementById('printQuoteBtn');if(original){original.click()}else{window.print()}})}}document.addEventListener('DOMContentLoaded',ensureBuyerUi);setTimeout(ensureBuyerUi,300);setTimeout(ensureBuyerUi,1200)})();</script>`;
   const crmBridge=`<script>(function(){
     if(!location.pathname.startsWith('/admin'))return;
-    const params=new URLSearchParams(location.search),leadId=params.get('crm_lead'),quoteToOpen=params.get('crm_quote');
+    const params=new URLSearchParams(location.search),leadId=params.get('crm_lead')||sessionStorage.getItem('pending_crm_lead'),quoteToOpen=params.get('crm_quote');
     if(!leadId&&!quoteToOpen)return;
+    if(leadId)sessionStorage.setItem('pending_crm_lead',leadId);
     let done=false;
-    async function session(){try{return (await supabase.auth.getSession()).data.session}catch{return null}}
-    async function run(){if(done)return;const s=await session();if(!s)return;
-      try{
-        if(quoteToOpen&&typeof reopenQuote==='function'){done=true;await reopenQuote(quoteToOpen,false);return}
-        if(leadId){const r=await fetch('/api/crm-lead?lead_id='+encodeURIComponent(leadId),{headers:{Authorization:'Bearer '+s.access_token}}),d=await r.json();if(!r.ok)throw new Error(d.error||'Não foi possível carregar o cliente do CRM');const l=d.lead||{};
-          if(document.getElementById('crmLeadId'))document.getElementById('crmLeadId').value=l.lead_id||leadId;
-          const map={clientId:l.client_id,company:l.company,cnpj:l.cnpj,address:l.address,deliveryAddress:l.delivery_address,clientName:l.client_name,phone:l.phone,clientEmail:l.client_email};
-          Object.entries(map).forEach(([id,v])=>{const el=document.getElementById(id);if(el&&v!=null)el.value=v});
-          ['clientId','company','cnpj'].forEach(id=>{const el=document.getElementById(id);if(el){el.readOnly=true;el.classList.add('crm-linked')}});
-          const cs=d.credit_summary,box=document.getElementById('publicCreditInfo');if(box&&cs){const brl=n=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(n)||0);box.innerHTML='<div class="credit-info-box"><b>Crédito Yepii</b><div>Limite aprovado: <strong>'+brl(cs.credit_limit)+'</strong> · Em uso: <strong>'+brl(cs.credit_used)+'</strong> · Disponível hoje: <strong>'+brl(cs.credit_available)+'</strong></div></div>'}
-          const st=document.getElementById('status');if(st){st.textContent='Cliente carregado automaticamente do CRM: '+(l.client_id||'');st.style.display='block'}
-          done=true;
-        }
-      }catch(e){const st=document.getElementById('status');if(st){st.textContent=e.message;st.style.display='block'}done=true}
+    async function getSession(){try{return (await supabase.auth.getSession()).data.session}catch{return null}}
+    async function hydrateLead(){if(done||!leadId)return;const s=await getSession();if(!s)return;
+      try{const r=await fetch('/api/crm-lead?lead_id='+encodeURIComponent(leadId),{headers:{Authorization:'Bearer '+s.access_token}}),d=await r.json();if(!r.ok)throw new Error(d.error||'Não foi possível carregar o cliente do CRM');const l=d.lead||{};
+        if(document.getElementById('crmLeadId'))document.getElementById('crmLeadId').value=l.lead_id||leadId;
+        const map={clientId:l.client_id,company:l.company,cnpj:l.cnpj,address:l.address,deliveryAddress:l.delivery_address,clientName:l.client_name,phone:l.phone,clientEmail:l.client_email};
+        Object.entries(map).forEach(([id,v])=>{const el=document.getElementById(id);if(el&&v!=null)el.value=v});
+        ['clientId','company','cnpj'].forEach(id=>{const el=document.getElementById(id);if(el){el.readOnly=true;el.classList.add('crm-linked')}});
+        const cs=d.credit_summary,box=document.getElementById('publicCreditInfo');if(box&&cs){const brl=n=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(n)||0);box.innerHTML='<div class="credit-info-box"><b>Crédito Yepii</b><div>Limite aprovado: <strong>'+brl(cs.credit_limit)+'</strong> · Em uso: <strong>'+brl(cs.credit_used)+'</strong> · Disponível hoje: <strong>'+brl(cs.credit_available)+'</strong></div></div>'}
+        const st=document.getElementById('status');if(st){st.textContent='Cliente carregado automaticamente do CRM: '+(l.client_id||'');st.style.display='block'}
+        sessionStorage.removeItem('pending_crm_lead');done=true;
+      }catch(e){const st=document.getElementById('status');if(st){st.textContent=e.message;st.style.display='block'}}
     }
-    document.addEventListener('DOMContentLoaded',()=>{setTimeout(run,250)});setInterval(run,900);
+    async function run(){if(done)return;const s=await getSession();if(!s)return;if(quoteToOpen&&typeof reopenQuote==='function'){done=true;await reopenQuote(quoteToOpen,false);return}await hydrateLead()}
+    document.addEventListener('DOMContentLoaded',()=>{setTimeout(run,250)});setInterval(run,800);
+    supabase.auth.onAuthStateChange((event,session)=>{if(session)setTimeout(run,150)});
   })();</script>`;
   html=html.replace('</body>',forceClientUi+crmBridge+'</body>');
   return html;
