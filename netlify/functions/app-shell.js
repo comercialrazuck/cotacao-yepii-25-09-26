@@ -27,23 +27,28 @@ function applyBrandingAndUi(source){
     const params=new URLSearchParams(location.search),leadId=params.get('crm_lead')||sessionStorage.getItem('pending_crm_lead'),quoteToOpen=params.get('crm_quote');
     if(!leadId&&!quoteToOpen)return;
     if(leadId)sessionStorage.setItem('pending_crm_lead',leadId);
-    let done=false,authImported=false;
-    async function importCrmAuth(){if(authImported)return;authImported=true;try{const raw=String(location.hash||'').replace(/^#/,'');const hp=new URLSearchParams(raw),packed=hp.get('crm_auth');if(!packed)return;const p=new URLSearchParams(decodeURIComponent(packed)),access_token=p.get('access_token'),refresh_token=p.get('refresh_token');if(access_token&&refresh_token){const {error}=await supabase.auth.setSession({access_token,refresh_token});if(error)throw error;history.replaceState(null,'',location.pathname+location.search)}}catch(e){console.warn('CRM auth handoff:',e.message)}}
+    let done=false,authImported=false,prefilled=false;
+    function brl(n){return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(n)||0)}
+    function applyLead(l){if(!l)return false;try{
+      if(document.getElementById('crmLeadId'))document.getElementById('crmLeadId').value=l.lead_id||leadId||'';
+      const map={clientId:l.client_id,company:l.company,cnpj:l.cnpj,address:l.address,deliveryAddress:l.delivery_address,clientName:l.client_name,phone:l.phone,clientEmail:l.client_email};
+      Object.entries(map).forEach(([id,v])=>{const el=document.getElementById(id);if(el&&v!=null)el.value=v});
+      ['clientId','company','cnpj'].forEach(id=>{const el=document.getElementById(id);if(el){el.readOnly=true;el.classList.add('crm-linked')}});
+      const cs=l.credit_summary,box=document.getElementById('publicCreditInfo');if(box&&cs){box.innerHTML='<div class="credit-info-box"><b>Crédito Yepii</b><div>Limite aprovado: <strong>'+brl(cs.credit_limit)+'</strong> · Em uso: <strong>'+brl(cs.credit_used)+'</strong> · Disponível hoje: <strong>'+brl(cs.credit_available)+'</strong></div></div>'}
+      const st=document.getElementById('status');if(st){st.textContent='Cliente carregado automaticamente do CRM: '+(l.client_id||'');st.style.display='block'}
+      return !!(l.client_id||l.company||l.cnpj)
+    }catch(e){console.warn('CRM prefill:',e.message);return false}}
+    function decodeCrmData(){try{const raw=String(location.hash||'').replace(/^#/,'');const hp=new URLSearchParams(raw),packed=hp.get('crm_data');if(!packed)return null;let b64=packed.replace(/-/g,'+').replace(/_/g,'/');while(b64.length%4)b64+='=';return JSON.parse(decodeURIComponent(escape(atob(b64))))}catch(e){console.warn('CRM data decode:',e.message);return null}}
+    async function importCrmAuth(){if(authImported)return;authImported=true;try{const raw=String(location.hash||'').replace(/^#/,'');const hp=new URLSearchParams(raw),packed=hp.get('crm_auth');if(!packed)return;const p=new URLSearchParams(packed),access_token=p.get('access_token'),refresh_token=p.get('refresh_token');if(access_token&&refresh_token){const {error}=await supabase.auth.setSession({access_token,refresh_token});if(error)throw error}}catch(e){console.warn('CRM auth handoff:',e.message)}}
+    function prefillFromHash(){if(prefilled)return true;const d=decodeCrmData();if(!d)return false;prefilled=applyLead(d);if(prefilled){sessionStorage.removeItem('pending_crm_lead');const clean=location.pathname+location.search;history.replaceState(null,'',clean)}return prefilled}
     async function getSession(){try{return (await supabase.auth.getSession()).data.session}catch{return null}}
-    async function hydrateLead(){if(done||!leadId)return;const s=await getSession();if(!s)return;
-      try{const r=await fetch('/api/crm-lead?lead_id='+encodeURIComponent(leadId),{headers:{Authorization:'Bearer '+s.access_token}}),d=await r.json();if(!r.ok)throw new Error(d.error||'Não foi possível carregar o cliente do CRM');const l=d.lead||{};
-        if(document.getElementById('crmLeadId'))document.getElementById('crmLeadId').value=l.lead_id||leadId;
-        const map={clientId:l.client_id,company:l.company,cnpj:l.cnpj,address:l.address,deliveryAddress:l.delivery_address,clientName:l.client_name,phone:l.phone,clientEmail:l.client_email};
-        Object.entries(map).forEach(([id,v])=>{const el=document.getElementById(id);if(el&&v!=null)el.value=v});
-        ['clientId','company','cnpj'].forEach(id=>{const el=document.getElementById(id);if(el){el.readOnly=true;el.classList.add('crm-linked')}});
-        const cs=d.credit_summary,box=document.getElementById('publicCreditInfo');if(box&&cs){const brl=n=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(n)||0);box.innerHTML='<div class="credit-info-box"><b>Crédito Yepii</b><div>Limite aprovado: <strong>'+brl(cs.credit_limit)+'</strong> · Em uso: <strong>'+brl(cs.credit_used)+'</strong> · Disponível hoje: <strong>'+brl(cs.credit_available)+'</strong></div></div>'}
-        const st=document.getElementById('status');if(st){st.textContent='Cliente carregado automaticamente do CRM: '+(l.client_id||'');st.style.display='block'}
-        sessionStorage.removeItem('pending_crm_lead');done=true;
-      }catch(e){const st=document.getElementById('status');if(st){st.textContent=e.message;st.style.display='block'}}
+    async function hydrateLead(){if(done||!leadId||prefilled)return;const s=await getSession();if(!s)return;
+      try{const r=await fetch('/api/crm-lead?lead_id='+encodeURIComponent(leadId),{headers:{Authorization:'Bearer '+s.access_token}}),d=await r.json();if(!r.ok)throw new Error(d.error||'Não foi possível carregar o cliente do CRM');const l={...(d.lead||{}),credit_summary:d.credit_summary};if(applyLead(l)){sessionStorage.removeItem('pending_crm_lead');done=true}}
+      catch(e){const st=document.getElementById('status');if(st){st.textContent=e.message;st.style.display='block'}}
     }
-    async function run(){if(done)return;await importCrmAuth();const s=await getSession();if(!s)return;if(quoteToOpen&&typeof reopenQuote==='function'){done=true;await reopenQuote(quoteToOpen,false);return}await hydrateLead()}
-    document.addEventListener('DOMContentLoaded',()=>{setTimeout(run,150)});setInterval(run,700);
-    supabase.auth.onAuthStateChange((event,session)=>{if(session)setTimeout(run,150)});
+    async function run(){if(done)return;if(prefillFromHash()){done=true;return}await importCrmAuth();const s=await getSession();if(!s)return;if(quoteToOpen&&typeof reopenQuote==='function'){done=true;await reopenQuote(quoteToOpen,false);return}await hydrateLead()}
+    document.addEventListener('DOMContentLoaded',()=>{setTimeout(run,80)});setTimeout(run,250);setInterval(run,700);
+    supabase.auth.onAuthStateChange((event,session)=>{if(session)setTimeout(run,100)});
   })();</script>`;
   html=html.replace('</body>',forceClientUi+crmBridge+'</body>');
   return html;
