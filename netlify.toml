@@ -3,7 +3,7 @@
   functions = "netlify/functions"
 
 [functions]
-  included_files = ["index.html", "termos.html"]
+  included_files = ["index.html"]
 
 [[redirects]]
   from = "/api/save-quote"
@@ -59,12 +59,12 @@
   status = 200
 [[redirects]]
   from = "/termos.html"
-  to = "/.netlify/functions/terms"
-  status = 200
+  to = "https://drive.google.com/file/d/16Rn_Cun9J91UM-CcM4Oix8uhe0I7imyx/view"
+  status = 302
 [[redirects]]
   from = "/termos"
-  to = "/.netlify/functions/terms"
-  status = 200
+  to = "https://drive.google.com/file/d/16Rn_Cun9J91UM-CcM4Oix8uhe0I7imyx/view"
+  status = 302
 [[redirects]]
   from = "/relatorios"
   to = "/reports.html"
