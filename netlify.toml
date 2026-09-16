@@ -58,6 +58,14 @@
   to = "/.netlify/functions/resend-webhook"
   status = 200
 [[redirects]]
+  from = "/termos.html"
+  to = "/.netlify/functions/terms"
+  status = 200
+[[redirects]]
+  from = "/termos"
+  to = "/.netlify/functions/terms"
+  status = 200
+[[redirects]]
   from = "/relatorios"
   to = "/reports.html"
   status = 200
