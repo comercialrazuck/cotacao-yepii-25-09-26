@@ -3,7 +3,7 @@
   functions = "netlify/functions"
 
 [functions]
-  included_files = ["index.html"]
+  included_files = ["index.html", "termos.html"]
 
 [[redirects]]
   from = "/api/save-quote"
