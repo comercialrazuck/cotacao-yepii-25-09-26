@@ -1,6 +1,20 @@
 import crypto from 'node:crypto';
-import auth from '../lib/auth.js';
-const { getActor, canWriteQuotes } = auth;
+import { createClient } from '@supabase/supabase-js';
+
+const PUBLISHABLE_KEY = 'sb_publishable_9OnuKQOmBQR7TArHu3-X7g_HXbQpQoc';
+const WRITE_ROLES = new Set(['administrador', 'comercial', 'gestor_comercial']);
+async function getActor(request) {
+  const token = String(request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  if (!token) return null;
+  const authClient = createClient(Netlify.env.get('SUPABASE_URL'), PUBLISHABLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
+  const { data: { user }, error } = await authClient.auth.getUser(token);
+  if (error || !user) return null;
+  const supabase = createClient(Netlify.env.get('SUPABASE_URL'), Netlify.env.get('SUPABASE_SECRET_KEY'), { auth: { persistSession: false, autoRefreshToken: false } });
+  const { data: member, error: memberErr } = await supabase.from('yepii_team_members').select('user_id,full_name,email,role,active').eq('user_id', user.id).maybeSingle();
+  if (memberErr || !member || member.active !== true) return null;
+  return { user, member, supabase };
+}
+const canWriteQuotes = (actor) => !!actor && WRITE_ROLES.has(actor.member.role);
 
 const json = (status, body) => Response.json(body, { status });
 const sign = (value, secret) => crypto.createHmac('sha256', secret).update(value).digest('base64url');
@@ -8,7 +22,7 @@ const sign = (value, secret) => crypto.createHmac('sha256', secret).update(value
 export default async (request) => {
   try {
     if (request.method !== 'POST') return json(405, { error: 'Método não permitido.' });
-    const actor = await getActor({ headers: { authorization: request.headers.get('authorization') || '' } });
+    const actor = await getActor(request);
     if (!actor) return json(401, { error: 'Entre na sua conta novamente.' });
     if (!canWriteQuotes(actor)) return json(403, { error: 'Seu perfil não pode editar cotações.' });
     const key = Netlify.env.get('BRAVE_SEARCH_API_KEY');
