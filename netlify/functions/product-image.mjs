@@ -33,12 +33,15 @@ export default async (request) => {
       const query = String(body.query || '').trim().slice(0, 180);
       if (query.length < 4) return json(400, { error: 'Descreva o produto com marca, modelo ou código.' });
       const endpoint = new URL('https://api.search.brave.com/res/v1/images/search');
-      endpoint.search = new URLSearchParams({ q: `${query} fundo branco`, country: 'BR', search_lang: 'pt', count: '12', safesearch: 'strict' }).toString();
+      // Keep the request to documented required/basic fields; Brave applies strict SafeSearch by default.
+      endpoint.search = new URLSearchParams({ q: `${query} fundo branco`, count: '12' }).toString();
       const response = await fetch(endpoint, { headers: { 'X-Subscription-Token': key, Accept: 'application/json' }, signal: AbortSignal.timeout(12000) });
       if (!response.ok) {
-        console.error('product-image: Brave status', response.status);
+        const providerError = await response.json().catch(() => ({}));
+        console.error('product-image: Brave status', response.status, 'code', String(providerError?.error?.code || 'unknown'));
         if (response.status === 401 || response.status === 403) return json(502, { error: 'A Brave recusou a chave ou o plano de busca de imagens. Confira sua assinatura na Brave.' });
         if (response.status === 429) return json(429, { error: 'O limite de buscas foi atingido. Tente novamente mais tarde.' });
+        if (response.status === 422) return json(502, { error: 'A Brave rejeitou os termos desta busca (erro 422). Revise a descrição do produto.' });
         return json(502, { error: 'A busca de imagens está indisponível no momento.' });
       }
       const data = await response.json();
