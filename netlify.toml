@@ -10,6 +10,10 @@
   to = "/.netlify/functions/save-quote"
   status = 200
 [[redirects]]
+  from = "/api/product-image"
+  to = "/.netlify/functions/product-image"
+  status = 200
+[[redirects]]
   from = "/api/get-quote"
   to = "/.netlify/functions/get-quote"
   status = 200
