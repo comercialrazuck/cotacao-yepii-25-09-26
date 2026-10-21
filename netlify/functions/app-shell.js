@@ -3,7 +3,7 @@ const path=require('path');
 
 function applyBrandingAndUi(source){
   let html=source;
-  const logo='https://raw.githubusercontent.com/comercialrazuck/cotacao-yepii-25-09-26/9978cd6410b6f64a3a808709c06080c98c4f4e9b/assets/yepii-logo.png';
+  const logo='/assets/yepii-logo.png';
   html=html.replace(/<div class="logo">Yepii<\/div>/g,`<img class="official-yepii-logo" src="${logo}" alt="Yepii">`);
   html=html.replace(/<div class="logo" style="font-size:28px">Yepii<\/div>/g,`<img class="official-yepii-logo footer-yepii-logo" src="${logo}" alt="Yepii">`);
   html=html.replace(/<div class="receipt-logo">Yepii<\/div>/g,`<div class="receipt-logo"><img src="${logo}" alt="Yepii" class="receipt-logo-img"></div>`);
