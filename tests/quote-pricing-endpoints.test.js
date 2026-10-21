@@ -28,3 +28,10 @@ test('invalid costing data causes no database writes',async()=>{
 test('internal prices require both a session and permission to open the quote',async()=>{
  const h=harness();h.state.authenticated=false;assert.equal((await h.admin({httpMethod:'GET',queryStringParameters:{id:'q1'}})).statusCode,401);h.state.authenticated=true;h.state.quotes.push({id:'q1'});h.state.allowAccess=false;assert.equal((await h.admin({httpMethod:'GET',queryStringParameters:{id:'q1'}})).statusCode,403);
 });
+
+test('manual override with markup survives save, admin reopen and buyer response',async()=>{
+ const h=harness();const result=await h.save(event({description:'Produto',quantity:2,unit_price:125.49,unit_cost:100,markup_percent:30.21,manual_unit_price:true}));
+ assert.equal(result.statusCode,200,result.body);assert.equal(h.state.quote_items[0].unit_price,125.49);assert.equal(h.state.quotes[0].total,260.98);
+ const admin=JSON.parse((await h.admin({httpMethod:'GET',queryStringParameters:{id:'q1'}})).body).quote.items[0];assert.equal(admin.unit_price,125.49);assert.equal(admin.markup_percent,30.21);
+ h.state.quotes[0].status='sent';h.state.quotes[0].first_viewed_at='2026-10-21T00:00:00Z';const buyer=JSON.parse((await h.buyer({queryStringParameters:{token:'public-link'}})).body).quote.items[0];assert.equal(buyer.unit_price,125.49);assert.equal(Object.hasOwn(buyer,'manual_unit_price'),false);
+});

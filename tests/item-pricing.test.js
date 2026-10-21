@@ -10,7 +10,7 @@ test('blank markup stays null and preserves manual sale price',()=>{
 test('server calculates sale from cost and individual markup instead of trusting a stale client price',()=>{
  assert.equal(normalizeItemPricing({unit_cost:100,markup_percent:30,unit_price:999}).unit_price,130);
  assert.equal(normalizeItemPricing({unit_cost:100,markup_percent:45,unit_price:999}).unit_price,145);
- assert.equal(normalizeItemPricing({unit_cost:19.99,markup_percent:12.5}).unit_price,22.49);
+ assert.equal(normalizeItemPricing({unit_cost:19.99,markup_percent:12.5}).unit_price,23);
 });
 test('zero markup and zero cost are meaningful values',()=>{
  assert.equal(normalizeItemPricing({unit_cost:100,markup_percent:0}).unit_price,100);
@@ -32,4 +32,11 @@ test('invalid purchasing values are rejected before saving',()=>{
 test('public items exclude supplier, cost and markup even if the database result unexpectedly contains them',()=>{
  const item=publicQuoteItem({id:'i1',description:'Produto',unit_price:130,unit_cost:100,markup_percent:30,supplier_name:'Segredo interno',other_private_data:'x'});
  assert.equal(item.unit_price,130);for(const key of ['unit_cost','markup_percent','supplier_name','other_private_data'])assert.equal(Object.hasOwn(item,key),false);
+});
+
+test('calculated prices round up to whole reais while manual prices keep cents',()=>{
+ assert.equal(normalizeItemPricing({unit_cost:100,markup_percent:30.21}).unit_price,131);
+ assert.equal(normalizeItemPricing({unit_cost:100,markup_percent:30}).unit_price,130);
+ assert.equal(normalizeItemPricing({unit_cost:100,markup_percent:30,unit_price:125.49,manual_unit_price:true}).unit_price,125.49);
+ assert.equal(normalizeItemPricing({unit_cost:100,markup_percent:30,unit_price:0,manual_unit_price:true}).unit_price,0);
 });

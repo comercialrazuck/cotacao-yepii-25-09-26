@@ -15,8 +15,8 @@ function normalizeItemPricing(item){
   const markup_percent=optionalNumber(item.markup_percent,'Markup',4,MAX_MARKUP);
   const supplier_name=String(item.supplier_name??'').trim();
   if(supplier_name.length>300)badInput('O nome do fornecedor deve ter até 300 caracteres.');
-  const calculated=unit_cost!==null&&markup_percent!==null;
-  const unit_price=calculated?round(unit_cost*(1+markup_percent/100)):optionalNumber(item.unit_price,'Preço unitário',2,MAX_MONEY)??0;
+  const calculated=item.manual_unit_price!==true&&unit_cost!==null&&markup_percent!==null;
+  const unit_price=calculated?Math.ceil(round(unit_cost*(1+markup_percent/100),8)):optionalNumber(item.unit_price,'Preço unitário',2,MAX_MONEY)??0;
   if(!Number.isFinite(unit_price)||unit_price>MAX_MONEY)badInput('O preço de venda calculado ultrapassa o valor permitido.');
   return {...item,supplier_name:supplier_name||null,unit_cost,markup_percent,unit_price};
 }
