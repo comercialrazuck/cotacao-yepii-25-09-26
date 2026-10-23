@@ -89,3 +89,8 @@
   from = "/c/*"
   to = "/.netlify/functions/app-shell"
   status = 200
+
+[[redirects]]
+  from = "/api/crm-customers"
+  to = "/.netlify/functions/crm-customers"
+  status = 200

@@ -1,5 +1,6 @@
 const { getActor } = require('../lib/auth');
-function json(statusCode,body){return{statusCode,headers:{'Content-Type':'application/json','Access-Control-Allow-Origin':'https://crm.yepii.com.br','Access-Control-Allow-Headers':'Authorization, Content-Type','Access-Control-Allow-Methods':'GET, OPTIONS'},body:JSON.stringify(body)}}
+const {CONTACT_COLUMNS}=require('../lib/crm-customers');
+function json(statusCode,body){return{statusCode,headers:{'Content-Type':'application/json','Cache-Control':'no-store','Access-Control-Allow-Origin':'https://crm.yepii.com.br','Access-Control-Allow-Headers':'Authorization, Content-Type','Access-Control-Allow-Methods':'GET, OPTIONS'},body:JSON.stringify(body)}}
 function addr(l){return [l.street,l.street_number,l.address_complement,l.neighborhood,l.city,l.state,l.postal_code].filter(Boolean).join(', ')}
 exports.handler=async(event)=>{try{
  if(event.httpMethod==='OPTIONS')return json(204,{});
@@ -9,9 +10,9 @@ exports.handler=async(event)=>{try{
  const {supabase}=actor;
  const {data:lead,error}=await supabase.from('yepii_leads').select('*').eq('id',leadId).maybeSingle();
  if(error)throw error;if(!lead||lead.deleted_at)return json(404,{error:'Cliente não encontrado no CRM'});
- const {data:contacts,error:contactErr}=await supabase.from('yepii_contacts').select('*').eq('lead_id',leadId).order('is_primary',{ascending:false}).order('created_at',{ascending:true});
+ const {data:contacts,error:contactErr}=await supabase.from('yepii_contacts').select(CONTACT_COLUMNS).eq('lead_id',leadId).order('is_primary',{ascending:false}).order('created_at',{ascending:true});
  if(contactErr)throw contactErr;const contact=(contacts||[])[0]||{};
  let credit_summary={credit_limit:Number(lead.credit_limit||0),credit_used:0,credit_available:Number(lead.credit_limit||0),active_orders:0};
  try{const {data:cs,error:csErr}=await supabase.rpc('yepii_credit_summary',{p_lead_id:leadId});if(!csErr&&Array.isArray(cs)&&cs[0])credit_summary=cs[0]}catch{}
- return json(200,{lead:{lead_id:lead.id,client_id:lead.lead_code||'',company:lead.company_name||lead.trade_name||'',cnpj:lead.cnpj||'',address:addr(lead),delivery_address:addr(lead),client_name:contact.full_name||contact.name||'',phone:contact.whatsapp||contact.phone||'',client_email:contact.email||''},credit_summary});
+ return json(200,{contacts:contacts||[],lead:{lead_id:lead.id,client_id:lead.lead_code||'',company:lead.company_name||lead.trade_name||'',cnpj:lead.cnpj||'',address:addr(lead),delivery_address:addr(lead),client_name:contact.full_name||contact.name||'',phone:contact.whatsapp||contact.phone||'',client_email:contact.email||''},credit_summary});
 }catch(e){return json(500,{error:e.message||'Erro inesperado'})}};
