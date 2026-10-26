@@ -94,3 +94,8 @@
   from = "/api/crm-customers"
   to = "/.netlify/functions/crm-customers"
   status = 200
+
+[[redirects]]
+  from = "/api/reopen-quote"
+  to = "/.netlify/functions/reopen-quote"
+  status = 200
