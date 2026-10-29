@@ -1,0 +1,1195 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yepii CRM V6.9 · Leads organizados</title>
+<style>
+:root{--orange:#ff6600;--black:#111;--muted:#6b7280;--bg:#f5f5f5;--border:#e5e7eb}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--black)}
+button,input,select,textarea{font:inherit} .wrap{max-width:1180px;margin:auto;padding:20px}
+.card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:18px}
+.top{display:flex;justify-content:space-between;gap:14px;align-items:center} .brand{display:flex;align-items:center;gap:10px}
+.brand img{height:46px;width:auto} .nav{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}
+.nav button,.btn{border:0;border-radius:10px;padding:10px 14px;cursor:pointer}
+.nav button{background:#fff;border:1px solid var(--border)} .nav button.active,.btn{background:var(--orange);color:#fff}
+.btn.alt{background:#fff;color:#111;border:1px solid var(--border)} .muted{color:var(--muted);font-size:13px}
+.search{flex:1;max-width:450px} input,select,textarea{width:100%;border:1px solid #d1d5db;border-radius:9px;padding:10px 12px;background:#fff}
+.field{margin:9px 0} .field label{display:block;font-size:13px;font-weight:700;margin-bottom:4px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px} .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi b{display:block;font-size:25px;margin-top:6px} .sectionTitle{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}
+.sectionTitle h2{margin:0} .table{width:100%;border-collapse:collapse} .table th,.table td{text-align:left;padding:10px;border-bottom:1px solid #eee;font-size:13px}
+.scroll{overflow:auto} .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;background:#eee}
+.good{background:#e7f7ed;color:#126b37} .warn{background:#fff4db;color:#7a5200} .bad{background:#fde8e8;color:#8d1b1b}
+.alert{border-left:5px solid var(--orange);padding:12px;background:#fff7f2;border-radius:8px;margin:8px 0}
+.modal{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;padding:20px;z-index:99}
+.modal .card{width:min(760px,100%);max-height:90vh;overflow:auto} .login{max-width:430px;margin:60px auto}
+.login .brand{justify-content:center;margin-bottom:18px} .login .brand img{height:62px} .row{display:flex;gap:10px;flex-wrap:wrap}
+@media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.top{flex-direction:column;align-items:flex-start}.search{max-width:none;width:100%}.table{min-width:760px}}
+@media(max-width:430px){.grid{grid-template-columns:1fr}}
+.interaction-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin:10px 0}.interaction-toolbar .field{margin:0;min-width:160px;flex:1}.interaction-card{border-left:4px solid #ddd}.interaction-card.attention{border-left-color:#f59e0b}.interaction-card.overdue{border-left-color:#dc2626}.interaction-meta{display:flex;gap:7px;flex-wrap:wrap;align-items:center}.interaction-actions{display:flex;gap:7px;flex-wrap:wrap}.interaction-history{border-top:1px dashed #ddd;margin-top:8px;padding-top:8px}.interaction-alert-box{margin:12px 0;padding:12px;border:1px solid #f4c68c;background:#fff8ed;border-radius:10px}.interaction-alert-box.bad{border-color:#efb4b4;background:#fff2f2}.interaction-next{margin-top:8px;padding:8px 10px;background:#f8fafc;border-radius:8px}.interaction-empty{padding:10px 0;color:var(--muted)}
+.dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+.chart-card{min-height:300px}.chart-card h3{margin:0 0 4px}.chart-wrap{display:flex;align-items:center;gap:22px;min-height:220px}.pie{width:170px;height:170px;border-radius:50%;flex:0 0 auto;box-shadow:inset 0 0 0 1px #eee}.legend{display:grid;gap:8px;flex:1}.legend-row{display:flex;justify-content:space-between;gap:12px;font-size:13px}.legend-label{display:flex;align-items:center;gap:7px}.dot{width:10px;height:10px;border-radius:50%;display:inline-block}.toolbar{display:flex;gap:8px;align-items:end;flex-wrap:wrap}.toolbar .field{margin:0;min-width:180px}.progress{height:10px;border-radius:999px;background:#eee;overflow:hidden}.progress>span{display:block;height:100%;background:var(--orange)}.goal-box{padding:14px;border:1px solid var(--border);border-radius:12px;background:#fff}.goal-box strong{font-size:22px;display:block;margin:4px 0}.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.trend-bars{display:flex;align-items:end;gap:12px;height:190px;padding:20px 8px 0}.trend-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:end;height:100%;gap:6px}.trend-bar{width:70%;max-width:44px;background:var(--orange);border-radius:7px 7px 2px 2px;min-height:2px}.trend-label{font-size:11px;color:var(--muted);text-align:center}.trend-value{font-size:11px;font-weight:700}@media(max-width:850px){.dashboard-grid{grid-template-columns:1fr}.chart-wrap{flex-direction:column}.mini-grid{grid-template-columns:1fr}}
+
+.company-search-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.company-search-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.company-result{display:grid;grid-template-columns:34px 1.3fr .8fr .8fr .8fr;gap:10px;align-items:start;padding:12px 0;border-bottom:1px solid #eee}.company-result:last-child{border-bottom:0}.company-result .small{font-size:12px;color:var(--muted)}.search-summary{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.search-summary .badge{padding:6px 10px}.cost-note{padding:10px 12px;border-radius:10px;background:#fff8f2;border:1px solid #f0d5bd}.source-note{font-size:12px;color:var(--muted)}@media(max-width:900px){.company-search-grid{grid-template-columns:1fr 1fr}.company-result{grid-template-columns:30px 1fr}}@media(max-width:520px){.company-search-grid{grid-template-columns:1fr}}
+
+.sort-head{background:none;border:0;padding:0;cursor:pointer;font-weight:700;color:inherit;white-space:nowrap}.sort-head:hover{color:var(--orange)}.lead-pager{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}.lead-pager .row{align-items:center}.credit-nd{font-weight:800;color:#8d1b1b}.credit-na{font-weight:700;color:var(--muted)}
+.lead-filterbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap;margin:0 0 10px}.lead-filterbar .field{margin:0;min-width:190px}.lead-quickfilters{display:flex;gap:6px;flex-wrap:wrap}.lead-filter-btn{border:1px solid var(--border);background:#fff;border-radius:999px;padding:7px 10px;font-size:12px;cursor:pointer}.lead-filter-btn:hover{border-color:var(--orange);color:var(--orange)}.lead-filter-btn.active{background:var(--orange);border-color:var(--orange);color:#fff;font-weight:700}
+.lead-scroll-top{overflow-x:auto;overflow-y:hidden;margin:0 0 7px;height:18px;position:sticky;top:0;z-index:60;background:#fff;padding-top:2px}.lead-scroll-spacer{height:1px}.lead-table-shell{padding:0!important;overflow:visible}.lead-scroll-bottom{overflow:auto;max-height:68vh;position:relative;border-radius:10px}.lead-table{min-width:1840px;border-collapse:separate;border-spacing:0}.lead-table th,.lead-table td{padding:7px 9px;font-size:12px;white-space:nowrap;background:#fff}.lead-table tbody tr:nth-child(even) td{background:#fafafa}.lead-table tbody tr:hover td{background:#fff7f2}.lead-table thead th{position:sticky;top:0;z-index:20;background:#f4f4f4;border-bottom:2px solid #ddd;box-shadow:0 1px 0 #ddd}.lead-activity{width:270px;max-width:270px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.lead-company{font-weight:700;width:240px;max-width:240px;overflow:hidden;text-overflow:ellipsis}.lead-col-id{position:sticky!important;left:0;z-index:25!important;width:95px;min-width:95px;max-width:95px}.lead-col-company{position:sticky!important;left:95px;z-index:24!important;min-width:240px;max-width:240px}.lead-col-action{position:sticky!important;right:0;z-index:24!important;width:78px;min-width:78px;text-align:center}.lead-table thead .lead-col-id,.lead-table thead .lead-col-company,.lead-table thead .lead-col-action{z-index:40!important;background:#ededed}.lead-table tbody tr:nth-child(even) .lead-col-id,.lead-table tbody tr:nth-child(even) .lead-col-company,.lead-table tbody tr:nth-child(even) .lead-col-action{background:#fafafa}.lead-table tbody tr:hover .lead-col-id,.lead-table tbody tr:hover .lead-col-company,.lead-table tbody tr:hover .lead-col-action{background:#fff7f2}.lead-col-company{box-shadow:2px 0 4px #0000000b}.lead-col-action{box-shadow:-2px 0 4px #0000000b}.lead-status-badge{font-weight:700}.lead-filter-summary{font-size:12px;color:var(--muted);margin-left:auto;align-self:center}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script type="module">
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+const SUPABASE_URL='https://szcahilagrdnlvogngxg.supabase.co';
+const SUPABASE_KEY='sb_publishable_9OnuKQOmBQR7TArHu3-X7g_HXbQpQoc';
+const supabase=createClient(SUPABASE_URL,SUPABASE_KEY);
+const QUOTE_APP='https://cotacaoyepii.com.br';
+const LOGO='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPAAAAB4CAYAAADMtn8nAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAExmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSfvu78nIGlkPSdXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQnPz4KPHg6eG1wbWV0YSB4bWxuczp4PSdhZG9iZTpuczptZXRhLyc+CjxyZGY6UkRGIHhtbG5zOnJkZj0naHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyc+CgogPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9JycKICB4bWxuczpBdHRyaWI9J2h0dHA6Ly9ucy5hdHRyaWJ1dGlvbi5jb20vYWRzLzEuMC8nPgogIDxBdHRyaWI6QWRzPgogICA8cmRmOlNlcT4KICAgIDxyZGY6bGkgcmRmOnBhcnNlVHlwZT0nUmVzb3VyY2UnPgogICAgIDxBdHRyaWI6Q3JlYXRlZD4yMDI1LTA4LTA1PC9BdHRyaWI6Q3JlYXRlZD4KICAgICA8QXR0cmliOkV4dElkPmE5NGUwMjUwLTRmNGItNDk2My04NmE2LTA2ZTAxNWJjYTMwZjwvQXR0cmliOkV4dElkPgogICAgIDxBdHRyaWI6RmJJZD41MjUyNjU5MTQxNzk1ODA8L0F0dHJpYjpGYklkPgogICAgIDxBdHRyaWI6VG91Y2hUeXBlPjI8L0F0dHJpYjpUb3VjaFR5cGU+CiAgICA8L3JkZjpsaT4KICAgPC9yZGY6U2VxPgogIDwvQXR0cmliOkFkcz4KIDwvcmRmOkRlc2NyaXB0aW9uPgoKIDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PScnCiAgeG1sbnM6ZGM9J2h0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvJz4KICA8ZGM6dGl0bGU+CiAgIDxyZGY6QWx0PgogICAgPHJkZjpsaSB4bWw6bGFuZz0neC1kZWZhdWx0Jz5EZXNpZ24gc2VtIG5vbWUgLSAxPC9yZGY6bGk+CiAgIDwvcmRmOkFsdD4KICA8L2RjOnRpdGxlPgogPC9yZGY6RGVzY3JpcHRpb24+CgogPHJkZjpEZXNjcmlwdGlv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';
+
+let me=null, role='visualizacao', page='semana';
+let cache={leads:[],acts:[],orders:[],orderItems:[],orderHistory:[],orderDocuments:[],analyses:[],team:[],contacts:[],tasks:[],weeklyTargets:[],userTargets:[],creditEvents:[],bdcQueries:[]};
+let dashboardScope='geral';
+let companySearchState={results:[],nextCursor:null,total:null,meta:null,filters:null,selected:new Set(),usage:null,group:null};
+let leadListState={sortKey:'company',sortDir:'asc',page:1,pageSize:15,query:'',quickFilter:'all',ownerFilter:'all'};
+const app=document.getElementById('app');
+const $=s=>document.querySelector(s);
+const money=n=>new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(Number(n||0));
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const fmt=d=>d?new Date(d+'T12:00:00').toLocaleDateString('pt-BR'):'-';
+function monday(){let d=new Date(),x=(d.getDay()+6)%7;d.setDate(d.getDate()-x);return d.toISOString().slice(0,10)}
+function brand(){return `<div class="brand"><img src="${LOGO}" alt="Yepii"><b>CRM</b></div>`}
+
+function login(){
+ app.innerHTML=`<div class="wrap"><div class="card login">${brand()}
+ <h2>Acesso ao CRM</h2><p class="muted">Entre com seu e-mail corporativo. Na primeira vez, use “Criar conta”.</p>
+ <div class="field"><label>E-mail</label><input id="email" type="email"></div>
+ <div class="field"><label>Senha</label><input id="pass" type="password"></div>
+ <div class="row"><button class="btn" id="in">Entrar</button><button class="btn alt" id="up">Criar conta</button></div>
+ <p id="msg" class="muted"></p></div></div>`;
+ $('#in').onclick=async()=>{let{error}=await supabase.auth.signInWithPassword({email:$('#email').value,password:$('#pass').value});$('#msg').textContent=error?error.message:'Entrando...';if(!error)init()};
+ $('#up').onclick=async()=>{let{error}=await supabase.auth.signUp({email:$('#email').value,password:$('#pass').value});$('#msg').textContent=error?error.message:'Conta criada. Se receber um e-mail de confirmação, confirme e depois volte a este arquivo para entrar.'};
+}
+
+async function load(){
+ let [L,A,O,OI,OH,OD,C,T,CT,TS,WT,UT,CE,BQ,MC]=await Promise.all([
+  supabase.from('yepii_leads').select('*').order('created_at',{ascending:false}),
+  supabase.from('yepii_activities').select('*').order('activity_at',{ascending:false}),
+  supabase.from('yepii_orders').select('*').order('order_date',{ascending:false}),
+  supabase.from('yepii_order_items').select('*').order('created_at',{ascending:true}),
+  supabase.from('yepii_order_history').select('*').order('created_at',{ascending:false}).limit(2000),
+  supabase.from('yepii_order_documents').select('*').order('created_at',{ascending:false}).limit(2000),
+  supabase.from('yepii_credit_analyses').select('*').order('analyzed_at',{ascending:false}),
+  supabase.from('yepii_team_members').select('*').order('full_name'),
+  supabase.from('yepii_contacts').select('*').order('is_primary',{ascending:false}).order('full_name'),
+  supabase.from('yepii_tasks').select('*').order('due_at',{ascending:true}),
+  supabase.from('yepii_weekly_targets').select('*').order('week_start',{ascending:false}),
+  supabase.from('yepii_weekly_user_targets').select('*').order('week_start',{ascending:false}),
+  supabase.from('yepii_credit_events').select('*').order('event_date',{ascending:false}),
+  supabase.from('yepii_bigdatacorp_queries').select('*').order('queried_at',{ascending:false}).limit(500),
+  supabase.from('yepii_manual_credit_checks').select('*').eq('check_type','protestos_cartorio').order('created_at',{ascending:false}).limit(1000)
+ ]);
+ cache={leads:L.data||[],acts:A.data||[],orders:O.data||[],orderItems:OI.data||[],orderHistory:OH.data||[],orderDocuments:OD.data||[],analyses:C.data||[],team:T.data||[],contacts:CT.data||[],tasks:TS.data||[],weeklyTargets:WT.data||[],userTargets:UT.data||[],creditEvents:CE.data||[],bdcQueries:BQ.data||[],manualChecks:MC.data||[]};
+ role=cache.team.find(x=>x.user_id===me.id)?.role||'visualizacao';
+}
+
+function shell(){
+ app.innerHTML=`<div class="wrap"><div class="top">${brand()}
+ <div class="search"><input id="q" placeholder="Buscar ID, CNPJ, empresa, contato, telefone ou e-mail..."></div>
+ <div><span class="muted">${esc(me.email)} · ${esc(role)}</span> <button class="btn alt" id="out">Sair</button></div></div>
+ <div class="nav">${[['semana','Minha Semana'],['hoje','Hoje'],['empresas','Buscar empresas'],['leads','Leads'],['credito','Crédito'],['pedidos','Pedidos'],['relatorios','Relatórios'],['equipe','Equipe']].map(x=>`<button data-p="${x[0]}">${x[1]}</button>`).join('')}</div>
+ <main id="main"></main></div>`;
+ $('#out').onclick=()=>supabase.auth.signOut();
+ document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{page=b.dataset.p;render()});
+ $('#q').oninput=()=>{page='leads';render($('#q').value.trim())};
+}
+
+function nav(){document.querySelectorAll('[data-p]').forEach(b=>b.classList.toggle('active',b.dataset.p===page))}
+function render(q=''){nav(); if(page==='semana')week(); else if(page==='hoje')todayPage(); else if(page==='empresas')companySearch(); else if(page==='leads')leads(q); else if(page==='credito')credit(); else if(page==='pedidos')orders(); else if(page==='relatorios')reports(); else if(page==='equipe')team()}
+
+const LEAD_STATUSES=['nao_contatado','contatado','respondeu','interessado','cotacao','comprou','recompra','reativar','perdido'];
+const LEAD_STATUS_LABELS={nao_contatado:'Não contatado',contatado:'Contatado',respondeu:'Respondeu',interessado:'Interessado',cotacao:'Cotação',comprou:'Comprou',recompra:'Recompra',reativar:'Reativar',perdido:'Perdido'};
+function leadStatusLabel(s){return LEAD_STATUS_LABELS[s]||String(s||'Não informado')}
+
+function pieData(items){
+ const total=items.reduce((s,x)=>s+Number(x.value||0),0);
+ const palette=['#ff6600','#242424','#7c7c7c','#d9d9db','#ff9d5c','#8a4b20','#b8b8b8','#ffd0b0'];
+ let acc=0,parts=[];
+ items.forEach((x,i)=>{let pct=total?Number(x.value||0)/total*100:0;parts.push(`${palette[i%palette.length]} ${acc}% ${acc+pct}%`);acc+=pct});
+ return {total,gradient:total?`conic-gradient(${parts.join(',')})`:'conic-gradient(#eee 0 100%)',palette};
+}
+function pieCard(title,subtitle,items){
+ let p=pieData(items);
+ return `<div class="card chart-card"><h3>${esc(title)}</h3><div class="muted">${esc(subtitle||'')}</div><div class="chart-wrap"><div class="pie" style="background:${p.gradient}"></div><div class="legend">${items.map((x,i)=>`<div class="legend-row"><span class="legend-label"><i class="dot" style="background:${p.palette[i%p.palette.length]}"></i>${esc(x.label)}</span><b>${x.value}${x.suffix||''}</b></div>`).join('')}</div></div></div>`;
+}
+function scopeUserId(){return dashboardScope==='geral'?null:(dashboardScope==='me'?me.id:dashboardScope)}
+function userName(uid){let u=cache.team.find(x=>x.user_id===uid);return u?.full_name||u?.email||'Usuário'}
+function pct(a,b){return b?Math.min(999,(a/b)*100):0}
+function currentWeekRange(){let ws=monday(),d=new Date(ws+'T12:00:00');d.setDate(d.getDate()+6);return [ws,d.toISOString().slice(0,10)]}
+function scopeData(ws,we){
+ let uid=scopeUserId();
+ let acts=cache.acts.filter(x=>x.activity_at?.slice(0,10)>=ws&&x.activity_at?.slice(0,10)<=we&&(!uid||x.created_by===uid));
+ let ord=cache.orders.filter(x=>x.order_date>=ws&&x.order_date<=we&&x.payment_status!=='cancelado'&&(!uid||x.created_by===uid));
+ let scopedLeadIds=uid?new Set([...acts.map(x=>x.lead_id),...ord.map(x=>x.lead_id),...cache.leads.filter(x=>x.assigned_to===uid).map(x=>x.id)]):null;
+ let leads=uid?cache.leads.filter(x=>scopedLeadIds.has(x.id)):cache.leads;
+ let analyses=uid?cache.analyses.filter(x=>scopedLeadIds.has(x.lead_id)):cache.analyses;
+ return {uid,acts,ord,leads,analyses};
+}
+function targetFor(ws,uid){
+ if(uid) return cache.userTargets.find(x=>x.week_start===ws&&x.user_id===uid)||{};
+ return cache.weeklyTargets.find(x=>x.week_start===ws)||{};
+}
+function week(){
+ let [ws,we]=currentWeekRange(), d=scopeData(ws,we), target=targetFor(ws,d.uid);
+ let worked=new Set(d.acts.map(x=>x.lead_id)).size;
+ let buyers=new Set(d.ord.filter(x=>!x.is_repurchase).map(x=>x.lead_id)).size;
+ let reps=d.ord.filter(x=>x.is_repurchase).length;
+ let gmv=d.ord.reduce((s,x)=>s+Number(x.order_value||0),0);
+ let approved=d.leads.reduce((s,x)=>s+Number(x.credit_limit||0),0);
+ let used=cache.orders.filter(x=>['aberto','atrasado','inadimplente'].includes(x.payment_status)&&(!d.uid||x.created_by===d.uid)).reduce((s,x)=>s+Number(x.credit_used||0),0);
+ let alerts=d.leads.filter(x=>x.credit_block_required);
+ let contacts=d.acts.length;
+ let conversion=worked?buyers/worked*100:0;
+ let goal=Number(target.new_buyers_target||0),goalPct=pct(buyers,goal);
+ let scopeOptions=`<option value="geral" ${dashboardScope==='geral'?'selected':''}>Geral</option><option value="me" ${dashboardScope==='me'?'selected':''}>Meu desempenho</option>${role==='administrador'?cache.team.filter(x=>x.active).map(u=>`<option value="${u.user_id}" ${dashboardScope===u.user_id?'selected':''}>${esc(userName(u.user_id))}</option>`).join(''):''}`;
+ let latestByLead=new Map(); d.analyses.forEach(a=>{if(!latestByLead.has(a.lead_id))latestByLead.set(a.lead_id,a)}); let latest=[...latestByLead.values()];
+ let statuses=LEAD_STATUSES;
+ let statusLabels=LEAD_STATUS_LABELS;
+ let pay=['pago','aberto','atrasado','inadimplente'];
+ let publicPrivate=[{label:'Privadas',value:d.leads.filter(x=>x.company_sector_type==='privada').length},{label:'Públicas',value:d.leads.filter(x=>x.company_sector_type==='publica').length},{label:'Não classificadas',value:d.leads.filter(x=>!x.company_sector_type).length}];
+ let trend=[]; for(let i=5;i>=0;i--){let base=new Date(ws+'T12:00:00');base.setDate(base.getDate()-i*7);let a=base.toISOString().slice(0,10),e=new Date(base);e.setDate(e.getDate()+6);let b=e.toISOString().slice(0,10);let oo=cache.orders.filter(x=>x.order_date>=a&&x.order_date<=b&&x.payment_status!=='cancelado'&&(!d.uid||x.created_by===d.uid));trend.push({label:fmt(a).slice(0,5),gmv:oo.reduce((s,x)=>s+Number(x.order_value||0),0),orders:oo.length})}
+ let maxTrend=Math.max(1,...trend.map(x=>x.gmv));
+ let canGoal=role==='administrador'||(role==='comercial'&&d.uid===me.id);
+ $('#main').innerHTML=`<div class="sectionTitle"><div><h2>Dashboard</h2><div class="muted">${fmt(ws)} a ${fmt(we)} · ${d.uid?esc(userName(d.uid)):'Visão geral da Yepii'}</div></div><div class="toolbar"><div class="field"><label>Visão</label><select id="scope">${scopeOptions}</select></div><button class="btn ${canGoal?'':'alt'}" id="setGoal" ${canGoal?'':'disabled'}>Definir metas da semana</button><button class="btn alt" id="exportDash">Exportar Excel</button></div></div>
+ <div class="grid">${[['Leads trabalhados',worked],['Contatos',contacts],['Novos compradores',buyers],['Conversão',conversion.toFixed(1)+'%'],['Pedidos',d.ord.length],['Recompras',reps],['GMV',money(gmv)],['Crédito aprovado',money(approved)],['Crédito em uso',money(used)],['Crédito disponível',money(Math.max(0,100000-approved))],['Atrasados / inadimplentes',d.ord.filter(x=>['atrasado','inadimplente'].includes(x.payment_status)).length]].map(x=>`<div class="card kpi"><span class="muted">${x[0]}</span><b>${x[1]}</b></div>`).join('')}</div>
+ <div class="card" style="margin-top:12px"><div class="sectionTitle"><div><h2>Meta semanal de conversão</h2><div class="muted">Meta de novos compradores versus realizado</div></div><span class="badge ${goal&&buyers>=goal?'good':'warn'}">${goal?goalPct.toFixed(0)+'% da meta':'Meta não definida'}</span></div>
+ <div class="mini-grid"><div class="goal-box"><span class="muted">Meta</span><strong>${goal||'-'}</strong><span class="muted">novos compradores</span></div><div class="goal-box"><span class="muted">Convertidos</span><strong>${buyers}</strong><span class="muted">na semana</span></div><div class="goal-box"><span class="muted">Faltam</span><strong>${goal?Math.max(0,goal-buyers):'-'}</strong><span class="muted">para atingir a meta</span></div></div>
+ <div class="progress" style="margin-top:14px"><span style="width:${Math.min(100,goalPct)}%"></span></div></div>
+ <div class="dashboard-grid">
+ ${pieCard('Funil de leads','Distribuição atual da carteira',statuses.map(k=>({label:statusLabels[k],value:d.leads.filter(x=>x.status===k).length})))}
+ ${pieCard('Análise de crédito','Última decisão por empresa',[{label:'Aprovados',value:latest.filter(x=>x.decision==='aprovado').length},{label:'Em revisão',value:latest.filter(x=>x.decision==='revisar').length},{label:'Reprovados',value:latest.filter(x=>x.decision==='reprovado').length}])}
+ ${pieCard('Tipo de empresa','Pública x privada',publicPrivate)}
+ ${pieCard('Pagamentos','Situação dos pedidos',[...pay.map(k=>({label:k[0].toUpperCase()+k.slice(1),value:d.ord.filter(x=>x.payment_status===k).length}))])}
+ ${pieCard('Meta de conversão','Convertidos x faltam para a meta',[{label:'Convertidos',value:buyers},{label:'Faltam',value:goal?Math.max(0,goal-buyers):0}])}
+ <div class="card chart-card"><h3>Evolução semanal de GMV</h3><div class="muted">Últimas 6 semanas</div><div class="trend-bars">${trend.map(x=>`<div class="trend-col"><div class="trend-value">${x.orders} ped.</div><div class="trend-bar" style="height:${Math.max(2,x.gmv/maxTrend*145)}px" title="${money(x.gmv)}"></div><div class="trend-label">${x.label}<br>${money(x.gmv)}</div></div>`).join('')}</div></div>
+ </div>
+ <div class="card" style="margin-top:12px"><h2>Alertas de crédito</h2>${alerts.length?alerts.slice(0,8).map(x=>`<div class="alert"><b>${esc(x.lead_code)} · ${esc(x.company_name)}</b><div>${esc(x.credit_alert_reason||'Bloquear crédito e acompanhar')}</div></div>`).join(''):'<span class="muted">Nenhum alerta de crédito ativo.</span>'}</div>`;
+ $('#scope').onchange=e=>{dashboardScope=e.target.value;week()};
+ $('#setGoal').onclick=()=>goalForm(ws,d.uid);
+ $('#exportDash').onclick=()=>exportExcel({scopeUser:d.uid,weekStart:ws,weekEnd:we});
+}
+function goalForm(ws,uid){
+ let t=targetFor(ws,uid); let d=modal(`<h2>Metas da semana</h2><p class="muted">${fmt(ws)} · ${uid?esc(userName(uid)):'Meta geral da Yepii'}</p><div class="two">
+ <div class="field"><label>Leads trabalhados</label><input id="leads" type="number" min="0" value="${Number(t.leads_target??t.leads_planned??0)}"></div><div class="field"><label>Contatos</label><input id="contacts" type="number" min="0" value="${Number(t.contacts_target||0)}"></div>
+ <div class="field"><label>Novos compradores</label><input id="buyers" type="number" min="0" value="${Number(t.new_buyers_target||0)}"></div><div class="field"><label>Recompras</label><input id="rep" type="number" min="0" value="${Number(t.repurchases_target||0)}"></div>
+ <div class="field"><label>Pedidos</label><input id="orders" type="number" min="0" value="${Number(t.orders_target||0)}"></div><div class="field"><label>GMV</label><input id="gmv" type="number" min="0" step="0.01" value="${Number(t.gmv_target||0)}"></div></div><button class="btn" id="saveGoal">Salvar metas</button><div id="goalErr" class="muted"></div>`);
+ d.querySelector('#saveGoal').onclick=async()=>{let values={week_start:ws,contacts_target:Number(d.querySelector('#contacts').value)||0,new_buyers_target:Number(d.querySelector('#buyers').value)||0,repurchases_target:Number(d.querySelector('#rep').value)||0,orders_target:Number(d.querySelector('#orders').value)||0,gmv_target:Number(d.querySelector('#gmv').value)||0}; let res;
+ if(uid){values.user_id=uid;values.leads_target=Number(d.querySelector('#leads').value)||0;res=await supabase.from('yepii_weekly_user_targets').upsert(values,{onConflict:'week_start,user_id'})}
+ else{values.leads_planned=Number(d.querySelector('#leads').value)||0;res=await supabase.from('yepii_weekly_targets').upsert(values,{onConflict:'week_start'})}
+ if(res.error)d.querySelector('#goalErr').textContent=res.error.message;else{d.remove();await refresh()}}
+}
+
+
+function todayPage(){
+ let today=new Date().toISOString().slice(0,10);
+ let pending=cache.tasks.filter(t=>t.status==='pendente');
+ let todays=pending.filter(t=>t.due_at?.slice(0,10)===today);
+ let overdue=pending.filter(t=>t.due_at?.slice(0,10)<today);
+ let upcoming=pending.filter(t=>t.due_at?.slice(0,10)>today).slice(0,20);
+ const row=t=>{let l=cache.leads.find(x=>x.id===t.lead_id);let u=cache.team.find(x=>x.user_id===t.assigned_to);return `<tr><td>${esc(t.task_type)}</td><td>${esc(l?.lead_code||'')} · ${esc(l?.company_name||'')}</td><td>${new Date(t.due_at).toLocaleString('pt-BR')}</td><td>${esc(t.priority)}</td><td>${esc(u?.full_name||u?.email||'-')}</td><td><button class="btn alt done" data-id="${t.id}">Concluir</button></td></tr>`};
+ $('#main').innerHTML=`<div class="sectionTitle"><div><h2>Hoje</h2><div class="muted">${new Date().toLocaleDateString('pt-BR')}</div></div></div>
+ <div class="grid"><div class="card kpi"><span class="muted">Hoje</span><b>${todays.length}</b></div><div class="card kpi"><span class="muted">Atrasadas</span><b>${overdue.length}</b></div><div class="card kpi"><span class="muted">Próximas</span><b>${upcoming.length}</b></div><div class="card kpi"><span class="muted">Interações a atualizar</span><b>${interactionNeeds.length}</b></div></div>
+ <div class="card scroll" style="margin-top:12px"><h3>Interações que precisam de atualização</h3>${interactionNeeds.length?`<table class="table"><thead><tr><th>Contato</th><th>Lead</th><th>Status</th><th>Aviso</th><th>Responsável</th><th></th></tr></thead><tbody>${interactionNeeds.slice(0,30).map(({a,r})=>{let l=cache.leads.find(x=>String(x.id)===String(a.lead_id));return `<tr><td>${esc(contactName(a.contact_id))}</td><td>${esc(l?.lead_code||'')} · ${esc(l?.company_name||'')}</td><td><span class="badge ${interactionStatusClass(a.status)}">${esc(interactionStatusLabel(a.status||'pendente'))}</span></td><td><span class="badge ${r.level==='bad'?'bad':'warn'}">${esc(r.text)}</span></td><td>${esc(userName(a.created_by))}</td><td><button class="btn alt open-interaction-lead" data-lead="${a.lead_id}">Abrir lead</button></td></tr>`}).join('')}</tbody></table>`:'<span class="muted">Nenhuma interação precisa de atualização agora.</span>'}</div>
+ <div class="card scroll" style="margin-top:12px"><h3>Atrasadas</h3><table class="table"><thead><tr><th>Ação</th><th>Lead</th><th>Quando</th><th>Prioridade</th><th>Responsável</th><th></th></tr></thead><tbody>${overdue.map(row).join('')}</tbody></table></div>
+ <div class="card scroll" style="margin-top:12px"><h3>Hoje</h3><table class="table"><thead><tr><th>Ação</th><th>Lead</th><th>Quando</th><th>Prioridade</th><th>Responsável</th><th></th></tr></thead><tbody>${todays.map(row).join('')}</tbody></table></div>
+ <div class="card scroll" style="margin-top:12px"><h3>Próximas</h3><table class="table"><thead><tr><th>Ação</th><th>Lead</th><th>Quando</th><th>Prioridade</th><th>Responsável</th><th></th></tr></thead><tbody>${upcoming.map(row).join('')}</tbody></table></div>`;
+ document.querySelectorAll('.done').forEach(b=>b.onclick=async()=>{let {error}=await supabase.from('yepii_tasks').update({status:'concluida',completed_at:new Date().toISOString()}).eq('id',b.dataset.id);if(error)alert(error.message);else await refresh()});
+ document.querySelectorAll('.open-interaction-lead').forEach(b=>b.onclick=()=>safeLeadDetail(b.dataset.lead));
+}
+
+
+function textList(v){
+ if(Array.isArray(v)) return v.map(x=>String(x??''));
+ if(v===null||v===undefined||v==='') return [];
+ if(typeof v==='string') return [v];
+ try{return [JSON.stringify(v)]}catch{return [String(v)]}
+}
+function safeLeadDetail(id){
+ try{
+   const found=cache.leads.find(x=>String(x.id)===String(id));
+   if(!found){alert('Não foi possível localizar este lead na memória do CRM. Atualize a página e tente novamente.');return}
+   leadDetail(found.id);
+ }catch(e){
+   console.error('Erro ao abrir lead',id,e);
+   alert('Não foi possível abrir este lead. O CRM encontrou um dado antigo ou incompatível neste cadastro. Erro: '+(e?.message||e));
+ }
+}
+
+function creditStatus(l){
+ const st=String(l?.credit_status||'').toLowerCase();
+ if(['approved','denied','not_analyzed'].includes(st))return st;
+ return Number(l?.credit_limit||0)>0?'approved':'not_analyzed';
+}
+function creditStatusLabel(l){const st=creditStatus(l);return st==='approved'?'Aprovado':st==='denied'?'Não concedido':'Não analisado'}
+function creditDisplay(l){const st=creditStatus(l);if(st==='denied')return '<span class="credit-nd">ND</span>';if(st==='not_analyzed')return '<span class="credit-na">—</span>';return money(l.credit_limit)}
+function latestBdcQuery(leadId){return cache.bdcQueries.find(q=>String(q.lead_id)===String(leadId))||null}
+function leadAgeValue(l){const a=latestBdcAnalysis(l.id);if(a?.company_age_years!==null&&a?.company_age_years!==undefined)return Number(a.company_age_years);if(l.opening_date){const d=new Date(l.opening_date+'T12:00:00');if(!Number.isNaN(d.getTime()))return Math.max(0,(Date.now()-d.getTime())/31557600000)}return null}
+function leadSortValue(l,key){
+ const q=latestBdcQuery(l.id),a=latestBdcAnalysis(l.id);
+ if(key==='company')return String(l.company_name||'').toLowerCase();
+ if(key==='activity')return String(l.main_activity||'').toLowerCase();
+ if(key==='owner')return String(userName(l.assigned_to)||'').toLowerCase();
+ if(key==='score')return Number(l.score_avg??-1);
+ if(key==='capital')return l.capital_social==null?-1:Number(l.capital_social);
+ if(key==='age')return leadAgeValue(l)??-1;
+ if(key==='bigdata')return q?.queried_at?new Date(q.queried_at).getTime():0;
+ if(key==='entry')return l.created_at?new Date(l.created_at).getTime():0;
+ if(key==='credit'){const st=creditStatus(l);return st==='approved'?Number(l.credit_limit||0):st==='denied'?-1:-2}
+ if(key==='status')return leadStatusLabel(l.status).toLowerCase();
+ return '';
+}
+function sortHead(key,label){const active=leadListState.sortKey===key;const arrow=active?(leadListState.sortDir==='asc'?' ↑':' ↓'):' ↕';return `<button class="sort-head" data-sort="${key}" title="Ordenar ${esc(label)}">${esc(label)}${arrow}</button>`}
+function formatBdcDate(q){return q?.queried_at?new Date(q.queried_at).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'}):'-'}
+function formatLeadEntry(l){return l?.created_at?new Date(l.created_at).toLocaleDateString('pt-BR'):'-'}
+function formatLeadAge(l){const n=leadAgeValue(l);return n==null?'-':`${Math.floor(n)} ano(s)`}
+function leadQuickFilterMatch(l,filter){
+ if(filter==='all')return true;
+ if(filter==='nao_contatado')return l.status==='nao_contatado';
+ if(filter==='em_contato')return ['contatado','respondeu','interessado','cotacao'].includes(l.status);
+ if(filter==='comprou')return ['comprou','recompra'].includes(l.status);
+ if(filter==='approved')return creditStatus(l)==='approved';
+ if(filter==='denied')return creditStatus(l)==='denied';
+ if(filter==='not_analyzed')return creditStatus(l)==='not_analyzed';
+ return true;
+}
+function leadOwnerFilterMatch(l,filter){
+ if(!filter||filter==='all')return true;
+ if(filter==='unassigned')return !l.assigned_to;
+ return String(l.assigned_to||'')===String(filter);
+}
+function leads(q=''){
+ let s=q.toLowerCase();
+ if(leadListState.query!==s){leadListState.query=s;leadListState.page=1}
+ let contactLeadIds=new Set(cache.contacts.filter(c=>[c.full_name,c.phone,c.whatsapp,c.email,c.linkedin].some(v=>String(v||'').toLowerCase().includes(s))).map(c=>c.lead_id));
+ let searched=cache.leads.filter(x=>!x.deleted_at).filter(x=>!s||[x.lead_code,x.cnpj,x.company_name,x.segment,x.main_activity,x.main_cnae].some(v=>String(v||'').toLowerCase().includes(s))||contactLeadIds.has(x.id));
+ let ls=searched.filter(x=>leadQuickFilterMatch(x,leadListState.quickFilter)&&leadOwnerFilterMatch(x,leadListState.ownerFilter));
+ const dir=leadListState.sortDir==='asc'?1:-1,key=leadListState.sortKey;
+ ls=ls.slice().sort((a,b)=>{const av=leadSortValue(a,key),bv=leadSortValue(b,key);if(typeof av==='number'&&typeof bv==='number')return (av-bv)*dir;return String(av).localeCompare(String(bv),'pt-BR',{numeric:true,sensitivity:'base'})*dir});
+ const total=ls.length,pages=Math.max(1,Math.ceil(total/leadListState.pageSize));
+ if(leadListState.page>pages)leadListState.page=pages;
+ const from=(leadListState.page-1)*leadListState.pageSize, pageRows=ls.slice(from,from+leadListState.pageSize);
+ const quick=[['all','Todos'],['nao_contatado','Não contatados'],['em_contato','Em contato'],['comprou','Compraram'],['approved','Crédito aprovado'],['denied','ND'],['not_analyzed','Sem análise']];
+ const owners=`<option value="all" ${leadListState.ownerFilter==='all'?'selected':''}>Todos os responsáveis</option><option value="unassigned" ${leadListState.ownerFilter==='unassigned'?'selected':''}>Sem responsável</option>${cache.team.filter(x=>x.active).map(u=>`<option value="${u.user_id}" ${String(leadListState.ownerFilter)===String(u.user_id)?'selected':''}>${esc(userName(u.user_id))}</option>`).join('')}`;
+ $('#main').innerHTML=`<div class="sectionTitle"><div><h2>Leads</h2><div class="muted">${total} lead(s) exibido(s) · ${searched.length} encontrado(s) na busca · 15 por página</div></div><button class="btn" id="add">+ Novo lead</button></div>
+ <div class="lead-filterbar"><div><label class="muted" style="display:block;margin-bottom:5px">Filtros rápidos</label><div class="lead-quickfilters">${quick.map(([k,label])=>`<button class="lead-filter-btn ${leadListState.quickFilter===k?'active':''}" data-lead-filter="${k}">${label}</button>`).join('')}</div></div><div class="field"><label>Responsável</label><select id="leadOwnerFilter">${owners}</select></div><button class="btn alt" id="leadClearFilters">Limpar filtros</button><span class="lead-filter-summary">Cabeçalho, ID, Empresa e Abrir permanecem visíveis durante a navegação.</span></div>
+ <div class="lead-scroll-top" id="leadScrollTop"><div class="lead-scroll-spacer" id="leadScrollSpacer"></div></div>
+ <div class="card lead-table-shell"><div class="lead-scroll-bottom" id="leadScrollBottom"><table class="table lead-table" id="leadTable"><thead><tr><th class="lead-col-id">ID</th><th class="lead-col-company">${sortHead('company','Empresa')}</th><th>${sortHead('activity','Atividade principal')}</th><th>CNPJ</th><th>${sortHead('owner','Responsável')}</th><th>${sortHead('score','Score')}</th><th>${sortHead('capital','Capital social')}</th><th>${sortHead('age','Tempo empresa')}</th><th>${sortHead('bigdata','Última BigData')}</th><th>${sortHead('entry','Entrada CRM')}</th><th>${sortHead('credit','Crédito')}</th><th>${sortHead('status','Status')}</th><th class="lead-col-action">Abrir</th></tr></thead>
+ <tbody>${pageRows.map(x=>{const qx=latestBdcQuery(x.id);return `<tr><td class="lead-col-id">${esc(x.lead_code)}</td><td class="lead-col-company lead-company" title="${esc(x.company_name||'')}">${esc(x.company_name)}</td><td class="lead-activity" title="${esc(x.main_activity||'')}">${esc(x.main_activity||'-')}</td><td>${esc(x.cnpj)}</td><td>${esc(userName(x.assigned_to)||'Sem responsável')}</td><td>${Math.round(Number(x.score_avg||0))||'-'}</td><td>${x.capital_social!=null?money(x.capital_social):'-'}</td><td>${esc(formatLeadAge(x))}</td><td>${esc(formatBdcDate(qx))}</td><td>${esc(formatLeadEntry(x))}</td><td>${creditDisplay(x)}</td><td><span class="badge lead-status-badge">${esc(leadStatusLabel(x.status))}</span></td><td class="lead-col-action"><button class="btn alt open" data-id="${x.id}">Abrir</button></td></tr>`}).join('')}</tbody></table></div>
+ <div class="lead-pager" style="padding:0 12px 12px"><div class="muted">Mostrando ${total?from+1:0}–${Math.min(from+leadListState.pageSize,total)} de ${total}</div><div class="row"><button class="btn alt" id="leadPrev" ${leadListState.page<=1?'disabled':''}>‹ Anterior</button><span><b>Página ${leadListState.page}</b> de ${pages}</span><button class="btn alt" id="leadNext" ${leadListState.page>=pages?'disabled':''}>Próxima ›</button></div></div></div>`;
+ $('#add').onclick=newLead;
+ const leadTop=$('#leadScrollTop'),leadBottom=$('#leadScrollBottom'),leadTable=$('#leadTable'),leadSpacer=$('#leadScrollSpacer');
+ if(leadTop&&leadBottom&&leadTable&&leadSpacer){
+   const syncLeadScrollWidth=()=>{leadSpacer.style.width=leadTable.scrollWidth+'px'};
+   syncLeadScrollWidth(); requestAnimationFrame(syncLeadScrollWidth);
+   let syncingLeadScroll=false;
+   leadTop.onscroll=()=>{if(syncingLeadScroll)return;syncingLeadScroll=true;leadBottom.scrollLeft=leadTop.scrollLeft;syncingLeadScroll=false};
+   leadBottom.onscroll=()=>{if(syncingLeadScroll)return;syncingLeadScroll=true;leadTop.scrollLeft=leadBottom.scrollLeft;syncingLeadScroll=false};
+ }
+ document.querySelectorAll('.open').forEach(b=>b.onclick=()=>safeLeadDetail(b.dataset.id));
+ document.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{const k=b.dataset.sort;if(leadListState.sortKey===k)leadListState.sortDir=leadListState.sortDir==='asc'?'desc':'asc';else{leadListState.sortKey=k;leadListState.sortDir='asc'}leadListState.page=1;leads(leadListState.query)});
+ document.querySelectorAll('[data-lead-filter]').forEach(b=>b.onclick=()=>{leadListState.quickFilter=b.dataset.leadFilter;leadListState.page=1;leads(leadListState.query)});
+ $('#leadOwnerFilter').onchange=e=>{leadListState.ownerFilter=e.target.value;leadListState.page=1;leads(leadListState.query)};
+ $('#leadClearFilters').onclick=()=>{leadListState.quickFilter='all';leadListState.ownerFilter='all';leadListState.page=1;leads(leadListState.query)};
+ $('#leadPrev').onclick=()=>{if(leadListState.page>1){leadListState.page--;leads(leadListState.query)}};
+ $('#leadNext').onclick=()=>{if(leadListState.page<pages){leadListState.page++;leads(leadListState.query)}};
+}
+
+
+function modal(body){
+ let d=document.createElement('div'); d.className='modal'; d.innerHTML=`<div class="card">${body}<div style="margin-top:12px"><button class="btn alt close">Fechar</button></div></div>`;
+ document.body.appendChild(d); d.querySelector('.close').onclick=()=>d.remove(); return d;
+}
+
+function newLead(){
+ let previewId=null;
+ let d=modal(`<h2>Novo lead</h2>
+ <p class="muted">Digite o CNPJ. Primeiro a Yepii consulta e mostra os dados cadastrais. O lead só será criado depois da sua confirmação.</p>
+ <div class="field"><label>CNPJ</label><input id="cnpj" placeholder="00.000.000/0000-00"></div>
+ <button class="btn" id="lookup">Consultar cadastro</button>
+ <div id="err" class="muted" style="margin-top:10px"></div>
+ <div id="preview" style="margin-top:12px"></div>`);
+ d.querySelector('#lookup').onclick=async()=>{
+   const cnpj=d.querySelector('#cnpj').value.replace(/\D/g,'');
+   if(cnpj.length!==14){d.querySelector('#err').textContent='Digite um CNPJ válido com 14 números.';return}
+   d.querySelector('#lookup').disabled=true; d.querySelector('#err').textContent='Consultando dados cadastrais na BigDataCorp...';
+   try{
+     const {data:{session}}=await supabase.auth.getSession(); if(!session?.access_token) throw new Error('Sua sessão expirou. Saia e entre novamente.');
+     const {data,error}=await supabase.functions.invoke('yepii-bigdatacorp-create-lead',{body:{action:'preview',cnpj,user_token:session.access_token}});
+     if(error) throw error; if(data?.error) throw new Error(data.error);
+     if(data?.existing){d.querySelector('#err').textContent='Este CNPJ já está cadastrado no CRM.'; d.querySelector('#preview').innerHTML=`<div class="card"><b>${esc(data.lead?.lead_code||'')}</b><div>${esc(data.lead?.company_name||'')}</div></div>`; return}
+     previewId=data?.preview_id; const b=data?.basic_data||{};
+     d.querySelector('#err').textContent='Consulta concluída. Confira os dados antes de criar o lead.';
+     d.querySelector('#preview').innerHTML=`<div class="card">
+       <h3 style="margin-top:0">${esc(b.trade_name||b.official_name||'Empresa')}</h3>
+       <div><b>Razão social:</b> ${esc(b.official_name||'-')}</div><div><b>Situação Receita:</b> ${esc(b.receita_status||'-')}</div>
+       <div><b>Abertura:</b> ${esc(b.opening_date||'-')}</div><div><b>Idade:</b> ${esc(b.age??'-')} anos</div><div><b>UF:</b> ${esc(b.state||'-')}</div>
+       <div><b>Porte:</b> ${esc(b.company_size||'-')}</div><div><b>Natureza jurídica:</b> ${esc(b.legal_nature||'-')}</div>
+       <div><b>CNAE principal:</b> ${esc(b.main_cnae||'-')} · ${esc(b.main_activity||'-')}</div>
+       <div><b>Endereço:</b> ${b.address?[b.address.street,b.address.street_number,b.address.address_complement,b.address.neighborhood,b.address.city,b.address.state,b.address.postal_code].filter(Boolean).map(esc).join(', '):'-'}</div>
+       <div class="row" style="margin-top:14px"><button class="btn" id="confirmLead">Criar lead</button><button class="btn alt" id="cancelLead">Não criar</button></div>
+     </div>`;
+     d.querySelector('#cancelLead').onclick=()=>{previewId=null;d.querySelector('#preview').innerHTML='';d.querySelector('#err').textContent='Consulta descartada. Nenhum lead foi criado.'};
+     d.querySelector('#confirmLead').onclick=async()=>{
+       if(!previewId)return; const btn=d.querySelector('#confirmLead');btn.disabled=true;d.querySelector('#err').textContent='Criando lead...';
+       try{const {data:{session}}=await supabase.auth.getSession(); const {data,error}=await supabase.functions.invoke('yepii-bigdatacorp-create-lead',{body:{action:'confirm',preview_id:previewId,user_token:session.access_token}}); if(error)throw error;if(data?.error)throw new Error(data.error);d.querySelector('#err').textContent='Lead criado com sucesso.';await refresh();setTimeout(()=>d.remove(),500)}catch(e){d.querySelector('#err').textContent='Erro ao criar lead: '+(e?.message||e);btn.disabled=false}
+     };
+   }catch(e){d.querySelector('#err').textContent='Erro na consulta: '+(e?.message||e)} finally{d.querySelector('#lookup').disabled=false}
+ };
+}
+
+function digits(v){return String(v||'').replace(/\D/g,'')}
+function normText(v){return String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim()}
+function companyCnpjExists(cnpj){const d=digits(cnpj);return cache.leads.some(l=>digits(l.cnpj)===d&&!l.deleted_at)}
+function companyLabelBool(v){return v===true?'Sim':v===false?'Não':'-'}
+function companyApiMessage(e){
+ const m=String(e?.message||e||'Erro na consulta');
+ if(m.includes('CNPJIA_KEY_NOT_CONFIGURED')||m.includes('chave da cnpj.ia.br'))return 'A integração está pronta, mas falta configurar a chave da cnpj.ia.br no Supabase.';
+ return m;
+}
+async function companyInvoke(body){
+ const {data:{session}}=await supabase.auth.getSession();
+ if(!session)throw new Error('Sua sessão expirou. Saia e entre novamente.');
+ const {data,error}=await supabase.functions.invoke('yepii-cnpj-search',{body});
+ if(error){let extra='';try{extra=await error.context?.text?.()}catch{};throw new Error(extra||error.message||'Falha na busca de empresas')}
+ if(data?.error)throw new Error(data.message||data.error);
+ return data||{};
+}
+async function loadMunicipalities(uf,select){
+ if(!select)return;
+ select.innerHTML='<option value="">Carregando municípios...</option>';select.disabled=true;
+ if(!uf){select.innerHTML='<option value="">Todos os municípios</option>';select.disabled=false;return}
+ try{
+  const r=await fetch('https://servicodados.ibge.gov.br/api/v1/localidades/estados/'+encodeURIComponent(uf)+'/municipios?orderBy=nome');
+  if(!r.ok)throw new Error('IBGE indisponível');
+  const rows=await r.json();
+  select.innerHTML='<option value="">Todos os municípios</option>'+rows.map(x=>`<option value="${esc(x.id)}">${esc(x.nome)}</option>`).join('');
+ }catch(e){select.innerHTML='<option value="">Informe só a UF ou tente novamente</option>'}
+ finally{select.disabled=false}
+}
+function currentCompanyVisibleResults(){
+ const bairro=normText($('#csBairro')?.value||'');
+ const onlyContact=!!$('#csContato')?.checked;
+ const hideExisting=$('#csHideExisting')?.checked!==false;
+ return companySearchState.results.filter(e=>{
+  const b=normText(e?.endereco?.bairro||'');
+  if(bairro&&!b.includes(bairro))return false;
+  if(onlyContact&&!(e.has_phone||e.has_email||e.has_mobile_phone))return false;
+  if(hideExisting&&companyCnpjExists(e.cnpj))return false;
+  return true;
+ });
+}
+function renderCompanyResults(){
+ const box=$('#csResults');if(!box)return;
+ const rows=currentCompanyVisibleResults();
+ const loaded=companySearchState.results.length, existing=companySearchState.results.filter(e=>companyCnpjExists(e.cnpj)).length;
+ $('#csSummary').innerHTML=companySearchState.meta?`<span class="badge">${companySearchState.group?'Naturezas: <b>'+companySearchState.group.codes.length+'</b>':'Encontradas: <b>'+esc(companySearchState.total||'-')+'</b>'}</span><span class="badge">Carregadas: <b>${loaded}</b></span><span class="badge">Visíveis: <b>${rows.length}</b></span><span class="badge">Já no CRM nesta carga: <b>${existing}</b></span><span class="badge">Custo da última página: <b>${esc(companySearchState.meta?.credits_charged??0)} créditos</b></span>`:'';
+ if(!companySearchState.results.length){box.innerHTML='<div class="interaction-empty">Faça uma busca para ver as empresas.</div>';return}
+ if(!rows.length){box.innerHTML='<div class="interaction-empty">Nenhuma empresa desta página atende aos filtros locais (bairro/contato/CRM). Você pode buscar a próxima página sem alterar os filtros da API.</div>';return}
+ box.innerHTML=rows.map(e=>{
+  const c=digits(e.cnpj),exists=companyCnpjExists(c),addr=e.endereco||{};
+  const checked=companySearchState.selected.has(c)?'checked':'';
+  return `<div class="company-result"><div><input class="csPick" type="checkbox" data-cnpj="${esc(c)}" ${checked} ${exists?'disabled':''}></div><div><b>${esc(e.nome_fantasia||e.razao_social||'Empresa')}</b><div class="small">${esc(e.razao_social||'')} · CNPJ ${esc(c)}</div><div class="small">${esc(e.cnae_fiscal?.codigo||'-')} · ${esc(e.cnae_fiscal?.descricao||'-')}</div>${exists?'<span class="badge warn">Já existe no CRM</span>':''}</div><div><b>${esc(addr.municipio||'-')} / ${esc(addr.uf||'-')}</b><div class="small">${esc(addr.bairro||'Bairro não informado')}</div><div class="small">${esc([addr.tipo_logradouro,addr.logradouro,addr.numero].filter(Boolean).join(' ')||'')}</div></div><div><b>${esc(e.porte?.descricao||'-')}</b><div class="small">${esc(companyEntityLabel(e))}${companySphereFromNature(companyNatureCode(e))?' · '+esc(companySphereFromNature(companyNatureCode(e))):''}</div><div class="small">Natureza: ${esc(e.natureza_juridica?.codigo||'-')} · ${esc(e.natureza_juridica?.descricao||'-')}</div><div class="small">Situação: ${esc(e.situacao_cadastral?.descricao||'-')}</div><div class="small">Capital: ${money(e.capital_social)}</div></div><div><div class="small">Telefone: <b>${companyLabelBool(e.has_phone||e.has_mobile_phone)}</b></div><div class="small">E-mail: <b>${companyLabelBool(e.has_email)}</b></div><div class="small">Site: <b>${companyLabelBool(e.has_website)}</b></div></div></div>`
+ }).join('');
+ box.querySelectorAll('.csPick').forEach(ch=>ch.onchange=()=>{if(ch.checked)companySearchState.selected.add(ch.dataset.cnpj);else companySearchState.selected.delete(ch.dataset.cnpj);$('#csSelectedCount').textContent=companySearchState.selected.size});
+ $('#csSelectedCount').textContent=companySearchState.selected.size;
+}
+const COMPANY_ENTITY_CODES={
+ private:['2046','2054','2062','2070','2089','2097','2127','2135','2143','2151','2160','2178','2216','2224','2232','2240','2259','2267','2283','2291','2305','2313','2321','2330','2348','2356'],
+ sa_private:['2046','2054'],
+ public_company:['2011'],
+ mixed_economy:['2038'],
+ public_body:{
+  federal:['1015','1040','1074','1163'],state:['1023','1058','1082','1171'],municipal:['1031','1066','1180']
+ },
+ autarchy:{federal:['1104'],state:['1112'],municipal:['1120']},
+ public_foundation:{federal:['1139','1252'],state:['1147','1260'],municipal:['1155','1279']},
+ public_all:{
+  federal:['1015','1040','1074','1104','1139','1163','1252','1287','1317','1341'],
+  state:['1023','1058','1082','1112','1147','1171','1236','1260','1295','1325'],
+  municipal:['1031','1066','1120','1155','1180','1244','1279','1309','1333'],
+  extra:['1198','1210','1228','2011','2038']
+ }
+};
+const COMPANY_NATURE_LABELS={
+ '1015':'Órgão Executivo Federal','1023':'Órgão Executivo Estadual/DF','1031':'Órgão Executivo Municipal','1040':'Órgão Legislativo Federal','1058':'Órgão Legislativo Estadual/DF','1066':'Órgão Legislativo Municipal','1074':'Órgão Judiciário Federal','1082':'Órgão Judiciário Estadual','1104':'Autarquia Federal','1112':'Autarquia Estadual/DF','1120':'Autarquia Municipal','1139':'Fundação Pública Federal','1147':'Fundação Pública Estadual/DF','1155':'Fundação Pública Municipal','1163':'Órgão Público Autônomo Federal','1171':'Órgão Público Autônomo Estadual/DF','1180':'Órgão Público Autônomo Municipal','1252':'Fundação Pública de Direito Privado Federal','1260':'Fundação Pública de Direito Privado Estadual/DF','1279':'Fundação Pública de Direito Privado Municipal','1287':'Fundo Público Indireto Federal','1295':'Fundo Público Indireto Estadual/DF','1309':'Fundo Público Indireto Municipal','1317':'Fundo Público Direto Federal','1325':'Fundo Público Direto Estadual/DF','1333':'Fundo Público Direto Municipal','1341':'União','1236':'Estado ou Distrito Federal','1244':'Município','2011':'Empresa Pública','2038':'Sociedade de Economia Mista','2046':'S.A. Aberta','2054':'S.A. Fechada','2062':'Sociedade Empresária Limitada','2135':'Empresário Individual','2143':'Cooperativa','2240':'Sociedade Simples Limitada'};
+function entityCodes(entity,sphere){
+ if(!entity)return [];
+ const v=COMPANY_ENTITY_CODES[entity];
+ if(Array.isArray(v))return [...v];
+ if(!v)return [];
+ if(entity==='public_all'){
+  if(sphere&&sphere!=='all')return [...(v[sphere]||[])];
+  return [...v.federal,...v.state,...v.municipal,...v.extra];
+ }
+ if(sphere&&sphere!=='all')return [...(v[sphere]||[])];
+ return [...(v.federal||[]),...(v.state||[]),...(v.municipal||[])];
+}
+function companyNatureCode(e){return digits(e?.natureza_juridica?.codigo||'')}
+function companySphereFromNature(code){
+ code=digits(code);
+ const fed=['1015','1040','1074','1104','1139','1163','1252','1287','1317','1341'];
+ const est=['1023','1058','1082','1112','1147','1171','1236','1260','1295','1325'];
+ const mun=['1031','1066','1120','1155','1180','1244','1279','1309','1333'];
+ if(fed.includes(code))return 'Federal';if(est.includes(code))return 'Estadual/DF';if(mun.includes(code))return 'Municipal';return '';
+}
+function companyEntityLabel(e){
+ const c=companyNatureCode(e);
+ if(c==='2011')return 'Empresa pública';if(c==='2038')return 'Economia mista';if(['2046','2054'].includes(c))return 'S.A. privada';if(c.startsWith('1'))return 'Setor público';if(c.startsWith('2'))return 'Empresa privada';return 'Outra entidade';
+}
+function selectedEntityTypes(){
+ return [...document.querySelectorAll('.csEntityType:checked')].map(x=>x.value).filter(Boolean);
+}
+function updateEntityUi(){
+ const types=selectedEntityTypes(),sphere=$('#csSphere'),note=$('#csEntityNote');if(!sphere||!note)return;
+ const sphereTypes=['public_body','autarchy','public_foundation','public_all'];
+ const hasSphereType=types.some(t=>sphereTypes.includes(t));
+ sphere.disabled=!hasSphereType;if(sphere.disabled)sphere.value='all';
+ if(!types.length)note.textContent='Nenhum tipo marcado: a busca considera todos os tipos de entidade.';
+ else if(hasSphereType&&types.some(t=>['private','sa_private','public_company','mixed_economy'].includes(t)))note.textContent='Você selecionou tipos diferentes. A esfera será aplicada apenas aos órgãos, autarquias e fundações públicas; empresas privadas e estatais sem esfera identificável permanecem na busca.';
+ else if(hasSphereType)note.textContent='Você pode marcar vários tipos. A esfera é aplicada aos tipos públicos compatíveis.';
+ else note.textContent='Você pode marcar vários tipos de entidade ao mesmo tempo. A esfera não se aplica aos tipos atualmente selecionados.';
+}
+function companyFiltersFromUi(cursor=null,natureOverride=null){
+ const f={};
+ const put=(k,v)=>{if(v!==''&&v!=null)f[k]=v};
+ put('uf',$('#csUf').value);put('municipio',$('#csMunicipio').value);put('cnae',digits($('#csCnae').value));put('porte',$('#csPorte').value);put('situacao',$('#csSituacao').value);
+ const nature=natureOverride||digits($('#csNatureza').value);if(nature)put('natureza',nature);
+ put('capital_min',$('#csCapMin').value);put('capital_max',$('#csCapMax').value);put('abertura_de',$('#csAberturaDe').value);put('abertura_ate',$('#csAberturaAte').value);
+ if($('#csSimples').value!=='')put('simples',$('#csSimples').value);
+ if($('#csMei').value!=='')put('mei',$('#csMei').value);
+ if(cursor)put('cursor',cursor);
+ return f;
+}
+function prepareEntityGroup(){
+ const entities=selectedEntityTypes(),sphere=$('#csSphere').value,manual=digits($('#csNatureza').value);
+ let codes=[...new Set(entities.flatMap(entity=>entityCodes(entity,sphere)))];
+ if(manual){if(codes.length&&!codes.includes(manual))throw new Error('A natureza jurídica informada não pertence aos Tipos de entidade/Esfera selecionados.');codes=[manual]}
+ if(!codes.length)return null;
+ return {codes,index:0,cursors:{},finished:{},labels:codes.map(c=>COMPANY_NATURE_LABELS[c]||c),entities:[...entities]};
+}
+async function fetchNextEntityPage(group){
+ while(group.index<group.codes.length){
+  const code=group.codes[group.index],cursor=group.cursors[code]||null;
+  const filters=companyFiltersFromUi(cursor,code);
+  const data=await companyInvoke({action:'search',filters});
+  const arr=Array.isArray(data.data)?data.data:[];
+  const next=data.meta?.next_cursor||null;
+  group.cursors[code]=next;
+  if(!next){group.finished[code]=true;group.index++}
+  if(arr.length)return {data,arr,code};
+ }
+ return {data:{meta:{}},arr:[],code:null};
+}
+async function runCompanySearch(next=false){
+ const st=$('#csStatus');const btn=next?$('#csMore'):$('#csSearch');
+ try{
+  if(btn)btn.disabled=true;
+  if(!next){
+   const group=prepareEntityGroup();
+   const base=companyFiltersFromUi(null,null);delete base.nature;
+   const manual=digits($('#csNatureza').value);
+   if(!group&&!manual&&!Object.keys(base).length)throw new Error('Escolha pelo menos um filtro da API antes de buscar.');
+   companySearchState.results=[];companySearchState.selected.clear();companySearchState.total=null;companySearchState.meta=null;companySearchState.group=group;companySearchState.filters={...base};
+  }
+  st.textContent=next?'Buscando próximas empresas...':'Buscando primeiras empresas...';
+  let data,arr,code=null;
+  if(companySearchState.group){({data,arr,code}=await fetchNextEntityPage(companySearchState.group));}
+  else{
+   const filters=companyFiltersFromUi(next?companySearchState.nextCursor:null,null);
+   data=await companyInvoke({action:'search',filters});arr=Array.isArray(data.data)?data.data:[];
+   companySearchState.nextCursor=data.meta?.next_cursor||null;
+  }
+  const known=new Set(companySearchState.results.map(x=>digits(x.cnpj)));arr.forEach(x=>{if(!known.has(digits(x.cnpj)))companySearchState.results.push(x)});
+  companySearchState.meta=data.meta||{};
+  if(!companySearchState.group)companySearchState.total=data.meta?.total_count_capped??companySearchState.total;
+  const g=companySearchState.group;
+  const groupHasMore=!!(g&&g.index<g.codes.length);
+  const singleHasMore=!g&&!!companySearchState.nextCursor;
+  const currentLabel=code?(COMPANY_NATURE_LABELS[code]||code):'';
+  st.textContent=arr.length?`Página carregada${currentLabel?' · '+currentLabel:''}. ${arr.length} empresa(s) consumiram ${data.meta?.credits_charged??arr.length} crédito(s).`:'Não há mais empresas para estes filtros.';
+  renderCompanyResults();
+  if($('#csMore')){$('#csMore').disabled=!(groupHasMore||singleHasMore);$('#csMore').style.display=(groupHasMore||singleHasMore)?'inline-flex':'none'}
+ }catch(e){st.textContent='Erro: '+companyApiMessage(e)}finally{if(btn)btn.disabled=false}
+}
+function mapCompanyToLead(e,assigned){const a=e.endereco||{},nc=companyNatureCode(e);return {cnpj:digits(e.cnpj),company_name:e.razao_social||e.nome_fantasia||'Empresa',trade_name:e.nome_fantasia||null,main_cnae:e.cnae_fiscal?.codigo||null,main_activity:e.cnae_fiscal?.descricao||null,legal_nature:e.natureza_juridica?.descricao||null,opening_date:e.data_inicio_atividade||null,receita_status:e.situacao_cadastral?.descricao||null,company_size:e.porte?.descricao||null,state:a.uf||null,street:[a.tipo_logradouro,a.logradouro].filter(Boolean).join(' ')||null,street_number:a.numero||null,address_complement:a.complemento||null,neighborhood:a.bairro||null,city:a.municipio||null,postal_code:a.cep||null,company_sector_type:(nc.startsWith('1')||['2011','2038'].includes(nc))?'publica':(nc.startsWith('2')?'privada':null),status:'nao_contatado',priority:'B',assigned_to:assigned||null,created_by:me.id,capital_social:(e.capital_social!==null&&e.capital_social!==undefined&&e.capital_social!==''?Number(e.capital_social):null),registration_source:'cnpj_ia'} }
+function companyHasContactSignal(e){return !!(e?.has_phone||e?.has_mobile_phone||e?.has_email)}
+function normalizeImportedPhone(v){return String(v||'').replace(/\s+/g,' ').trim()}
+function cnpjiaContactsFromFull(resp){
+ const d=resp?.data||resp||{},meta=resp?.meta||{};
+ if(meta?.suppressed)return {rows:[],suppressed:true,meta};
+ const phones=[],emails=[];
+ const addPhone=v=>{v=normalizeImportedPhone(v);if(v&&!phones.includes(v))phones.push(v)};
+ const addEmail=v=>{v=String(v||'').trim().toLowerCase();if(v&&v.includes('@')&&!emails.includes(v))emails.push(v)};
+ (Array.isArray(d.telefones)?d.telefones:[]).forEach(p=>addPhone([p?.ddd,p?.numero].filter(Boolean).join('')));
+ addEmail(d.email);
+ (Array.isArray(d.contatos_extras)?d.contatos_extras:[]).forEach(c=>{
+   const tipo=normText(c?.tipo||'');
+   if(tipo.includes('mail'))addEmail(c?.valor);
+   else if(tipo.includes('fone')||tipo.includes('phone')||tipo.includes('celular')||tipo.includes('mobile'))addPhone(c?.valor);
+ });
+ const n=Math.max(phones.length,emails.length),rows=[];
+ for(let i=0;i<n;i++)rows.push({phone:phones[i]||null,email:emails[i]||null});
+ return {rows,suppressed:false,meta};
+}
+async function enrichImportedLeadContacts(lead,sourceCompany){
+ if(!companyHasContactSignal(sourceCompany))return {queried:false,created:0,reason:'sem_sinal'};
+ try{
+   const full=await companyInvoke({action:'full',cnpj:digits(sourceCompany.cnpj)});
+   const parsed=cnpjiaContactsFromFull(full);
+   if(parsed.suppressed)return {queried:true,created:0,reason:'suprimido',credits:parsed.meta?.credits_charged||0};
+   if(!parsed.rows.length)return {queried:true,created:0,reason:'sem_contato',credits:parsed.meta?.credits_charged||0};
+   const baseDate=parsed.meta?.data_as_of?` · base ${parsed.meta.data_as_of}`:'';
+   const contactRows=parsed.rows.map((c,i)=>({lead_id:lead.id,full_name:i===0?'Contato cadastral':'Contato cadastral '+(i+1),job_title:null,phone:c.phone,whatsapp:null,email:c.email,linkedin:null,is_primary:i===0,notes:'Importado automaticamente do cnpj.ia.br'+baseDate,created_by:me.id}));
+   const {error}=await supabase.from('yepii_contacts').insert(contactRows);if(error)throw error;
+   return {queried:true,created:contactRows.length,reason:'ok',credits:parsed.meta?.credits_charged||0};
+ }catch(e){return {queried:true,created:0,reason:'erro',error:e?.message||String(e)} }
+}
+async function importSelectedCompanies(){
+ const st=$('#csStatus'),assigned=$('#csOwner').value||null;
+ const selected=companySearchState.results.filter(e=>companySearchState.selected.has(digits(e.cnpj))&&!companyCnpjExists(e.cnpj));
+ if(!selected.length){st.textContent='Selecione pelo menos uma empresa nova para importar.';return}
+ const enrichable=selected.filter(companyHasContactSignal).length;
+ const warning=enrichable?`\n\n${enrichable} empresa(s) têm sinal de telefone/e-mail e receberão consulta FULL para importar os contatos. Cada consulta FULL pode consumir até 6 créditos.`:'';
+ if(!confirm(`Criar ${selected.length} lead(s) no CRM?${warning}`))return;
+ try{
+  $('#csImport').disabled=true;st.textContent='Criando leads...';
+  const rows=selected.map(e=>mapCompanyToLead(e,assigned));
+  const {data:created,error}=await supabase.from('yepii_leads').insert(rows).select('id,cnpj');if(error)throw error;
+  let contactsCreated=0,fullQueries=0,contactErrors=0,credits=0;
+  for(let i=0;i<(created||[]).length;i++){
+    const lead=created[i],src=selected.find(e=>digits(e.cnpj)===digits(lead.cnpj));
+    if(!src)continue;
+    if(companyHasContactSignal(src))st.textContent=`Leads criados. Importando contatos ${fullQueries+1} de ${enrichable}...`;
+    const r=await enrichImportedLeadContacts(lead,src);
+    if(r.queried)fullQueries++;
+    contactsCreated+=Number(r.created||0);credits+=Number(r.credits||0);
+    if(r.reason==='erro')contactErrors++;
+  }
+  companySearchState.selected.clear();await load();renderCompanyResults();
+  st.textContent=`${rows.length} lead(s) criado(s). ${contactsCreated} contato(s) importado(s) de ${fullQueries} consulta(s) completa(s)${credits?` · ${credits} crédito(s) consumido(s)`:''}${contactErrors?` · ${contactErrors} consulta(s) de contato falharam`:''}.`;
+ }catch(e){st.textContent='Erro ao importar: '+(e?.message||e)}finally{$('#csImport').disabled=false}
+}
+async function loadCompanyUsage(){try{const d=await companyInvoke({action:'usage'});companySearchState.usage=d;const m=d.meta||{},u=d.data||d;if($('#csUsage'))$('#csUsage').textContent=`Créditos restantes: ${u.credits_remaining??m.credits_remaining??'-'} · reset: ${u.credits_reset_at?fmt(String(u.credits_reset_at).slice(0,10)):(m.credits_reset_at?fmt(String(m.credits_reset_at).slice(0,10)):'-')}` }catch(e){if($('#csUsage'))$('#csUsage').textContent=companyApiMessage(e)}}
+function companySearch(){
+ const uf=['','AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+ const owners=cache.team.filter(x=>x.active).map(u=>`<option value="${u.user_id}" ${u.user_id===me.id?'selected':''}>${esc(userName(u.user_id))}</option>`).join('');
+ $('#main').innerHTML=`<div class="sectionTitle"><div><h2>Buscar empresas</h2><div class="muted">Prospecção nacional pela base CNPJ. Selecione um ou mais tipos de entidade. Cada clique em buscar carrega no máximo uma página de 20 empresas.</div></div><div><span id="csUsage" class="badge">Consultando saldo...</span></div></div>
+ <div class="card"><div class="company-search-grid">
+  <div class="field" style="grid-column:span 2"><label>Tipo de entidade <span class="muted" style="font-weight:400">(marque um ou mais)</span></label><div id="csEntity" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:7px 12px;padding:10px;border:1px solid var(--border);border-radius:10px;background:#fff"><label style="font-weight:400"><input class="csEntityType" type="checkbox" value="private" style="width:auto"> Empresa privada</label><label style="font-weight:400"><input class="csEntityType" type="checkbox" value="sa_private" style="width:auto"> S.A. privada</label><label style="font-weight:400"><input class="csEntityType" type="checkbox" value="public_company" style="width:auto"> Empresa pública</label><label style="font-weight:400"><input class="csEntityType" type="checkbox" value="mixed_economy" style="width:auto"> Sociedade de economia mista</label><label style="font-weight:400"><input class="csEntityType" type="checkbox" value="public_body" style="width:auto"> Órgão público</label><label style="font-weight:400"><input class="csEntityType" type="checkbox" value="autarchy" style="width:auto"> Autarquia</label><label style="font-weight:400"><input class="csEntityType" type="checkbox" value="public_foundation" style="width:auto"> Fundação pública</label><label style="font-weight:400"><input class="csEntityType" type="checkbox" value="public_all" style="width:auto"> Todos do setor público</label></div></div>
+  <div class="field"><label>Esfera administrativa</label><select id="csSphere"><option value="all">Todas</option><option value="municipal">Municipal</option><option value="state">Estadual / DF</option><option value="federal">Federal</option></select></div>
+  <div class="field"><label>UF</label><select id="csUf">${uf.map(x=>`<option value="${x}">${x||'Todas'}</option>`).join('')}</select></div>
+  <div class="field"><label>Município</label><select id="csMunicipio"><option value="">Todos os municípios</option></select></div>
+  <div class="field"><label>CNAE ou prefixo</label><input id="csCnae" placeholder="Ex.: 5510801 ou 55"></div>
+  <div class="field"><label>Situação cadastral</label><select id="csSituacao"><option value="ATIVA" selected>ATIVA</option><option value="">Todas</option><option>SUSPENSA</option><option>INAPTA</option><option>BAIXADA</option><option>NULA</option></select></div>
+  <div class="field"><label>Porte</label><select id="csPorte"><option value="">Todos</option><option>ME</option><option>EPP</option><option>DEMAIS</option></select></div>
+  <div class="field"><label>Natureza jurídica (opcional)</label><input id="csNatureza" placeholder="Ex.: 2062"></div>
+  <div class="field"><label>Simples Nacional</label><select id="csSimples"><option value="">Todos</option><option value="true">Sim</option><option value="false">Não</option></select></div>
+  <div class="field"><label>MEI</label><select id="csMei"><option value="false" selected>Excluir MEI</option><option value="">Todos</option><option value="true">Somente MEI</option></select></div>
+  <div class="field"><label>Capital social mínimo</label><input id="csCapMin" type="number" min="0" step="1000" placeholder="R$"></div>
+  <div class="field"><label>Capital social máximo</label><input id="csCapMax" type="number" min="0" step="1000" placeholder="R$"></div>
+  <div class="field"><label>Abertura a partir de</label><input id="csAberturaDe" type="date"></div>
+  <div class="field"><label>Abertura até</label><input id="csAberturaAte" type="date"></div>
+ </div><div id="csEntityNote" class="muted" style="margin-top:8px"></div><div class="company-search-actions" style="margin-top:12px"><button class="btn" id="csSearch">Buscar primeiras 20</button><button class="btn alt" id="csClear">Limpar</button><span id="csStatus" class="muted"></span></div></div>
+ <div class="card" style="margin-top:12px"><div class="sectionTitle"><div><h3 style="margin:0">Filtros locais</h3><div class="muted">Aplicados depois da API, portanto não consomem novos créditos.</div></div></div><div class="company-search-grid"><div class="field"><label>Bairro</label><input id="csBairro" placeholder="Ex.: Barra da Tijuca"></div><div class="field"><label>Contato disponível</label><label style="font-weight:400"><input id="csContato" type="checkbox" style="width:auto"> Somente com telefone ou e-mail</label></div><div class="field"><label>CRM</label><label style="font-weight:400"><input id="csHideExisting" type="checkbox" checked style="width:auto"> Ocultar CNPJs já cadastrados</label></div><div class="field"><label>Responsável ao importar</label><select id="csOwner"><option value="">Sem responsável</option>${owners}</select></div></div></div>
+ <div class="search-summary" id="csSummary"></div><div class="card"><div class="sectionTitle"><div><h3 style="margin:0">Resultados</h3><div class="source-note">Ao adicionar empresas ao CRM, telefone e e-mail são importados automaticamente quando a busca básica indicar que existem. A consulta completa é feita somente para as empresas selecionadas e pode consumir até 6 créditos por CNPJ.</div></div><div class="company-search-actions"><span class="badge">Selecionadas: <b id="csSelectedCount">0</b></span><button class="btn" id="csImport">Adicionar selecionadas ao CRM</button></div></div><div id="csResults"><div class="interaction-empty">Faça uma busca para ver as empresas.</div></div><div style="margin-top:12px"><button class="btn alt" id="csMore" style="display:none">Buscar próximas 20</button></div></div>`;
+ $('#csUf').onchange=()=>loadMunicipalities($('#csUf').value,$('#csMunicipio'));
+ document.querySelectorAll('.csEntityType').forEach(ch=>ch.onchange=updateEntityUi);$('#csSphere').onchange=updateEntityUi;updateEntityUi();
+ $('#csSearch').onclick=()=>runCompanySearch(false);$('#csMore').onclick=()=>runCompanySearch(true);$('#csImport').onclick=importSelectedCompanies;
+ ['csBairro','csContato','csHideExisting'].forEach(id=>$('#'+id).oninput=$('#'+id).onchange=renderCompanyResults);
+ $('#csClear').onclick=()=>{companySearchState={results:[],nextCursor:null,total:null,meta:null,filters:null,selected:new Set(),usage:companySearchState.usage,group:null};companySearch()};
+ loadCompanyUsage();
+}
+
+async function quoteApi(path){
+ const {data:{session}}=await supabase.auth.getSession();
+ if(!session)throw new Error('Sessão expirada. Entre novamente.');
+ const res=await fetch(QUOTE_APP+path,{headers:{Authorization:'Bearer '+session.access_token,'Content-Type':'application/json'}});
+ const data=await res.json().catch(()=>({}));
+ if(!res.ok)throw new Error(data.error||'Erro ao consultar cotações.');
+ return data;
+}
+function quoteStatusLabel(s){return ({draft:'Rascunho',sent:'Enviada',viewed:'Visualizada',accepted:'Aceita',rejected:'Recusada',expired:'Expirada',cancelled:'Cancelada'})[s]||s||'-'}
+function quoteStatusClass(s){return s==='accepted'?'good':(['rejected','expired','cancelled'].includes(s)?'bad':(['sent','viewed'].includes(s)?'warn':''))}
+function quoteClientLink(q){return q.short_token?QUOTE_APP+'/c/'+encodeURIComponent((q.quote_number||'')+'-'+String(q.short_token).slice(0,6).toUpperCase()):(q.public_token?QUOTE_APP+'/?q='+encodeURIComponent(q.public_token):'')}
+async function loadLeadQuotes(leadId,box){
+ if(!box)return;
+ box.innerHTML='<span class="muted">Carregando cotações...</span>';
+ try{
+  const d=await quoteApi('/api/crm-quotes?lead_id='+encodeURIComponent(leadId)),rows=d.quotes||[];
+  box.innerHTML=`<details class="company-quote-history" open><summary style="cursor:pointer;font-weight:700;padding:10px 0">Ver histórico de cotações (${rows.length})</summary><div class="quote-history-filters" style="display:flex;gap:10px;flex-wrap:wrap;margin:10px 0"><div class="field" style="flex:1;min-width:180px"><label>Status das cotações</label><select class="company-quote-status"><option value="sent_history">Todas as enviadas</option><option value="accepted">Aceitas</option><option value="sent">Enviadas</option><option value="viewed">Visualizadas</option><option value="rejected">Recusadas</option><option value="expired">Expiradas</option><option value="cancelled">Canceladas</option><option value="draft">Rascunhos</option><option value="all">Todas, incluindo rascunhos</option></select></div><div class="field" style="flex:1;min-width:180px"><label>Buscar no histórico</label><input class="company-quote-search" type="search" placeholder="Número da cotação ou e-mail"></div></div><div class="company-quote-summary muted" role="status" style="margin:8px 0"></div><div class="company-quote-rows" style="max-height:480px;overflow:auto"></div></details>`;
+  const status=box.querySelector('.company-quote-status'),search=box.querySelector('.company-quote-search'),list=box.querySelector('.company-quote-rows'),summary=box.querySelector('.company-quote-summary');
+  function render(){
+   const term=search.value.trim().toLowerCase(),filter=status.value;
+   const filtered=rows.filter(q=>(filter==='all'||filter==='sent_history'?(filter==='all'||q.status!=='draft'||q.sent_at):q.status===filter)&&(!term||[q.quote_number,q.client_email,q.client_name].some(v=>String(v||'').toLowerCase().includes(term))));
+   const total=filtered.reduce((sum,q)=>sum+Number(q.total||0),0);
+   summary.textContent=`${filtered.length} cotação(ões) · Valor total: ${money(total)} · Aceitas: ${filtered.filter(q=>q.status==='accepted').length}`;
+   list.innerHTML=filtered.length?filtered.map(q=>{const client=q.status==='draft'?'':quoteClientLink(q);return `<div class="card" style="margin:7px 0"><div class="sectionTitle" style="align-items:flex-start;flex-wrap:wrap;gap:10px"><div><b>${esc(q.quote_number||'Cotação')}</b> <span class="badge ${quoteStatusClass(q.status)}">${esc(quoteStatusLabel(q.status))}</span><div class="muted">${q.quote_date?new Date(q.quote_date+'T12:00:00').toLocaleDateString('pt-BR'):''} · ${money(q.total)}${q.valid_until?' · validade '+new Date(q.valid_until+'T12:00:00').toLocaleDateString('pt-BR'):''}</div><div class="muted" style="overflow-wrap:anywhere">Enviada para: ${esc(q.client_email||'Sem destinatário informado')}</div>${q.accepted_at?`<div class="muted">Aceita em ${esc(new Date(q.accepted_at).toLocaleString('pt-BR'))}</div>`:''}${q.order?`<div style="margin-top:5px"><span class="badge good">Pedido gerado</span> ${esc(q.order.order_number||'')}</div>`:''}</div><div class="row"><button class="btn alt quote-admin" data-id="${esc(q.id)}">Abrir cotação</button>${client?`<button class="btn alt quote-client" data-link="${esc(client)}">Link cliente</button>`:''}</div></div></div>`}).join(''):'<div class="muted" style="padding:12px 0">Nenhuma cotação encontrada para este filtro.</div>';
+   list.querySelectorAll('.quote-admin').forEach(b=>b.onclick=()=>window.open(QUOTE_APP+'/admin?crm_quote='+encodeURIComponent(b.dataset.id),'_blank','noopener'));
+   list.querySelectorAll('.quote-client').forEach(b=>b.onclick=()=>window.open(b.dataset.link,'_blank','noopener'));
+  }
+  status.onchange=render;search.oninput=render;render();
+ }catch(e){box.innerHTML='<div class="alert">'+esc(e.message)+'</div>'}
+}
+async function createQuoteForLead(leadId){try{const l=cache.leads.find(x=>String(x.id)===String(leadId))||{};const contact=(cache.contacts||[]).filter(c=>String(c.lead_id)===String(leadId)).sort((a,b)=>Number(!!b.is_primary)-Number(!!a.is_primary))[0]||{};const cs=creditSummaryForLead(leadId);const address=[l.street,l.street_number,l.address_complement,l.neighborhood,l.city,l.state,l.postal_code].filter(Boolean).join(', ');const payload={lead_id:leadId,client_id:l.lead_code||'',company:l.company_name||l.trade_name||'',cnpj:l.cnpj||'',address,delivery_address:address,client_name:contact.full_name||'',phone:contact.whatsapp||contact.phone||'',client_email:contact.email||'',credit_summary:{credit_limit:cs.limit,credit_used:cs.used,credit_available:cs.available,active_orders:cs.active.length}};const packed=btoa(unescape(encodeURIComponent(JSON.stringify(payload)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');const {data:{session}}=await supabase.auth.getSession();let url=QUOTE_APP+'/admin?crm_lead='+encodeURIComponent(leadId);const hash=new URLSearchParams({crm_data:packed});if(session?.access_token&&session?.refresh_token){const handoff=new URLSearchParams({access_token:session.access_token,refresh_token:session.refresh_token}).toString();hash.set('crm_auth',handoff)}url+='#'+hash.toString();window.open(url,'_blank','noopener')}catch(e){console.error('Falha ao abrir cotação vinculada',e);window.open(QUOTE_APP+'/admin?crm_lead='+encodeURIComponent(leadId),'_blank','noopener')}}
+function paymentUsesYepiiCredit(method){const m=String(method||'').toLowerCase();return m.includes('fatur')||m.includes('credito yepii')||m.includes('crédito yepii')}
+function creditSummaryForLead(leadId,excludeOrderId=null){
+ const l=cache.leads.find(x=>String(x.id)===String(leadId));
+ const limit=Number(l?.credit_limit||0);
+ const active=cache.orders.filter(o=>String(o.lead_id)===String(leadId)&&String(o.id)!==String(excludeOrderId||'')&&['aberto','atrasado','inadimplente'].includes(o.payment_status)&&Number(o.credit_used||0)>0);
+ const used=active.reduce((sum,o)=>sum+Number(o.credit_used||0),0);
+ return {limit,used,available:Math.max(0,limit-used),active};
+}
+function creditOrdersHtml(cs){return cs.active.length?cs.active.map(o=>`<div style="padding:6px 0;border-top:1px solid #eee"><b>${esc(o.order_number||'Pedido')}</b> — ${money(o.credit_used)} <span class="badge ${o.payment_status==='inadimplente'?'bad':'warn'}">${esc(o.payment_status)}</span></div>`).join(''):'<div class="muted" style="margin-top:6px">Nenhum pedido consumindo crédito.</div>'}
+
+function latestBdcAnalysis(leadId){
+ return cache.analyses.find(a=>String(a.lead_id)===String(leadId)&&String(a.source||'').toLowerCase()==='bigdatacorp')||null;
+}
+function yn(v){return v===true?'Sim':v===false?'Não':'Não identificado'}
+function bdcSummaryHtml(leadId){
+ const a=latestBdcAnalysis(leadId),q=latestBdcQuery(leadId);
+ if(!a&&!q) return `<div class="card" style="margin-top:10px"><b>Dados BigDataCorp</b><div class="muted" style="margin-top:6px">Ainda não existe consulta BigDataCorp registrada para este CNPJ.</div></div>`;
+ const cls=a?.decision==='aprovado'?'good':a?.decision==='reprovado'?'bad':'warn';
+ const reasons=a?textList(a.decision_reasons).join('; '):'';
+ const age=a?.company_age_years!==null&&a?.company_age_years!==undefined?`${a.company_age_years} ano(s)`:'Não identificado';
+ const queriedAt=q?.queried_at||a?.analyzed_at||null;
+ const queriedBy=q?.queried_by||a?.created_by||null;
+ return `<div class="card" style="margin-top:10px"><div class="sectionTitle"><div><h3 style="margin:0">Dados BigDataCorp</h3><div style="margin-top:5px"><b>Última consulta:</b> ${queriedAt?new Date(queriedAt).toLocaleString('pt-BR'):'-'}${queriedBy?' · <b>Consultado por:</b> '+esc(userName(queriedBy)):''}</div></div>${a?`<span class="badge ${cls}">${esc(String(a.decision||'revisar').toUpperCase())}</span>`:''}</div>
+ ${a?`<div class="grid" style="margin-top:10px"><div class="card kpi"><span class="muted">Tempo de empresa</span><b style="font-size:20px">${esc(age)}</b></div><div class="card kpi"><span class="muted">Murabei</span><b>${a.murabei_score!=null?Math.round(Number(a.murabei_score)):'-'}</b></div><div class="card kpi"><span class="muted">Quantum</span><b>${a.quantum_score!=null?Math.round(Number(a.quantum_score)):'-'}</b></div><div class="card kpi"><span class="muted">Score médio</span><b>${a.score_avg!=null?Math.round(Number(a.score_avg)):'-'}</b></div></div>
+ <div class="two" style="margin-top:10px"><div><b>Situação Receita:</b> ${esc(a.receita_status||'-')}<br><b>MEI:</b> ${yn(a.is_mei)}<br><b>Ações judiciais:</b> ${yn(a.has_judicial_action)}${a.total_lawsuits!=null?' ('+esc(a.total_lawsuits)+')':''}<br><b>Dívida trabalhista:</b> ${yn(a.has_labor_debt)}</div><div><b>Dívida pública:</b> ${yn(a.has_government_debt??a.has_other_public_debts)}<br><b>Restrições Quod:</b> ${yn(a.has_quod_restrictions)}${a.quod_negative_count!=null?' ('+esc(a.quod_negative_count)+')':''}<br><b>Limite sugerido:</b> ${a.suggested_limit!=null?money(a.suggested_limit):'-'}</div></div>
+ ${reasons?`<div class="alert" style="margin-top:10px"><b>Motivos da decisão:</b><div>${esc(reasons)}</div></div>`:''}`:'<div class="muted" style="margin-top:10px">Existe consulta registrada, mas ainda não há uma análise automática de crédito BigDataCorp salva.</div>'}
+ </div>`;
+}
+
+function interactionStatusLabel(s){return ({pendente:'Pendente',realizada:'Realizada',sem_resposta:'Sem resposta',aguardando_retorno:'Aguardando retorno',retorno_agendado:'Retorno agendado',convertida:'Convertida em oportunidade',encerrada:'Encerrada'})[s]||String(s||'Pendente')}
+function interactionStatusClass(s){return ['encerrada','convertida'].includes(s)?'good':['pendente','sem_resposta','aguardando_retorno','retorno_agendado'].includes(s)?'warn':''}
+function interactionIsOpen(a){return !['encerrada','convertida'].includes(String(a.status||'pendente'))}
+function contactName(id){let c=cache.contacts.find(x=>String(x.id)===String(id));return c?.full_name||'Contato não vinculado'}
+function interactionAgeDays(a){let d=new Date(a.status_changed_at||a.updated_at||a.activity_at||a.created_at||Date.now());return Math.max(0,Math.floor((Date.now()-d.getTime())/86400000))}
+function interactionReminder(a){if(!interactionIsOpen(a))return null;let now=Date.now();if(a.next_action_at){let due=new Date(a.next_action_at).getTime();if(Number.isFinite(due)&&due<now)return {level:'bad',text:'Próxima ação vencida'};}if(['aguardando_retorno','retorno_agendado'].includes(a.status)&&!a.next_action_at)return {level:'warn',text:'Defina a data do próximo retorno'};let days=interactionAgeDays(a);if(days>=4)return {level:'bad',text:`Status sem atualização há ${days} dias`};if(days>=2)return {level:'warn',text:`Status sem atualização há ${days} dias`};return null}
+function interactionHistoryHtml(a){let h=Array.isArray(a.change_history)?a.change_history:[];if(!h.length)return '<span class="muted">Nenhuma alteração registrada.</span>';return h.slice().reverse().map(x=>{let p=x.previous||{};return `<div class="interaction-history"><div class="muted">${x.changed_at?new Date(x.changed_at).toLocaleString('pt-BR'):''} · ${esc(userName(x.changed_by)||'Usuário')}</div><div>Status anterior: <b>${esc(interactionStatusLabel(p.status))}</b>${p.contact_id?' · '+esc(contactName(p.contact_id)):''}</div>${p.notes?`<div class="muted">${esc(p.notes)}</div>`:''}</div>`}).join('')}
+function interactionAlertHtml(acts){let needs=acts.map(a=>({a,r:interactionReminder(a)})).filter(x=>x.r);if(!needs.length)return '';let bad=needs.filter(x=>x.r.level==='bad').length;return `<div class="interaction-alert-box ${bad?'bad':''}"><b>${needs.length} interação(ões) precisam de atualização</b><div class="muted" style="margin-top:4px">${bad?bad+' vencida(s) ou parada(s). ':''}Atualize o status ou informe o próximo retorno para manter o atendimento em andamento.</div></div>`}
+function renderInteractionList(leadId,container,filters={}){let rows=cache.acts.filter(x=>String(x.lead_id)===String(leadId));if(filters.contact)rows=rows.filter(x=>String(x.contact_id||'')===String(filters.contact));if(filters.status)rows=rows.filter(x=>String(x.status||'pendente')===filters.status);if(filters.user)rows=rows.filter(x=>String(x.created_by||'')===String(filters.user));rows.sort((a,b)=>new Date(b.activity_at||0)-new Date(a.activity_at||0));if(!rows.length){container.innerHTML='<div class="interaction-empty">Nenhuma interação encontrada com estes filtros.</div>';return}container.innerHTML=rows.map(a=>{let rem=interactionReminder(a),hist=Array.isArray(a.change_history)?a.change_history:[];return `<div class="card interaction-card ${rem?.level==='bad'?'overdue':rem?'attention':''}" style="margin:7px 0"><div class="sectionTitle" style="align-items:flex-start"><div><div class="interaction-meta"><b>${esc(contactName(a.contact_id))}</b><span class="badge ${interactionStatusClass(a.status||'pendente')}">${esc(interactionStatusLabel(a.status||'pendente'))}</span>${rem?`<span class="badge ${rem.level==='bad'?'bad':'warn'}">${esc(rem.text)}</span>`:''}</div><div class="muted" style="margin-top:4px">${esc(a.channel||'-')} · ${esc(a.outcome||'-')} · ${new Date(a.activity_at).toLocaleString('pt-BR')} · ${esc(userName(a.created_by))}</div></div><div class="interaction-actions"><button class="btn alt edit-interaction" data-id="${a.id}">Editar</button>${hist.length?`<button class="btn alt interaction-history-btn" data-id="${a.id}">Histórico (${hist.length})</button>`:''}</div></div>${a.result?`<div><b>Resultado:</b> ${esc(a.result)}</div>`:''}${a.notes?`<div style="margin-top:5px">${esc(a.notes)}</div>`:''}${a.next_action||a.next_action_at?`<div class="interaction-next"><b>Próximo passo:</b> ${esc(a.next_action||'Retorno')}${a.next_action_at?' · '+new Date(a.next_action_at).toLocaleString('pt-BR'):''}</div>`:''}${a.updated_at?`<div class="muted" style="margin-top:6px">Última alteração: ${new Date(a.updated_at).toLocaleString('pt-BR')}${a.updated_by?' · '+esc(userName(a.updated_by)):''}</div>`:''}</div>`}).join('');container.querySelectorAll('.edit-interaction').forEach(b=>b.onclick=()=>activity(leadId,container.closest('.modal'),cache.acts.find(x=>String(x.id)===String(b.dataset.id))));container.querySelectorAll('.interaction-history-btn').forEach(b=>b.onclick=()=>{let a=cache.acts.find(x=>String(x.id)===String(b.dataset.id));modal(`<h2>Histórico da interação</h2><div><b>${esc(contactName(a?.contact_id))}</b> · ${esc(a?.channel||'')}</div><div style="margin-top:10px">${interactionHistoryHtml(a||{})}</div>`)})}
+function bindInteractionSection(leadId,d){let box=d.querySelector('#interactionList');if(!box)return;let apply=()=>renderInteractionList(leadId,box,{contact:d.querySelector('#interactionContactFilter')?.value||'',status:d.querySelector('#interactionStatusFilter')?.value||'',user:d.querySelector('#interactionUserFilter')?.value||''});['#interactionContactFilter','#interactionStatusFilter','#interactionUserFilter'].forEach(sel=>{let el=d.querySelector(sel);if(el)el.onchange=apply});apply()}
+function who(id){return userName(id)}
+function leadDetail(id){
+ let l=cache.leads.find(x=>String(x.id)===String(id));
+ if(!l) throw new Error('Lead não localizado');
+ id=l.id;
+ let a=cache.acts.filter(x=>String(x.lead_id)===String(id)), o=cache.orders.filter(x=>String(x.lead_id)===String(id)), c=cache.analyses.filter(x=>String(x.lead_id)===String(id));
+ let cs=creditSummaryForLead(id);
+ let address=[l.street,l.street_number,l.address_complement,l.neighborhood,l.city,l.state,l.postal_code].filter(Boolean).join(', ');
+ let d=modal(`<div class="sectionTitle"><div><h2>${esc(l.lead_code)} · ${esc(l.company_name)}</h2><div class="muted">${esc(l.cnpj||'')} · ${esc(l.segment||'')}</div><div class="muted" style="margin-top:4px">${address?'<b>Endereço:</b> '+esc(address):''}</div></div>
+ <span class="badge ${l.credit_block_required?'bad':'good'}">${l.credit_block_required?'BLOQUEAR / ACOMPANHAR':'Crédito regular'}</span></div>
+ ${l.credit_alert_reason?`<div class="alert">${esc(l.credit_alert_reason)}</div>`:''}
+ <div class="card" style="margin-top:12px"><div class="sectionTitle"><div><h3 style="margin:0">Gestão do lead</h3><div class="muted">Defina quem é responsável por este lead e mantenha o status comercial atualizado.</div></div><button class="btn" id="saveLeadManagement">Salvar</button></div><div class="two" style="margin-top:10px"><div class="field"><label>Responsável pelo lead</label><select id="leadOwner"><option value="">Sem responsável</option>${cache.team.filter(x=>x.active!==false).map(x=>`<option value="${x.user_id}" ${String(l.assigned_to||'')===String(x.user_id)?'selected':''}>${esc(x.full_name||x.email||x.user_id)}</option>`).join('')}</select></div><div class="field"><label>Status do lead</label><select id="leadStatus">${LEAD_STATUSES.map(st=>`<option value="${st}" ${String(l.status||'nao_contatado')===st?'selected':''}>${esc(leadStatusLabel(st))}</option>`).join('')}</select></div></div><div id="leadManagementMsg" class="muted"></div></div>
+ <div class="grid" style="margin-top:12px"><div class="card kpi"><span class="muted">Score médio</span><b>${Math.round(Number(l.score_avg||0))||'-'}</b></div><div class="card kpi"><span class="muted">Capital social</span><b>${l.capital_social!==null&&l.capital_social!==undefined?money(l.capital_social):'-'}</b></div><div class="card kpi"><span class="muted">Limite aprovado</span><b>${creditDisplay(l)}</b><span class="muted">${esc(creditStatusLabel(l))}</span></div><div class="card kpi"><span class="muted">Crédito em uso</span><b>${money(cs.used)}</b></div><div class="card kpi"><span class="muted">Crédito disponível</span><b>${creditStatus(l)==='approved'?money(cs.available):creditDisplay(l)}</b></div><div class="card kpi"><span class="muted">Tipo de empresa</span><b style="font-size:18px">${l.company_sector_type==='publica'?'Pública':l.company_sector_type==='privada'?'Privada':'Não informado'}</b></div><div class="card kpi"><span class="muted">Pedidos</span><b>${o.length}</b></div><div class="card kpi"><span class="muted">GMV cliente</span><b>${money(o.reduce((s,x)=>s+Number(x.order_value||0),0))}</b></div></div><div class="card" style="margin-top:10px"><b>Resumo do crédito</b><div style="margin-top:7px">Situação: <b>${esc(creditStatusLabel(l))}</b> · Limite: <b>${creditDisplay(l)}</b> · Em uso: <b>${money(cs.used)}</b> · Disponível: <b>${creditStatus(l)==='approved'?money(cs.available):creditDisplay(l)}</b></div>${creditOrdersHtml(cs)}</div>
+ ${bdcSummaryHtml(id)}
+ <div class="row" style="margin-top:14px"><button class="btn alt" id="companyType">Pública / Privada</button><button class="btn alt" id="refreshData">Atualizar cadastro</button><button class="btn" id="bdc">Análise automática BigDataCorp</button><button class="btn alt" id="bdcCustom">Consultar datasets</button><button class="btn alt" id="manualCredit">Ajustar crédito</button><button class="btn" id="contactPerson">+ Contato da empresa</button><button class="btn" id="act">Registrar interação</button><button class="btn" id="task">+ Próxima ação</button><button class="btn" id="ana">Analisar crédito manualmente</button><button class="btn" id="newQuote">Criar cotação</button><button class="btn" id="ord">Registrar pedido</button>${role==='administrador'?'<button class="btn alt" id="deleteLead" style="border-color:#f2b8b8;color:#8d1b1b">Excluir lead</button>':''}</div>
+ <div class="sectionTitle" style="margin-top:18px"><h3 style="margin:0">Contatos da empresa</h3><button class="btn" id="addContact">+ Adicionar contato</button></div>${cache.contacts.filter(x=>x.lead_id===id).length?cache.contacts.filter(x=>x.lead_id===id).map(x=>`<div class="card" style="margin:6px 0"><div class="sectionTitle" style="align-items:flex-start"><div><b>${esc(x.full_name)}</b>${x.is_primary?' <span class="badge good">Principal</span>':''}<div class="muted">${esc(x.job_title||'')}</div><div>${esc(x.whatsapp||x.phone||'')} ${x.email?' · '+esc(x.email):''} ${x.linkedin?' · '+esc(x.linkedin):''}</div>${x.notes?`<div class="muted" style="margin-top:4px">${esc(x.notes)}</div>`:''}</div><button class="btn alt edit-contact" data-contact="${x.id}">Editar contato</button></div></div>`).join(''):'<span class="muted">Nenhum contato cadastrado.</span>'}
+ <h3>Próximas ações</h3>${cache.tasks.filter(x=>x.lead_id===id&&x.status==='pendente').length?cache.tasks.filter(x=>x.lead_id===id&&x.status==='pendente').map(x=>`<div class="card" style="margin:6px 0"><b>${esc(x.task_type)}</b> · ${new Date(x.due_at).toLocaleString('pt-BR')} <span class="badge">${esc(x.priority)}</span><div>${esc(x.notes||'')}</div></div>`).join(''):'<span class="muted">Nenhuma próxima ação pendente.</span>'}
+ <h3>Cotações da empresa</h3><div id="leadQuotes"><span class="muted">Carregando cotações...</span></div>
+ ${interactionAlertHtml(a)}
+ <div class="sectionTitle" style="margin-top:18px"><h3 style="margin:0">Interações</h3><span class="muted">${a.filter(interactionIsOpen).length} aberta(s)</span></div>
+ <div class="interaction-toolbar"><div class="field"><label>Contato</label><select id="interactionContactFilter"><option value="">Todos</option>${cache.contacts.filter(x=>String(x.lead_id)===String(id)).map(x=>`<option value="${x.id}">${esc(x.full_name)}</option>`).join('')}</select></div><div class="field"><label>Status</label><select id="interactionStatusFilter"><option value="">Todos</option>${['pendente','realizada','sem_resposta','aguardando_retorno','retorno_agendado','convertida','encerrada'].map(s=>`<option value="${s}">${interactionStatusLabel(s)}</option>`).join('')}</select></div><div class="field"><label>Responsável</label><select id="interactionUserFilter"><option value="">Todos</option>${cache.team.filter(x=>x.active).map(u=>`<option value="${u.user_id}">${esc(userName(u.user_id))}</option>`).join('')}</select></div></div>
+ <div id="interactionList"></div>
+ <h3>Análises de crédito</h3>${c.length?c.slice(0,5).map(x=>`<div class="card" style="margin:6px 0"><span class="badge ${x.decision==='aprovado'?'good':x.decision==='reprovado'?'bad':'warn'}">${esc(x.decision)}</span> Score ${Math.round(Number(x.score_avg||0))||'-'} · Sugestão ${money(x.suggested_limit)}<div class="muted" style="margin-top:5px">${esc(textList(x.decision_reasons).join('; '))}</div></div>`).join(''):'<span class="muted">Sem análise.</span>'}
+ <h3>Protestos / Cartório</h3>${protestSummaryHtml(id)}
+ <h3>Histórico BigDataCorp</h3>${bdcHistoryHtml(id)}`);
+ d.querySelector('#saveLeadManagement').onclick=async()=>{
+   const btn=d.querySelector('#saveLeadManagement'),msg=d.querySelector('#leadManagementMsg');
+   btn.disabled=true;msg.textContent='Salvando responsável e status...';
+   const assigned_to=d.querySelector('#leadOwner').value||null;
+   const status=d.querySelector('#leadStatus').value||'nao_contatado';
+   const {error}=await supabase.from('yepii_leads').update({assigned_to,status}).eq('id',id);
+   if(error){msg.textContent='Erro ao salvar: '+error.message;btn.disabled=false;return}
+   msg.textContent='Responsável e status atualizados.';
+   await load();
+   const fresh=cache.leads.find(x=>String(x.id)===String(id));
+   if(fresh){l=fresh;d.querySelector('#leadOwner').value=fresh.assigned_to||'';d.querySelector('#leadStatus').value=fresh.status||'nao_contatado'}
+   btn.disabled=false;
+ };
+ d.querySelector('#companyType').onclick=()=>companyTypeForm(id,l,d); if(d.querySelector('#newQuote'))d.querySelector('#newQuote').onclick=()=>createQuoteForLead(id); loadLeadQuotes(id,d.querySelector('#leadQuotes')); d.querySelector('#refreshData').onclick=()=>refreshRegistration(id,l,d); d.querySelector('#bdc').onclick=()=>bigDataCorpQuery(id,l,d); d.querySelector('#bdcCustom').onclick=()=>customBdcQuery(id,l,d); d.querySelector('#manualCredit').onclick=()=>manualCreditForm(id,l,d); d.querySelector('#contactPerson').onclick=()=>contactForm(id,d); if(d.querySelector('#addContact'))d.querySelector('#addContact').onclick=()=>contactForm(id,d); d.querySelectorAll('.edit-contact').forEach(b=>b.onclick=()=>contactForm(id,d,cache.contacts.find(x=>x.id===b.dataset.contact))); d.querySelector('#act').onclick=()=>activity(id,d); d.querySelector('#task').onclick=()=>taskForm(id,d); d.querySelector('#ana').onclick=()=>analysis(id,l,d); d.querySelector('#ord').onclick=()=>orderForm(id,d); if(d.querySelector('#deleteLead'))d.querySelector('#deleteLead').onclick=()=>deleteLead(id,l,d); d.querySelectorAll('.bdc-view').forEach(b=>b.onclick=()=>viewBdcHistory(b.dataset.q)); if(d.querySelector('#protestCheck'))d.querySelector('#protestCheck').onclick=()=>protestCheckForm(id,d); bindInteractionSection(id,d);
+}
+
+
+
+
+
+
+
+function protestSummaryHtml(leadId){
+ const checks=(cache.manualChecks||[]).filter(x=>x.lead_id===leadId&&x.check_type==='protestos_cartorio');
+ const latest=checks[0]||null;
+ const status=latest?.status||'pendente';
+ const label=status==='consta'?'CONSTA':status==='nao_consta'?'NÃO CONSTA':'PENDENTE';
+ const cls=status==='nao_consta'?'good':'warn';
+ const canEdit=['administrador','credito_financeiro','gestor_comercial'].includes(role);
+ const latestMeta=latest?`<div class="muted" style="margin-top:6px">Última verificação: ${latest.checked_at?new Date(latest.checked_at).toLocaleString('pt-BR'):'pendente'}${latest.checked_by?' · '+esc(userName(latest.checked_by)):''}</div>`:'<div class="muted" style="margin-top:6px">Ainda não houve verificação manual registrada.</div>';
+ const latestNotes=latest?.notes?`<div class="muted" style="margin-top:4px"><b>Observação:</b> ${esc(latest.notes)}</div>`:'';
+ const latestRef=latest?.reference?`<div class="muted"><b>Referência/Protocolo:</b> ${esc(latest.reference)}</div>`:'';
+ const history=checks.length?`<details style="margin-top:10px"><summary>Ver histórico (${checks.length})</summary>${checks.slice(0,20).map(x=>`<div class="card" style="margin:7px 0"><b>${x.status==='consta'?'Consta':x.status==='nao_consta'?'Não consta':'Pendente'}</b> · ${x.checked_at?new Date(x.checked_at).toLocaleString('pt-BR'):'sem data de verificação'} · ${esc(userName(x.checked_by))}${x.reference?`<div class="muted">Ref.: ${esc(x.reference)}</div>`:''}${x.notes?`<div class="muted">${esc(x.notes)}</div>`:''}</div>`).join('')}</details>`:'';
+ return `<div class="card"><div><b>Status:</b> <span class="badge ${cls}">${label}</span></div>${latestMeta}${latestRef}${latestNotes}${canEdit?'<button class="btn alt" id="protestCheck" style="margin-top:10px">Registrar verificação</button>':''}${history}</div>`;
+}
+
+function protestCheckForm(leadId,parent){
+ const checks=(cache.manualChecks||[]).filter(x=>x.lead_id===leadId&&x.check_type==='protestos_cartorio');
+ const latest=checks[0]||null;
+ const current=latest?.status||'pendente';
+ let d=modal(`<h2>Protestos / Cartório</h2><p class="muted">Verificação manual. O resultado ficará registrado no histórico com usuário e data.</p><div class="field"><label>Resultado</label><select id="st"><option value="pendente" ${current==='pendente'?'selected':''}>Pendente / não consultado</option><option value="nao_consta" ${current==='nao_consta'?'selected':''}>Não consta</option><option value="consta" ${current==='consta'?'selected':''}>Consta protesto</option></select></div><div class="field"><label>Referência / Protocolo</label><input id="rf" value="${esc(latest?.reference||'')}" placeholder="Ex.: protocolo, link ou referência da consulta"></div><div class="field"><label>Observação</label><textarea id="nt" placeholder="Ex.: consulta realizada no cartório/birô">${esc(latest?.notes||'')}</textarea></div><button class="btn" id="sv">Salvar verificação</button><div id="er" class="muted" style="margin-top:8px"></div>`);
+ d.querySelector('#sv').onclick=async()=>{
+   const status=d.querySelector('#st').value;
+   const notes=d.querySelector('#nt').value.trim()||null;
+   const reference=d.querySelector('#rf').value.trim()||null;
+   d.querySelector('#sv').disabled=true;d.querySelector('#er').textContent='Salvando...';
+   const {error}=await supabase.rpc('yepii_save_protest_check',{p_lead_id:leadId,p_status:status,p_notes:notes,p_reference:reference});
+   if(error){d.querySelector('#er').textContent='Erro: '+error.message;d.querySelector('#sv').disabled=false;return}
+   d.remove();parent.remove();await refresh();leadDetail(leadId);
+ };
+}
+
+function bdcHistoryHtml(leadId){
+ const qs=cache.bdcQueries.filter(q=>q.lead_id===leadId);
+ if(!qs.length)return '<span class="muted">Nenhuma consulta registrada.</span>';
+ return qs.slice(0,15).map(q=>`<div class="card" style="margin:6px 0"><b>${new Date(q.queried_at).toLocaleString('pt-BR')}</b> <span class="badge ${q.request_status==='sucesso'?'good':'warn'}">${esc(q.request_status)}</span><div class="muted">Datasets: ${esc(textList(q.requested_datasets).join(', '))}</div><button class="btn alt bdc-view" data-q="${q.id}" style="margin-top:7px">Ver consulta</button></div>`).join('');
+}
+function findArrayByKeys(obj,keys){
+ if(!obj||typeof obj!=='object')return null;
+ for(const k of Object.keys(obj)){if(keys.includes(k)&&Array.isArray(obj[k]))return obj[k]}
+ for(const v of Object.values(obj)){if(v&&typeof v==='object'){const r=findArrayByKeys(v,keys);if(r)return r}}
+ return null;
+}
+function findObjectByKey(obj,key){
+ if(!obj||typeof obj!=='object')return null;if(obj[key]&&typeof obj[key]==='object')return obj[key];
+ for(const v of Object.values(obj)){if(v&&typeof v==='object'){const r=findObjectByKey(v,key);if(r)return r}}return null;
+}
+function processCard(p){
+ const number=p.Number||p.ProcessNumber||p.LawsuitNumber||p.NumberCNJ||p.CaseNumber||'-';
+ const court=p.CourtName||p.Court||p.Tribunal||'-'; const type=p.CourtType||p.Type||p.CnjProcedureType||'-'; const state=p.State||p.CourtState||'-'; const status=p.Status||'-';
+ const date=p.NoticeDate||p.DistributionDate||p.CaptureDate||''; const value=p.Value||p.Amount||null; const subject=p.CnjSubject||p.Subject||p.MainSubject||'';
+ return `<div class="card" style="margin:7px 0"><b>Processo ${esc(number)}</b><div>${esc(court)} · ${esc(type)} · ${esc(state)} · ${esc(status)}</div>${date?`<div class="muted">Data: ${esc(String(date).slice(0,10))}</div>`:''}${subject?`<div>Assunto: ${esc(typeof subject==='object'?JSON.stringify(subject):subject)}</div>`:''}${value!=null?`<div>Valor: ${money(value)}</div>`:''}</div>`;
+}
+function bdcResultHtml(raw){
+ const results=raw?.results||[]; let html='';
+ for(const r of results){const ds=r.dataset||r.datasets||r.request_dataset||''; const data=r.data||{}; html+=`<div class="card" style="margin:8px 0"><b>${esc(ds)}</b> <span class="badge ${r.ok?'good':'warn'}">${r.ok?'OK':'ERRO'}</span>`;
+   if(ds==='lawsuits_distribution_data'){const x=findObjectByKey(data,'LawsuitsDistributionData');if(x)html+=`<div style="margin-top:7px"><b>Total de processos:</b> ${esc(x.TotalLawsuits??0)}</div><div class="muted">Por tipo: ${esc(JSON.stringify(x.CourtTypeDistribution||x.TypeDistribution||{}))}</div><div class="muted">Por status: ${esc(JSON.stringify(x.StatusDistribution||{}))}</div>`}
+   if(ds==='government_debtors'){const g=findObjectByKey(data,'GovernmentDebtors');if(g){html+=`<div style="margin-top:7px"><b>Dívida ativa:</b> ${Number(g.TotalDebts||0)>0?'SIM':'NÃO'} · ${esc(g.TotalDebts??0)} registro(s) · ${money(g.TotalDebtValue||0)}</div>`;const debts=g.Debts||[];html+=debts.slice(0,20).map(x=>`<div class="alert"><b>${esc(x.Origin||x.Type||x.Description||'Dívida')}</b><div>${esc(x.RegistrationNumber||x.DebtNumber||'')}</div><div>${money(x.Value||x.Amount||x.DebtValue||0)}</div></div>`).join('')}}
+   if(ds==='processes'){const arr=findArrayByKeys(data,['Processes','Lawsuits','ProcessData']);if(arr&&arr.length){html+=`<div style="margin-top:8px"><b>Processos detalhados (${arr.length} retornados)</b></div>${arr.slice(0,20).map(processCard).join('')}`}else html+='<div class="muted" style="margin-top:7px">Nenhum processo detalhado retornado nesta consulta.</div>'}
+   html+='</div>';
+ }
+ return html||'<span class="muted">Sem dados para exibir.</span>';
+}
+function viewBdcHistory(queryId){const q=cache.bdcQueries.find(x=>x.id===queryId);if(!q)return;modal(`<h2>Consulta BigDataCorp</h2><div class="muted">${new Date(q.queried_at).toLocaleString('pt-BR')} · ${esc(q.cnpj)}<br>Datasets: ${esc(textList(q.requested_datasets).join(', '))}</div><div style="margin-top:12px">${bdcResultHtml(q.response_raw||{})}</div><details style="margin-top:12px"><summary>Ver retorno técnico completo</summary><pre style="white-space:pre-wrap;font-size:11px">${esc(JSON.stringify(q.response_raw||{},null,2))}</pre></details>`)}
+function customBdcQuery(id,l,parent){
+ const options=[['basic_data','Dados cadastrais'],['lawsuits_distribution_data','Resumo de processos'],['processes','Processos detalhados (até 20)'],['government_debtors','Dívida ativa União/FGTS'],['ondemand_cert_labor_debt_absence_company','Dívida trabalhista/CNDT'],['partner_murabei_credit_score_company','Score Murabei'],['partner_quantum_custom_score_company','Score Quantum'],['partner_quod_credit_risk_details_company','Restrições Quod']];
+ let d=modal(`<h2>Consultar datasets BigDataCorp</h2><p class="muted">Escolha exatamente o que deseja consultar. Cada consulta ficará registrada no histórico do lead.</p>${options.map((x,i)=>`<label style="display:block;padding:7px 0"><input type="checkbox" class="ds" value="${x[0]}" ${['lawsuits_distribution_data','processes','government_debtors'].includes(x[0])?'checked':''} style="width:auto;margin-right:8px">${esc(x[1])}</label>`).join('')}<button class="btn" id="run">Consultar selecionados</button><div id="st" class="muted" style="margin-top:10px"></div><div id="res"></div>`);
+ d.querySelector('#run').onclick=async()=>{const datasets=[...d.querySelectorAll('.ds:checked')].map(x=>x.value);if(!datasets.length){d.querySelector('#st').textContent='Selecione ao menos um dataset.';return}d.querySelector('#run').disabled=true;d.querySelector('#st').textContent='Consultando BigDataCorp...';try{const {data:{session}}=await supabase.auth.getSession();const {data,error}=await supabase.functions.invoke('yepii-bigdatacorp-query',{body:{lead_id:id,cnpj:l.cnpj,datasets,user_token:session.access_token}});if(error)throw error;if(data?.error)throw new Error(data.error);d.querySelector('#st').textContent='Consulta concluída e registrada no histórico.';d.querySelector('#res').innerHTML=bdcResultHtml({results:data.results||[]});await refresh()}catch(e){d.querySelector('#st').textContent='Erro: '+(e?.message||e)}finally{d.querySelector('#run').disabled=false}};
+}
+function manualCreditForm(id,l,parent){
+ const current=creditStatus(l);
+ let d=modal(`<h2>Ajustar crédito manualmente</h2><p class="muted">O ajuste ficará registrado no histórico de eventos de crédito com usuário e data.</p>
+ <div class="field"><label>Situação do crédito</label><select id="creditDecision"><option value="approved" ${current==='approved'?'selected':''}>Aprovar crédito</option><option value="denied" ${current==='denied'?'selected':''}>Não conceder crédito (ND)</option><option value="not_analyzed" ${current==='not_analyzed'?'selected':''}>Não analisado</option></select></div>
+ <div class="field" id="amountWrap"><label>Novo limite de crédito</label><input id="amt" type="number" min="0.01" step="0.01" value="${Number(l.credit_limit||0)>0?Number(l.credit_limit):''}" placeholder="0,00"></div>
+ <div class="field"><label>Motivo/observação</label><textarea id="note" placeholder="Ex.: crédito não concedido após análise / limite aprovado manualmente"></textarea></div><button class="btn" id="save">Salvar crédito</button><div id="er" class="muted"></div>`);
+ const sync=()=>{const st=d.querySelector('#creditDecision').value;d.querySelector('#amountWrap').style.display=st==='approved'?'block':'none'};d.querySelector('#creditDecision').onchange=sync;sync();
+ d.querySelector('#save').onclick=async()=>{
+  const st=d.querySelector('#creditDecision').value,note=d.querySelector('#note').value.trim()||null;
+  let amount=st==='approved'?Number(d.querySelector('#amt').value):0;
+  if(st==='approved'&&(!Number.isFinite(amount)||amount<=0)){d.querySelector('#er').textContent='Informe um valor maior que zero para o crédito aprovado.';return}
+  d.querySelector('#save').disabled=true;d.querySelector('#er').textContent='Salvando...';
+  const {error}=await supabase.rpc('yepii_set_manual_credit',{p_lead_id:id,p_amount:amount,p_notes:note});
+  if(error){d.querySelector('#er').textContent='Erro: '+error.message;d.querySelector('#save').disabled=false;return}
+  const upd=await supabase.from('yepii_leads').update({credit_status:st,credit_limit:amount}).eq('id',id);
+  if(upd.error){d.querySelector('#er').textContent='O limite foi registrado, mas houve erro ao salvar a situação: '+upd.error.message;d.querySelector('#save').disabled=false;return}
+  d.remove();parent.remove();await refresh();leadDetail(id);
+ };
+}
+
+function deleteLead(id,l,parent){
+ if(!confirm(`Excluir o lead ${l.lead_code} · ${l.company_name}?\n\nEle sairá das listas ativas, mas o histórico de consultas, pedidos e atividades será preservado.`))return;
+ supabase.rpc('yepii_soft_delete_lead',{p_lead_id:id}).then(async({error})=>{if(error)alert('Erro ao excluir: '+error.message);else{parent.remove();await refresh();page='leads';render()}});
+}
+
+function companyTypeForm(id,l,parent){
+ let current=l.company_sector_type||'';
+ let d=modal(`<h2>Tipo de empresa</h2>
+ <p class="muted">Classifique a empresa como pública ou privada.</p>
+ <div class="field"><label>Tipo de empresa</label><select id="ct"><option value="" ${!current?'selected':''}>Não informado</option><option value="privada" ${current==='privada'?'selected':''}>Privada</option><option value="publica" ${current==='publica'?'selected':''}>Pública</option></select></div>
+ <button class="btn" id="sv">Salvar</button><div id="er" class="muted" style="margin-top:10px"></div>`);
+ d.querySelector('#sv').onclick=async()=>{
+   const value=d.querySelector('#ct').value||null;
+   const {error}=await supabase.from('yepii_leads').update({company_sector_type:value}).eq('id',id);
+   if(error){d.querySelector('#er').textContent='Erro ao salvar: '+error.message;return}
+   d.remove(); parent.remove(); await refresh(); leadDetail(id);
+ };
+}
+
+async function refreshRegistration(id,l,parent){
+ if(!l.cnpj){alert('Este lead não possui CNPJ cadastrado.');return}
+ let d=modal(`<h2>Atualizar dados cadastrais</h2><p>O CRM consultará novamente os dados cadastrais e o endereço da empresa na BigDataCorp.</p><button class="btn" id="go">Atualizar agora</button><div id="st" class="muted" style="margin-top:10px"></div>`);
+ d.querySelector('#go').onclick=async()=>{
+   d.querySelector('#go').disabled=true; d.querySelector('#st').textContent='Consultando BigDataCorp...';
+   try{
+     const {data:{session}}=await supabase.auth.getSession();
+     if(!session?.access_token) throw new Error('Sua sessão expirou.');
+     const {data,error}=await supabase.functions.invoke('yepii-bigdatacorp-create-lead',{body:{cnpj:l.cnpj,user_token:session.access_token,refresh:true}});
+     if(error) throw error;
+     if(data?.error) throw new Error(data.error);
+     d.querySelector('#st').textContent='Cadastro e endereço atualizados com sucesso.';
+     await refresh();
+     setTimeout(()=>{d.remove();parent.remove();leadDetail(id)},500);
+   }catch(e){d.querySelector('#st').textContent='Erro: '+(e?.message||e)}
+   finally{d.querySelector('#go').disabled=false}
+ };
+}
+
+async function bigDataCorpQuery(id,l,parent){
+ if(!l.cnpj){alert('Este lead não possui CNPJ cadastrado.');return}
+ let d=modal(`<h2>Consultar BigDataCorp</h2><p>Será consultado o CNPJ <b>${esc(l.cnpj)}</b>.</p><p class="muted">Será feita a análise automática de crédito com os dados contratados da BigDataCorp e as regras de crédito da Yepii.</p><button class="btn" id="go">Consultar agora</button><div id="status" class="muted" style="margin-top:10px"></div><div id="result" style="margin-top:12px"></div>`);
+ d.querySelector('#go').onclick=async()=>{
+   d.querySelector('#go').disabled=true;
+   d.querySelector('#status').textContent='Consultando BigDataCorp...';
+   try{
+     const {data:{session}}=await supabase.auth.getSession();
+     if(!session?.access_token) throw new Error('Sua sessão expirou. Saia e entre novamente no CRM.');
+     const {data,error}=await supabase.functions.invoke('yepii-bigdatacorp-credit',{
+       body:{lead_id:id,cnpj:l.cnpj,user_token:session.access_token}
+     });
+     if(error) throw error;
+     d.querySelector('#status').textContent=data?.ok?'Consulta concluída com sucesso.':'Consulta concluída, mas um ou mais datasets retornaram erro.';
+     const p=data?.parsed||{};
+     const cls=p.decision==='aprovado'?'good':p.decision==='reprovado'?'bad':'warn';
+     let errors=(data?.results||[]).filter(x=>!x.ok).map(x=>`<div class="alert"><b>${esc(x.datasets)}</b> · HTTP ${esc(x.status)}</div>`).join('');
+     d.querySelector('#result').innerHTML=`
+       <h3>Resultado final da análise</h3>
+       <div class="grid">
+         <div class="card kpi"><span class="muted">Murabei</span><b>${p.murabei_score!=null?Math.round(Number(p.murabei_score)):'-'}</b></div>
+         <div class="card kpi"><span class="muted">Quantum</span><b>${p.quantum_score!=null?Math.round(Number(p.quantum_score)):'-'}</b></div>
+         <div class="card kpi"><span class="muted">Média</span><b>${p.score_avg??'-'}</b></div>
+         <div class="card kpi"><span class="muted">Receita</span><b style="font-size:18px">${esc(p.receita_status||'-')}</b></div>
+       </div>
+       <div class="card" style="margin-top:10px">
+         <div><b>Empresa:</b> ${esc(p.official_name||l.company_name||'-')}</div>
+         <div><b>Idade:</b> ${esc(p.company_age_years??'-')} anos</div>
+         <div><b>MEI:</b> ${p.is_mei?'Sim':'Não'}</div>
+         <div><b>Ações judiciais:</b> ${p.has_judicial_action?'Sim ('+esc(p.total_lawsuits||0)+')':'Não'}</div>
+         <div><b>Dívida trabalhista:</b> ${p.has_labor_debt===true?'Sim':p.has_labor_debt===false?'Não':'Não identificado'}</div>
+         <div><b>Dívida ativa União/FGTS:</b> ${p.has_government_debt===true?'Sim':p.has_government_debt===false?'Não':'Não identificado'}</div>
+         <div><b>Restrições Quod:</b> ${p.has_quod_restrictions===true?'Sim'+(p.quod_negative_count!=null?' ('+esc(p.quod_negative_count)+')':''):p.has_quod_restrictions===false?'Não':'Não identificado'}</div><div><b>Protestos / Cartório:</b> <span class="badge warn">PENDENTE DE VERIFICAÇÃO MANUAL</span></div>
+       </div>
+       <div class="card" style="margin-top:10px">
+         <div><span class="badge ${cls}">${esc((p.decision||'revisar').toUpperCase())}</span></div>
+         <div style="margin-top:8px"><b>Motivos:</b> ${esc((p.reasons||[]).join('; ')||'Nenhum impeditivo identificado.')}</div>
+         <div style="margin-top:8px"><b>Limite sugerido:</b> ${p.suggested_limit!=null?money(p.suggested_limit):'Sem liberação automática'}</div>
+       </div>
+       ${p.missing_checks?.length?`<div class="alert" style="margin-top:10px"><b>Verificação incompleta</b><div>${esc(p.missing_checks.join(', '))}. Por segurança, o resultado permanece REVISAR.</div></div>`:''}
+       ${errors}`;
+   }catch(e){
+     d.querySelector('#status').textContent='Erro na consulta: '+(e?.message||e);
+   }finally{
+     d.querySelector('#go').disabled=false;
+   }
+ };
+}
+
+function contactForm(id,parent,contact=null){
+ const edit=Boolean(contact?.id);
+ let d=modal(`<h2>${edit?'Editar contato':'Adicionar contato'}</h2><div class="two">
+ <div class="field"><label>Nome</label><input id="nm" value="${esc(contact?.full_name||'')}"></div><div class="field"><label>Cargo</label><input id="jt" value="${esc(contact?.job_title||'')}"></div>
+ <div class="field"><label>Telefone</label><input id="ph" value="${esc(contact?.phone||'')}"></div><div class="field"><label>WhatsApp</label><input id="wa" value="${esc(contact?.whatsapp||'')}"></div>
+ <div class="field"><label>E-mail</label><input id="em" type="email" value="${esc(contact?.email||'')}"></div><div class="field"><label>LinkedIn</label><input id="li" value="${esc(contact?.linkedin||'')}"></div>
+ <div class="field"><label>Contato principal?</label><select id="pr"><option value="false" ${!contact?.is_primary?'selected':''}>Não</option><option value="true" ${contact?.is_primary?'selected':''}>Sim</option></select></div></div>
+ <div class="field"><label>Observações</label><textarea id="no">${esc(contact?.notes||'')}</textarea></div><button class="btn" id="sv">${edit?'Salvar alterações':'Salvar contato'}</button><div id="er" class="muted"></div>`);
+ d.querySelector('#sv').onclick=async()=>{
+   const fullName=d.querySelector('#nm').value.trim();
+   if(!fullName){d.querySelector('#er').textContent='Informe o nome do contato.';return}
+   d.querySelector('#sv').disabled=true;d.querySelector('#er').textContent=edit?'Salvando alterações...':'Salvando contato...';
+   let row={lead_id:id,full_name:fullName,job_title:d.querySelector('#jt').value.trim()||null,phone:d.querySelector('#ph').value.trim()||null,whatsapp:d.querySelector('#wa').value.trim()||null,email:d.querySelector('#em').value.trim()||null,linkedin:d.querySelector('#li').value.trim()||null,is_primary:d.querySelector('#pr').value==='true',notes:d.querySelector('#no').value.trim()||null};
+   try{
+     if(row.is_primary){
+       const {error:unpinErr}=await supabase.from('yepii_contacts').update({is_primary:false}).eq('lead_id',id);
+       if(unpinErr)throw unpinErr;
+     }
+     let result;
+     if(edit){result=await supabase.from('yepii_contacts').update(row).eq('id',contact.id)}
+     else{row.created_by=me.id;result=await supabase.from('yepii_contacts').insert(row)}
+     if(result.error)throw result.error;
+     d.remove();parent.remove();await refresh();leadDetail(id);
+   }catch(e){d.querySelector('#er').textContent='Erro: '+(e?.message||e);d.querySelector('#sv').disabled=false}
+ };
+}
+
+function taskForm(id,parent){
+ let opts=cache.team.filter(x=>x.active).map(x=>`<option value="${x.user_id}" ${x.user_id===me.id?'selected':''}>${esc(x.full_name||x.email)}</option>`).join('');
+ let dt=new Date();dt.setDate(dt.getDate()+1);dt.setHours(10,0,0,0);let local=new Date(dt.getTime()-dt.getTimezoneOffset()*60000).toISOString().slice(0,16);
+ let d=modal(`<h2>Próxima ação</h2><div class="two">
+ <div class="field"><label>Ação</label><select id="tp"><option>ligar</option><option>whatsapp</option><option>email</option><option>linkedin</option><option>cotacao</option><option>followup</option><option>cobranca</option><option>recompra</option><option>outro</option></select></div>
+ <div class="field"><label>Data e hora</label><input id="due" type="datetime-local" value="${local}"></div>
+ <div class="field"><label>Prioridade</label><select id="pri"><option>baixa</option><option selected>normal</option><option>alta</option><option>urgente</option></select></div>
+ <div class="field"><label>Responsável</label><select id="ass">${opts}</select></div></div>
+ <div class="field"><label>Observações</label><textarea id="no"></textarea></div><button class="btn" id="sv">Salvar próxima ação</button><div id="er" class="muted"></div>`);
+ d.querySelector('#sv').onclick=async()=>{let due=d.querySelector('#due').value;let row={lead_id:id,assigned_to:d.querySelector('#ass').value||null,task_type:d.querySelector('#tp').value,due_at:due?new Date(due).toISOString():null,priority:d.querySelector('#pri').value,notes:d.querySelector('#no').value.trim()||null,created_by:me.id};let {error}=await supabase.from('yepii_tasks').insert(row);if(error)d.querySelector('#er').textContent=error.message;else{d.remove();parent.remove();await refresh();leadDetail(id)}};
+}
+
+function activity(id,parent,edit=null){
+ let contacts=cache.contacts.filter(x=>String(x.lead_id)===String(id));
+ if(!contacts.length){alert('Cadastre pelo menos um contato da empresa antes de registrar uma interação.');return}
+ let currentStatus=edit?.status||'pendente';
+ let nextLocal='';if(edit?.next_action_at){let dt=new Date(edit.next_action_at);nextLocal=new Date(dt.getTime()-dt.getTimezoneOffset()*60000).toISOString().slice(0,16)}
+ let d=modal(`<h2>${edit?'Editar interação':'Registrar interação'}</h2><div class="two">
+ <div class="field"><label>Contato *</label><select id="ct"><option value="">Selecione...</option>${contacts.map(c=>`<option value="${c.id}" ${String(edit?.contact_id||'')===String(c.id)?'selected':''}>${esc(c.full_name)}${c.job_title?' · '+esc(c.job_title):''}</option>`).join('')}</select></div>
+ <div class="field"><label>Status *</label><select id="st">${['pendente','realizada','sem_resposta','aguardando_retorno','retorno_agendado','convertida','encerrada'].map(s=>`<option value="${s}" ${currentStatus===s?'selected':''}>${interactionStatusLabel(s)}</option>`).join('')}</select></div>
+ <div class="field"><label>Canal</label><select id="ch">${['whatsapp','telefone','email','linkedin','outro'].map(v=>`<option ${edit?.channel===v?'selected':''}>${v}</option>`).join('')}</select></div>
+ <div class="field"><label>Resultado</label><select id="oc">${['sem_resposta','respondeu','interessado','cotacao','followup','perdido','outro'].map(v=>`<option ${edit?.outcome===v?'selected':''}>${v}</option>`).join('')}</select></div></div>
+ <div class="field"><label>Resultado / resumo da interação</label><input id="rs" value="${esc(edit?.result||'')}" placeholder="Ex.: Comprador pediu cotação para sexta-feira"></div>
+ <div class="field"><label>Observações</label><textarea id="no">${esc(edit?.notes||'')}</textarea></div>
+ <div class="two"><div class="field"><label>Próximo passo</label><input id="nx" value="${esc(edit?.next_action||'')}" placeholder="Ex.: Retornar com preço final"></div><div class="field"><label>Data/hora do próximo retorno</label><input id="na" type="datetime-local" value="${nextLocal}"></div></div>
+ <div class="muted" style="margin:6px 0 10px">Interações em Pendente, Sem resposta, Aguardando retorno ou Retorno agendado serão cobradas quando ficarem sem atualização.</div>
+ <button class="btn" id="sv">${edit?'Salvar alterações':'Salvar interação'}</button><div id="er" class="muted" style="margin-top:8px"></div>${edit&&Array.isArray(edit.change_history)&&edit.change_history.length?`<details style="margin-top:12px"><summary>Histórico de alterações (${edit.change_history.length})</summary>${interactionHistoryHtml(edit)}</details>`:''}`);
+ d.querySelector('#sv').onclick=async()=>{let contactId=d.querySelector('#ct').value;if(!contactId){d.querySelector('#er').textContent='Selecione o contato desta interação.';return}let next=d.querySelector('#na').value;let args={p_activity_id:edit?.id||null,p_lead_id:id,p_contact_id:contactId,p_channel:d.querySelector('#ch').value,p_outcome:d.querySelector('#oc').value,p_status:d.querySelector('#st').value,p_result:d.querySelector('#rs').value.trim()||null,p_notes:d.querySelector('#no').value.trim()||null,p_next_action:d.querySelector('#nx').value.trim()||null,p_next_action_at:next?new Date(next).toISOString():null};d.querySelector('#sv').disabled=true;let{error}=await supabase.rpc('yepii_save_activity',args);if(error){d.querySelector('#er').textContent=error.message;d.querySelector('#sv').disabled=false}else{d.remove();let leadModal=parent?.classList?.contains('modal')?parent:null;if(leadModal)leadModal.remove();await refresh();leadDetail(id)}};
+}
+
+function analysis(id,l,parent){
+ let d=modal(`<h2>Análise de crédito</h2><div class="two">
+ <div class="field"><label>Score 1</label><input id="s1" type="number" value="${l.score_1||''}"></div><div class="field"><label>Score 2</label><input id="s2" type="number" value="${l.score_2||''}"></div>
+ <div class="field"><label>É MEI?</label><select id="mei"><option value="false">Não</option><option value="true">Sim</option></select></div>
+ <div class="field"><label>Dados Receita conferem?</label><select id="match"><option value="true">Sim</option><option value="false">Não</option></select></div>
+ <div class="field"><label>Situação Receita</label><select id="rs"><option>Ativa</option><option>Inapta</option></select></div>
+ <div class="field"><label>Recuperação/liquidação/massa falida?</label><select id="rec"><option value="false">Não</option><option value="true">Sim</option></select></div>
+ <div class="field"><label>Menos de 3 anos?</label><select id="age"><option value="false">Não</option><option value="true">Sim</option></select></div>
+ <div class="field"><label>Protestos?</label><select id="prot"><option value="false">Não</option><option value="true">Sim</option></select></div>
+ <div class="field"><label>Ação judicial?</label><select id="jud"><option value="false">Não</option><option value="true">Sim</option></select></div>
+ <div class="field"><label>Dívida trabalhista?</label><select id="lab"><option value="false">Não</option><option value="true">Sim</option></select></div>
+ <div class="field"><label>Outras dívidas públicas?</label><select id="pub"><option value="false">Não</option><option value="true">Sim</option></select></div></div>
+ <button class="btn" id="sv">Analisar</button><div id="er" class="muted"></div>`);
+ d.querySelector('#sv').onclick=async()=>{
+  let row={lead_id:id,score_1:Number(d.querySelector('#s1').value)||null,score_2:Number(d.querySelector('#s2').value)||null,is_mei:d.querySelector('#mei').value==='true',receita_matches:d.querySelector('#match').value==='true',receita_status:d.querySelector('#rs').value,in_judicial_recovery_or_liquidation:d.querySelector('#rec').value==='true',company_age_lt_3y:d.querySelector('#age').value==='true',has_protests:d.querySelector('#prot').value==='true',has_judicial_action:d.querySelector('#jud').value==='true',has_labor_debt:d.querySelector('#lab').value==='true',has_other_public_debts:d.querySelector('#pub').value==='true',created_by:me.id};
+  let{error}=await supabase.from('yepii_credit_analyses').insert(row);if(error)d.querySelector('#er').textContent=error.message;else{d.remove();parent.remove();await refresh();leadDetail(id)}
+ };
+}
+
+function calcOrderFinance(products,shipping,commissionRate,saasRate,cardRate,refund){
+ const total=Number(products||0)+Number(shipping||0);
+ const commission=total*Number(commissionRate||0)/100;
+ const saas=total*Number(saasRate||0)/100;
+ const card=total*Number(cardRate||0)/100;
+ const net=Math.max(0,total-commission-saas-card-Number(refund||0));
+ return {total,commission,saas,card,net};
+}
+function suggestPayoutDate(orderDate,paymentMethod){
+ if(!orderDate)return '';
+ let d=new Date(orderDate+'T12:00:00');
+ d.setDate(d.getDate()+(paymentMethod==='cartao corporativo'?32:9));
+ return d.toISOString().slice(0,10);
+}
+function orderForm(id=null,parent=null,existing=null){
+ const isEdit=!!existing;
+ const fixedLead=id||existing?.lead_id||null;
+ const activeLeads=cache.leads.filter(x=>!x.deleted_at);
+ const existingItems=isEdit?cache.orderItems.filter(x=>x.order_id===existing.id):[];
+ const leadField=fixedLead
+   ? `<div class="field"><label>Comprador</label><input value="${esc((cache.leads.find(x=>x.id===fixedLead)?.lead_code||'')+' · '+(cache.leads.find(x=>x.id===fixedLead)?.company_name||''))}" disabled></div>`
+   : `<div class="field"><label>Comprador</label><select id="lead">${activeLeads.map(l=>`<option value="${l.id}" ${existing?.lead_id===l.id?'selected':''}>${esc(l.lead_code||'')} · ${esc(l.company_name||'')}</option>`).join('')}</select></div>`;
+ const dateValue=(existing?.order_date||new Date().toISOString().slice(0,10));
+ const paidValue=existing?.paid_at?new Date(existing.paid_at).toISOString().slice(0,16):'';
+ let d=modal(`<h2>${isEdit?'Editar pedido':'Novo pedido'}</h2>
+ <div class="two">
+ ${leadField}
+ <div class="field"><label>Número do pedido</label><input id="on" value="${esc(existing?.order_number||'Gerado automaticamente')}" ${isEdit?'':'disabled'}></div>
+ <div class="field"><label>Data do pedido</label><input id="od" type="date" value="${dateValue}"></div>
+ <div class="field"><label>Fornecedor</label><input id="sup" value="${esc(existing?.supplier_name||'')}" placeholder="Nome/Razão social"></div>
+ <div class="field"><label>CNPJ fornecedor</label><input id="supcnpj" value="${esc(existing?.supplier_cnpj||'')}" placeholder="00.000.000/0000-00"></div>
+ <div class="field"><label>Forma de pagamento</label><select id="p">${['boleto faturado','cartao corporativo','pix','boleto a vista','outro'].map(x=>`<option value="${x}" ${(existing?.payment_method||'boleto faturado')===x?'selected':''}>${x}</option>`).join('')}</select></div>
+ <div class="field"><label>Tipo</label><select id="r"><option value="false" ${!existing?.is_repurchase?'selected':''}>1ª compra</option><option value="true" ${existing?.is_repurchase?'selected':''}>Recompra</option></select></div>
+ <div class="field"><label>Status do pedido</label><select id="st">${['aberto','pago','atrasado','inadimplente','cancelado'].map(x=>`<option value="${x}" ${(existing?.payment_status||'aberto')===x?'selected':''}>${x}</option>`).join('')}</select></div>
+ <div class="field"><label>Crédito usado</label><input id="c" type="number" min="0" step="0.01" value="${existing?.credit_used??0}"></div>
+ <div class="field"><label>Vencimento</label><input id="due" type="date" value="${existing?.due_date||''}"></div>
+ <div class="field"><label>Pago em</label><input id="paid" type="datetime-local" value="${paidValue}"></div>
+ </div>
+ <div id="creditOrderSummary" class="card" style="margin:10px 0;background:#fffaf5"></div>
+ ${role==='administrador'?'<label style="display:flex;gap:8px;align-items:center;margin:8px 0"><input id="creditOverride" type="checkbox" '+(existing?.credit_override?'checked':'')+'> Autorizar excepcionalmente compra acima do crédito disponível</label><div class="field"><label>Motivo da liberação excepcional</label><input id="creditOverrideReason" value="'+esc(existing?.credit_override_reason||'')+'" placeholder="Obrigatório quando houver liberação excepcional"></div>':''}
+ <div class="sectionTitle" style="margin-top:14px"><h3 style="margin:0">Itens do pedido</h3><button class="btn alt" id="addItem">+ Item</button></div>
+ <div id="items"></div>
+ <div class="two" style="margin-top:12px">
+  <div class="field"><label>Frete</label><input id="ship" type="number" min="0" step="0.01" value="${existing?.shipping_value??0}"></div>
+  <div class="field"><label>Valor total</label><input id="v" type="number" step="0.01" value="${existing?.order_value??0}" disabled></div>
+  <div class="field"><label>Comissão Yepii (%)</label><input id="cr" type="number" min="0" step="0.01" value="${existing?.commission_rate??15}"></div>
+  <div class="field"><label>Comissão Yepii</label><input id="cv" disabled></div>
+  <div class="field"><label>SaaS (%)</label><input id="sr" type="number" min="0" step="0.01" value="${existing?.saas_rate??1}"></div>
+  <div class="field"><label>Taxa SaaS</label><input id="sv" disabled></div>
+  <div class="field"><label>Taxa cartão (%)</label><input id="fr" type="number" min="0" step="0.01" value="${existing?.card_fee_rate??((existing?.payment_method==='cartao corporativo')?4.5:0)}"></div>
+  <div class="field"><label>Custo cartão</label><input id="fv" disabled></div>
+  <div class="field"><label>Valor de estorno/devolução</label><input id="refund" type="number" min="0" step="0.01" value="${existing?.refund_value??0}"></div>
+  <div class="field"><label>Líquido estimado fornecedor</label><input id="net" disabled></div>
+  <div class="field"><label>Previsão de repasse</label><input id="pexp" type="date" value="${existing?.payout_expected_at?.slice(0,10)||suggestPayoutDate(dateValue,existing?.payment_method||'boleto faturado')}"></div>
+  <div class="field"><label>Status do repasse</label><select id="pst">${['pendente','programado','pago','retido','cancelado'].map(x=>`<option value="${x}" ${(existing?.payout_status||'pendente')===x?'selected':''}>${x}</option>`).join('')}</select></div>
+  <div class="field"><label>Repasse realizado em</label><input id="pat" type="date" value="${existing?.payout_at?.slice(0,10)||''}"></div>
+  <div class="field"><label>Número da NF</label><input id="nf" value="${esc(existing?.invoice_number||'')}"></div>
+ </div>
+ <div class="field"><label>Observações</label><textarea id="nt" placeholder="Referência interna, condição especial, observações...">${esc(existing?.notes||'')}</textarea></div>
+ <div class="row"><button class="btn" id="saveOrder">${isEdit?'Salvar alterações':'Salvar pedido'}</button>${isEdit&&existing.payment_status!=='cancelado'?'<button class="btn alt" id="cancelOrder" style="border-color:#f2b8b8;color:#8d1b1b">Cancelar pedido</button>':''}</div>
+ <div id="er" class="muted" style="margin-top:8px"></div>`);
+ const itemsBox=d.querySelector('#items');
+ function addItemRow(item={}){
+  const row=document.createElement('div'); row.className='card order-item'; row.style.margin='6px 0';
+  row.innerHTML=`<div class="two"><div class="field"><label>Descrição</label><input class="idesc" value="${esc(item.description||'')}"></div><div class="field"><label>SKU/Referência</label><input class="isku" value="${esc(item.sku||'')}"></div><div class="field"><label>Quantidade</label><input class="iq" type="number" min="0.001" step="0.001" value="${item.quantity??1}"></div><div class="field"><label>Valor unitário</label><input class="ip" type="number" min="0" step="0.01" value="${item.unit_price??0}"></div></div><div class="row"><b class="isub">R$ 0,00</b><button class="btn alt irm" type="button">Remover</button></div>`;
+  itemsBox.appendChild(row); row.querySelector('.irm').onclick=()=>{row.remove();recalc()}; row.querySelectorAll('input').forEach(x=>x.oninput=recalc); recalc();
+ }
+ function itemRows(){return [...itemsBox.querySelectorAll('.order-item')].map(r=>({description:r.querySelector('.idesc').value.trim(),sku:r.querySelector('.isku').value.trim()||null,quantity:Number(r.querySelector('.iq').value)||0,unit_price:Number(r.querySelector('.ip').value)||0,_row:r}))}
+ function recalc(){
+  let products=0; itemRows().forEach(i=>{const sub=i.quantity*i.unit_price;products+=sub;i._row.querySelector('.isub').textContent=money(sub)});
+  const f=calcOrderFinance(products,Number(d.querySelector('#ship').value)||0,Number(d.querySelector('#cr').value)||0,Number(d.querySelector('#sr').value)||0,Number(d.querySelector('#fr').value)||0,Number(d.querySelector('#refund').value)||0);
+  d.querySelector('#v').value=f.total.toFixed(2);d.querySelector('#cv').value=money(f.commission);d.querySelector('#sv').value=money(f.saas);d.querySelector('#fv').value=money(f.card);d.querySelector('#net').value=money(f.net);
+  const leadId=fixedLead||d.querySelector('#lead')?.value; const summary=creditSummaryForLead(leadId,existing?.id); const uses=paymentUsesYepiiCredit(d.querySelector('#p').value); const activeStatus=['aberto','atrasado','inadimplente'].includes(d.querySelector('#st').value);
+  if(uses&&activeStatus)d.querySelector('#c').value=f.total.toFixed(2); else if(!uses)d.querySelector('#c').value='0.00';
+  const requested=uses&&activeStatus?f.total:0,excess=Math.max(0,requested-summary.available); const box=d.querySelector('#creditOrderSummary');
+  if(box)box.innerHTML=`<b>Crédito do cliente</b><div style="margin-top:6px">Limite: <b>${money(summary.limit)}</b> · Em uso: <b>${money(summary.used)}</b> · Disponível: <b>${money(summary.available)}</b></div>${uses?(excess>0?`<div class="alert" style="margin-top:8px">Este pedido excede o crédito disponível em <b>${money(excess)}</b>.</div>`:`<div class="muted" style="margin-top:6px">Após este pedido: <b>${money(Math.max(0,summary.available-requested))}</b> disponíveis.</div>`):'<div class="muted" style="margin-top:6px">Esta forma de pagamento não consome o limite Yepii.</div>'}`;
+ }
+ (existingItems.length?existingItems:[{}]).forEach(addItemRow);
+ d.querySelector('#addItem').onclick=()=>addItemRow();
+ ['ship','cr','sr','fr','refund'].forEach(id=>d.querySelector('#'+id).oninput=recalc);
+ d.querySelector('#c').readOnly=true; if(d.querySelector('#lead'))d.querySelector('#lead').onchange=recalc; d.querySelector('#st').onchange=recalc;
+ d.querySelector('#p').onchange=()=>{if(d.querySelector('#p').value==='cartao corporativo'&&Number(d.querySelector('#fr').value)===0)d.querySelector('#fr').value='4.5';if(d.querySelector('#p').value!=='cartao corporativo'&&Number(d.querySelector('#fr').value)===4.5)d.querySelector('#fr').value='0';d.querySelector('#pexp').value=suggestPayoutDate(d.querySelector('#od').value,d.querySelector('#p').value);recalc()};
+ d.querySelector('#od').onchange=()=>{d.querySelector('#pexp').value=suggestPayoutDate(d.querySelector('#od').value,d.querySelector('#p').value)};
+ d.querySelector('#saveOrder').onclick=async()=>{
+   const leadId=fixedLead||d.querySelector('#lead')?.value; const items=itemRows().filter(i=>i.description||i.quantity||i.unit_price);
+   if(!leadId){d.querySelector('#er').textContent='Selecione o comprador.';return}
+   if(!items.length||items.some(i=>!i.description||i.quantity<=0)){d.querySelector('#er').textContent='Inclua ao menos um item com descrição e quantidade válida.';return}
+   const products=items.reduce((s,i)=>s+i.quantity*i.unit_price,0), shipping=Number(d.querySelector('#ship').value)||0;
+   const f=calcOrderFinance(products,shipping,Number(d.querySelector('#cr').value)||0,Number(d.querySelector('#sr').value)||0,Number(d.querySelector('#fr').value)||0,Number(d.querySelector('#refund').value)||0);
+   const paidLocal=d.querySelector('#paid').value;
+   const summary=creditSummaryForLead(leadId,existing?.id), usesCredit=paymentUsesYepiiCredit(d.querySelector('#p').value), activeCreditStatus=['aberto','atrasado','inadimplente'].includes(d.querySelector('#st').value), requestedCredit=(usesCredit&&activeCreditStatus)?f.total:0, override=role==='administrador'&&!!d.querySelector('#creditOverride')?.checked;
+   if(requestedCredit>summary.available&&!override){d.querySelector('#er').textContent=`Crédito insuficiente. Disponível: ${money(summary.available)} · Pedido: ${money(requestedCredit)}.`;return}
+   if(override&&!d.querySelector('#creditOverrideReason')?.value.trim()){d.querySelector('#er').textContent='Informe o motivo da liberação excepcional de crédito.';return}
+   const row={lead_id:leadId,order_date:d.querySelector('#od').value||dateValue,supplier_name:d.querySelector('#sup').value.trim()||null,supplier_cnpj:d.querySelector('#supcnpj').value.replace(/\D/g,'')||null,products_total:products,shipping_value:shipping,order_value:f.total,credit_used:Number(d.querySelector('#c').value)||0,payment_method:d.querySelector('#p').value,is_repurchase:d.querySelector('#r').value==='true',payment_status:d.querySelector('#st').value,due_date:d.querySelector('#due').value||null,paid_at:paidLocal?new Date(paidLocal).toISOString():null,commission_rate:Number(d.querySelector('#cr').value)||0,commission_value:f.commission,saas_rate:Number(d.querySelector('#sr').value)||0,saas_value:f.saas,card_fee_rate:Number(d.querySelector('#fr').value)||0,card_fee_value:f.card,net_supplier_value:f.net,payout_expected_at:d.querySelector('#pexp').value||null,payout_status:d.querySelector('#pst').value,payout_at:d.querySelector('#pat').value||null,refund_value:Number(d.querySelector('#refund').value)||0,invoice_number:d.querySelector('#nf').value.trim()||null,notes:d.querySelector('#nt').value||null,credit_override:role==='administrador'&&!!d.querySelector('#creditOverride')?.checked,credit_override_reason:role==='administrador'?(d.querySelector('#creditOverrideReason')?.value.trim()||null):null};
+   let orderId=existing?.id;
+   let res=isEdit?await supabase.from('yepii_orders').update(row).eq('id',orderId).select('id').single():await supabase.from('yepii_orders').insert({...row,created_by:me.id}).select('id').single();
+   if(res.error){d.querySelector('#er').textContent=String(res.error.message||'').includes('credito_insuficiente')?'Crédito insuficiente para este pedido. Atualize o lead e confira o saldo disponível.':res.error.message;return} orderId=res.data?.id||orderId;
+   if(isEdit){let del=await supabase.from('yepii_order_items').delete().eq('order_id',orderId);if(del.error){d.querySelector('#er').textContent='Pedido salvo, mas houve erro ao atualizar itens: '+del.error.message;return}}
+   let ins=await supabase.from('yepii_order_items').insert(items.map(i=>({order_id:orderId,description:i.description,sku:i.sku,quantity:i.quantity,unit_price:i.unit_price,created_by:me.id})));
+   if(ins.error){d.querySelector('#er').textContent='Pedido salvo, mas houve erro nos itens: '+ins.error.message;return}
+   d.remove();if(parent&&parent.remove)parent.remove();await refresh();if(fixedLead&&parent)leadDetail(fixedLead);else orders();
+ };
+ if(d.querySelector('#cancelOrder'))d.querySelector('#cancelOrder').onclick=async()=>{
+   if(!confirm('Cancelar este pedido? Ele permanecerá no histórico e não será apagado.'))return;
+   const note=(existing.notes?existing.notes+'\n':'')+'Cancelado em '+new Date().toLocaleString('pt-BR')+' por '+(me.email||'usuário');
+   const {error}=await supabase.from('yepii_orders').update({payment_status:'cancelado',payout_status:'cancelado',notes:note}).eq('id',existing.id);
+   if(error){d.querySelector('#er').textContent=error.message;return}d.remove();if(parent&&parent.remove)parent.remove();await refresh();if(fixedLead&&parent)leadDetail(fixedLead);else orders();
+ };
+ recalc();
+}
+
+async function openOrderDocument(doc){
+ const {data,error}=await supabase.storage.from('yepii-order-documents').createSignedUrl(doc.storage_path,120);
+ if(error){alert('Não foi possível abrir o documento: '+error.message);return} window.open(data.signedUrl,'_blank');
+}
+function orderDetail(order){
+ const l=cache.leads.find(x=>x.id===order.lead_id),items=cache.orderItems.filter(x=>x.order_id===order.id),docs=cache.orderDocuments.filter(x=>x.order_id===order.id),hist=cache.orderHistory.filter(x=>x.order_id===order.id);
+ let d=modal(`<div class="sectionTitle"><div><h2>${esc(order.order_number||'Pedido')}</h2><div class="muted">${esc(l?.lead_code||'')} · ${esc(l?.company_name||'')}</div></div><span class="badge ${order.payment_status==='pago'?'good':order.payment_status==='cancelado'?'bad':'warn'}">${esc(order.payment_status||'')}</span></div>
+ <div class="grid"><div class="card kpi"><span class="muted">Total</span><b>${money(order.order_value)}</b></div><div class="card kpi"><span class="muted">Comissão Yepii</span><b>${money(order.commission_value)}</b></div><div class="card kpi"><span class="muted">Líquido fornecedor</span><b>${money(order.net_supplier_value)}</b></div><div class="card kpi"><span class="muted">Repasse</span><b style="font-size:18px">${esc(order.payout_status||'pendente')}</b></div></div>
+ <div class="card" style="margin-top:10px"><b>Fornecedor:</b> ${esc(order.supplier_name||'-')} ${order.supplier_cnpj?' · '+esc(order.supplier_cnpj):''}<br><b>Pagamento:</b> ${esc(order.payment_method||'-')} · <b>Vencimento:</b> ${fmt(order.due_date)}<br><b>Previsão repasse:</b> ${fmt(order.payout_expected_at)} · <b>Repasse realizado:</b> ${fmt(order.payout_at)}${order.invoice_number?'<br><b>NF:</b> '+esc(order.invoice_number):''}</div>
+ <h3>Itens</h3><div class="card scroll"><table class="table"><thead><tr><th>Descrição</th><th>SKU</th><th>Qtd.</th><th>Unit.</th><th>Subtotal</th></tr></thead><tbody>${items.map(i=>`<tr><td>${esc(i.description)}</td><td>${esc(i.sku||'')}</td><td>${i.quantity}</td><td>${money(i.unit_price)}</td><td>${money(i.subtotal??i.quantity*i.unit_price)}</td></tr>`).join('')}</tbody></table></div>
+ <h3>Documentos</h3><div class="row"><input id="docFile" type="file" style="max-width:420px"><button class="btn" id="upDoc">Enviar documento</button></div><div id="docMsg" class="muted"></div>${docs.length?docs.map(x=>`<div class="card" style="margin:6px 0"><button class="btn alt doc-open" data-doc="${x.id}">Abrir</button> <b>${esc(x.file_name)}</b> <span class="muted">${new Date(x.created_at).toLocaleString('pt-BR')}</span></div>`).join(''):'<div class="muted" style="margin-top:6px">Nenhum documento anexado.</div>'}
+ <h3>Histórico de alterações</h3>${hist.length?hist.slice(0,30).map(h=>`<div class="card" style="margin:6px 0"><b>${h.action==='insert'?'Criado':'Alterado'}</b> · ${new Date(h.created_at).toLocaleString('pt-BR')} · ${esc(userName(h.changed_by))}</div>`).join(''):'<span class="muted">Sem histórico.</span>'}`);
+ d.querySelectorAll('.doc-open').forEach(b=>b.onclick=()=>openOrderDocument(docs.find(x=>x.id===b.dataset.doc)));
+ d.querySelector('#upDoc').onclick=async()=>{const file=d.querySelector('#docFile').files?.[0];if(!file){d.querySelector('#docMsg').textContent='Selecione um arquivo.';return}const safe=file.name.replace(/[^a-zA-Z0-9._-]/g,'_'),path=`${order.id}/${crypto.randomUUID()}-${safe}`;d.querySelector('#docMsg').textContent='Enviando...';const up=await supabase.storage.from('yepii-order-documents').upload(path,file,{upsert:false});if(up.error){d.querySelector('#docMsg').textContent=up.error.message;return}const ins=await supabase.from('yepii_order_documents').insert({order_id:order.id,file_name:file.name,storage_path:path,mime_type:file.type||null,size_bytes:file.size,uploaded_by:me.id});if(ins.error){d.querySelector('#docMsg').textContent='Arquivo enviado, mas falhou o registro: '+ins.error.message;return}d.remove();await refresh();orderDetail(cache.orders.find(x=>x.id===order.id))};
+}
+
+function orders(){
+ const q=(window._orderQ||'').toLowerCase(),st=window._orderStatus||'',from=window._orderFrom||'',to=window._orderTo||'';
+ const filtered=cache.orders.filter(x=>{const l=cache.leads.find(z=>z.id===x.lead_id);return (!q||[x.order_number,x.supplier_name,x.supplier_cnpj,l?.lead_code,l?.company_name].some(v=>String(v||'').toLowerCase().includes(q)))&&(!st||x.payment_status===st)&&(!from||x.order_date>=from)&&(!to||x.order_date<=to)});
+ const valid=filtered.filter(x=>x.payment_status!=='cancelado'),gmv=valid.reduce((s,x)=>s+Number(x.order_value||0),0),commission=valid.reduce((s,x)=>s+Number(x.commission_value||0),0),net=valid.reduce((s,x)=>s+Number(x.net_supplier_value||0),0),toPay=valid.filter(x=>x.payout_status!=='pago').reduce((s,x)=>s+Number(x.net_supplier_value||0),0);
+ $('#main').innerHTML=`<div class="sectionTitle"><div><h2>Pedidos</h2><div class="muted">Venda, comissão, repasse, documentos e histórico em um único módulo.</div></div><button class="btn" id="newOrder">+ Novo pedido</button></div>
+ <div class="card toolbar" style="margin-bottom:12px"><div class="field"><label>Buscar</label><input id="oq" value="${esc(window._orderQ||'')}" placeholder="Pedido, comprador, fornecedor..."></div><div class="field"><label>Status</label><select id="ost"><option value="">Todos</option>${['aberto','pago','atrasado','inadimplente','cancelado'].map(x=>`<option value="${x}" ${st===x?'selected':''}>${x}</option>`).join('')}</select></div><div class="field"><label>De</label><input id="of" type="date" value="${from}"></div><div class="field"><label>Até</label><input id="ot" type="date" value="${to}"></div><button class="btn alt" id="oclear">Limpar</button></div>
+ <div class="grid" style="margin-bottom:12px"><div class="card kpi"><span class="muted">Pedidos</span><b>${valid.length}</b></div><div class="card kpi"><span class="muted">GMV</span><b>${money(gmv)}</b></div><div class="card kpi"><span class="muted">Comissão Yepii</span><b>${money(commission)}</b></div><div class="card kpi"><span class="muted">Líquido fornecedores</span><b>${money(net)}</b></div><div class="card kpi"><span class="muted">A repassar</span><b>${money(toPay)}</b></div><div class="card kpi"><span class="muted">Cancelados</span><b>${filtered.filter(x=>x.payment_status==='cancelado').length}</b></div></div>
+ <div class="card scroll"><table class="table"><thead><tr><th>Pedido</th><th>Data</th><th>Comprador</th><th>Fornecedor</th><th>Total</th><th>Comissão</th><th>Líquido forn.</th><th>Pagamento</th><th>Pedido</th><th>Repasse</th><th>Ações</th></tr></thead><tbody>
+ ${filtered.map(x=>{let l=cache.leads.find(z=>z.id===x.lead_id);return `<tr><td><b>${esc(x.order_number||'-')}</b></td><td>${fmt(x.order_date)}</td><td>${esc(l?.lead_code||'')} · ${esc(l?.company_name||'')}</td><td>${esc(x.supplier_name||'-')}</td><td>${money(x.order_value)}</td><td>${money(x.commission_value)}</td><td>${money(x.net_supplier_value)}</td><td>${esc(x.payment_method||'')}</td><td><span class="badge ${x.payment_status==='pago'?'good':x.payment_status==='cancelado'?'bad':x.payment_status==='atrasado'||x.payment_status==='inadimplente'?'warn':''}">${esc(x.payment_status)}</span></td><td><span class="badge ${x.payout_status==='pago'?'good':x.payout_status==='retido'?'warn':''}">${esc(x.payout_status||'pendente')}</span></td><td><div class="row"><button class="btn alt view-order" data-id="${x.id}">Abrir</button><button class="btn alt edit-order" data-id="${x.id}">Editar</button>${x.payment_status!=='pago'&&x.payment_status!=='cancelado'?`<button class="btn alt pay-order" data-id="${x.id}">Marcar pago</button>`:''}</div></td></tr>`}).join('')}</tbody></table></div>`;
+ $('#newOrder').onclick=()=>orderForm();
+ ['oq','ost','of','ot'].forEach(id=>$('#'+id).onchange=$('#'+id).oninput=()=>{window._orderQ=$('#oq').value;window._orderStatus=$('#ost').value;window._orderFrom=$('#of').value;window._orderTo=$('#ot').value;orders()});
+ $('#oclear').onclick=()=>{window._orderQ='';window._orderStatus='';window._orderFrom='';window._orderTo='';orders()};
+ document.querySelectorAll('.view-order').forEach(b=>b.onclick=()=>orderDetail(cache.orders.find(x=>x.id===b.dataset.id)));
+ document.querySelectorAll('.edit-order').forEach(b=>b.onclick=()=>orderForm(null,null,cache.orders.find(x=>x.id===b.dataset.id)));
+ document.querySelectorAll('.pay-order').forEach(b=>b.onclick=async()=>{const ord=cache.orders.find(x=>x.id===b.dataset.id);if(!ord)return;const {error}=await supabase.from('yepii_orders').update({payment_status:'pago',paid_at:new Date().toISOString()}).eq('id',ord.id);if(error){alert('Não foi possível atualizar o pedido: '+error.message);return}await refresh();orders()});
+}
+
+function exportExcel(opts={}){
+ if(typeof XLSX==='undefined'){alert('A biblioteca de Excel ainda está carregando. Tente novamente em alguns segundos.');return}
+ const uid=opts.scopeUser||null, from=opts.weekStart||null,to=opts.weekEnd||null;
+ const leadIds=uid?new Set(cache.leads.filter(x=>x.assigned_to===uid).map(x=>x.id)):null;
+ const includeLead=l=>!uid||leadIds.has(l.id)||cache.acts.some(a=>a.lead_id===l.id&&a.created_by===uid)||cache.orders.some(o=>o.lead_id===l.id&&o.created_by===uid);
+ const leads=cache.leads.filter(includeLead);
+ const ids=new Set(leads.map(x=>x.id));
+ const acts=cache.acts.filter(x=>ids.has(x.lead_id)&&(!uid||x.created_by===uid)&&(!from||x.activity_at?.slice(0,10)>=from)&&(!to||x.activity_at?.slice(0,10)<=to));
+ const orders=cache.orders.filter(x=>ids.has(x.lead_id)&&(!uid||x.created_by===uid)&&(!from||x.order_date>=from)&&(!to||x.order_date<=to));
+ const analyses=cache.analyses.filter(x=>ids.has(x.lead_id));
+ const leadName=id=>{let l=cache.leads.find(x=>x.id===id);return l?`${l.lead_code||''} - ${l.company_name||''}`:''};
+ const who=id=>userName(id);
+ const sheets={
+ 'Leads':leads.map(l=>{const b=latestBdcAnalysis(l.id)||{};return {ID:l.lead_code,CNPJ:l.cnpj,'Razão social':l.company_name,'Nome fantasia':l.trade_name,'Pública/Privada':l.company_sector_type==='publica'?'Pública':l.company_sector_type==='privada'?'Privada':'Não informado',Segmento:l.segment,CNAE:l.main_cnae,'Atividade principal':l.main_activity,'Natureza jurídica':l.legal_nature,'Capital social':l.capital_social,'Data abertura':l.opening_date,'Situação Receita':l.receita_status,Porte:l.company_size,'Tempo empresa (anos)':b.company_age_years,'BigData última consulta':(latestBdcQuery(l.id)?.queried_at||b.analyzed_at),'BigData consultado por':(latestBdcQuery(l.id)?.queried_by?who(latestBdcQuery(l.id).queried_by):''),'BigData Murabei':b.murabei_score,'BigData Quantum':b.quantum_score,'BigData score médio':b.score_avg,'BigData decisão':b.decision,'BigData limite sugerido':b.suggested_limit,'BigData MEI':b.is_mei===true?'Sim':b.is_mei===false?'Não':'','BigData ações judiciais':b.has_judicial_action===true?'Sim':b.has_judicial_action===false?'Não':'','BigData dívida trabalhista':b.has_labor_debt===true?'Sim':b.has_labor_debt===false?'Não':'','BigData dívida pública':(b.has_government_debt??b.has_other_public_debts)===true?'Sim':(b.has_government_debt??b.has_other_public_debts)===false?'Não':'','BigData restrições Quod':b.has_quod_restrictions===true?'Sim':b.has_quod_restrictions===false?'Não':'',Endereço:l.street,Número:l.street_number,Complemento:l.address_complement,Bairro:l.neighborhood,Cidade:l.city,UF:l.state,CEP:l.postal_code,Prioridade:l.priority,Status:leadStatusLabel(l.status),'Responsável':who(l.assigned_to),'Score médio':l.score_avg,'Situação crédito':creditStatusLabel(l),'Limite de crédito':creditStatus(l)==='approved'?l.credit_limit:null,'Alerta crédito':l.credit_alert_reason,'Criado em':l.created_at}}),
+ 'Contatos':cache.contacts.filter(c=>ids.has(c.lead_id)).map(c=>({Empresa:leadName(c.lead_id),Nome:c.full_name,Cargo:c.job_title,Telefone:c.phone,WhatsApp:c.whatsapp,'E-mail':c.email,LinkedIn:c.linkedin,Principal:c.is_primary?'Sim':'Não',Observações:c.notes})),
+ 'Atividades':acts.map(a=>({Data:a.activity_at,Empresa:leadName(a.lead_id),Contato:contactName(a.contact_id),Usuário:who(a.created_by),Canal:a.channel,Status:interactionStatusLabel(a.status||'pendente'),Resultado:a.outcome,'Resumo/resultado':a.result,Observações:a.notes,'Próximo passo':a.next_action,'Próximo retorno':a.next_action_at,'Última alteração':a.updated_at,'Alterado por':who(a.updated_by)})),
+ 'Crédito':analyses.map(a=>{const pc=(cache.manualChecks||[]).find(x=>x.lead_id===a.lead_id&&x.check_type==='protestos_cartorio');return {Data:a.analyzed_at,Empresa:leadName(a.lead_id),Fonte:a.source,'Murabei':a.murabei_score,'Quantum':a.quantum_score,'Score médio':a.score_avg,Decisão:a.decision,'Motivos':textList(a.decision_reasons).join('; '),'Limite sugerido':a.suggested_limit,'Limite aprovado':a.approved_limit,'Protestos/Cartório':pc?.status==='consta'?'Consta':pc?.status==='nao_consta'?'Não consta':'Pendente','Verificado por':pc?.checked_by?who(pc.checked_by):'','Verificado em':pc?.checked_at||'','Referência protestos':pc?.reference||'','Observação protestos':pc?.notes||'','Ação judicial':a.has_judicial_action?'Sim':'Não','Dívida trabalhista':a.has_labor_debt?'Sim':'Não','Dívida pública':a.has_government_debt||a.has_other_public_debts?'Sim':'Não','Restrição Quod':a.has_quod_restrictions?'Sim':'Não'}}),
+ 'Pedidos':orders.map(o=>({Pedido:o.order_number,Data:o.order_date,Empresa:leadName(o.lead_id),Fornecedor:o.supplier_name,'CNPJ fornecedor':o.supplier_cnpj,Usuário:who(o.created_by),'Produtos':o.products_total,Frete:o.shipping_value,'Valor total':o.order_value,'Comissão %':o.commission_rate,'Comissão Yepii':o.commission_value,'SaaS %':o.saas_rate,'Taxa SaaS':o.saas_value,'Cartão %':o.card_fee_rate,'Custo cartão':o.card_fee_value,'Líquido fornecedor':o.net_supplier_value,'Forma pagamento':o.payment_method,'Crédito usado':o.credit_used,Recompra:o.is_repurchase?'Sim':'Não',Vencimento:o.due_date,'Pago em':o.paid_at,Status:o.payment_status,'Previsão repasse':o.payout_expected_at,'Status repasse':o.payout_status,'Repasse em':o.payout_at,'Estorno/devolução':o.refund_value,'NF':o.invoice_number,Observações:o.notes})),
+ 'Itens dos pedidos':cache.orderItems.filter(i=>orders.some(o=>o.id===i.order_id)).map(i=>{let o=cache.orders.find(x=>x.id===i.order_id);return {Pedido:o?.order_number||'',Descrição:i.description,SKU:i.sku,Quantidade:i.quantity,'Valor unitário':i.unit_price,Subtotal:i.subtotal}}),
+ 'Histórico pedidos':cache.orderHistory.filter(h=>orders.some(o=>o.id===h.order_id)).map(h=>{let o=cache.orders.find(x=>x.id===h.order_id);return {Pedido:o?.order_number||'',Ação:h.action,Usuário:who(h.changed_by),Data:h.created_at}}),
+ 'Tarefas':cache.tasks.filter(t=>ids.has(t.lead_id)&&(!uid||t.assigned_to===uid)).map(t=>({Empresa:leadName(t.lead_id),Responsável:who(t.assigned_to),Tipo:t.task_type,Vencimento:t.due_at,Prioridade:t.priority,Status:t.status,Concluída:t.completed_at,Observações:t.notes})),
+ 'Eventos de crédito':cache.creditEvents.filter(e=>ids.has(e.lead_id)).map(e=>({Data:e.event_date,Empresa:leadName(e.lead_id),Tipo:e.event_type,Valor:e.amount,Observações:e.notes})),
+ 'Metas gerais':cache.weeklyTargets.map(t=>({Semana:t.week_start,'Leads planejados':t.leads_planned,'Contatos meta':t.contacts_target,'Novos compradores meta':t.new_buyers_target,'Recompras meta':t.repurchases_target,'Pedidos meta':t.orders_target,'GMV meta':t.gmv_target,Observações:t.notes})),
+ 'Metas por usuário':cache.userTargets.map(t=>({Semana:t.week_start,Usuário:who(t.user_id),'Leads meta':t.leads_target,'Contatos meta':t.contacts_target,'Novos compradores meta':t.new_buyers_target,'Recompras meta':t.repurchases_target,'Pedidos meta':t.orders_target,'GMV meta':t.gmv_target,Observações:t.notes}))
+ };
+ let total=leads.length,buyers=new Set(orders.map(x=>x.lead_id)).size,gmv=orders.filter(x=>x.payment_status!=='cancelado').reduce((s,x)=>s+Number(x.order_value||0),0);
+ sheets['Resumo']=[{'Indicador':'Leads','Valor':total},{'Indicador':'Compradores únicos','Valor':buyers},{'Indicador':'Conversão %','Valor':total?buyers/total*100:0},{'Indicador':'Pedidos','Valor':orders.length},{'Indicador':'Recompras','Valor':orders.filter(x=>x.is_repurchase).length},{'Indicador':'GMV','Valor':gmv},{'Indicador':'Ticket médio','Valor':orders.length?gmv/orders.length:0},{'Indicador':'Crédito em aberto/atrasado/inadimplente','Valor':orders.filter(x=>['aberto','atrasado','inadimplente'].includes(x.payment_status)).reduce((s,x)=>s+Number(x.credit_used||0),0)}];
+ const wb=XLSX.utils.book_new(); Object.entries(sheets).forEach(([name,rows])=>{let ws=XLSX.utils.json_to_sheet(rows.length?rows:[{Informação:'Sem dados'}]);XLSX.utils.book_append_sheet(wb,ws,name.slice(0,31))});
+ XLSX.writeFile(wb,`Yepii_CRM_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+function reports(){
+ let total=cache.leads.length,buyers=new Set(cache.orders.map(x=>x.lead_id)).size,gmv=cache.orders.filter(x=>x.payment_status!=='cancelado').reduce((s,x)=>s+Number(x.order_value||0),0);
+ let arr=[['Leads cadastrados',total],['Compradores únicos',buyers],['GMV acumulado',money(gmv)],['Ticket médio',money(cache.orders.length?gmv/cache.orders.length:0)],['Conversão lead→comprador',(total?((buyers/total)*100).toFixed(1):0)+'%'],['Recompras',cache.orders.filter(x=>x.is_repurchase).length],['Pedidos pagos',cache.orders.filter(x=>x.payment_status==='pago').length],['Atrasados/inadimplentes',cache.orders.filter(x=>['atrasado','inadimplente'].includes(x.payment_status)).length]];
+ $('#main').innerHTML=`<div class="sectionTitle"><div><h2>Relatórios</h2><div class="muted">Visão consolidada e exportação completa do CRM</div></div><button class="btn" id="excelFull">Exportar Excel completo</button></div><div class="grid">${arr.map(x=>`<div class="card kpi"><span class="muted">${x[0]}</span><b>${x[1]}</b></div>`).join('')}</div><div class="card" style="margin-top:12px"><h3>Conteúdo do Excel</h3><p class="muted">Abas: Resumo, Leads, Contatos, Atividades, Crédito, Pedidos, Itens dos pedidos, Histórico pedidos, Tarefas, Eventos de crédito, Metas gerais e Metas por usuário.</p></div>`;
+ $('#excelFull').onclick=()=>exportExcel();
+}
+
+
+function team(){
+ if(role!=='administrador'){$('#main').innerHTML='<div class="card"><h2>Equipe</h2><p>Somente o administrador pode alterar perfis.</p></div>';return}
+ $('#main').innerHTML=`<div class="sectionTitle"><h2>Equipe</h2><button class="btn" id="invite">+ Adicionar usuário</button></div><div class="card scroll"><table class="table"><thead><tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Ativo</th></tr></thead><tbody>
+ ${cache.team.map(x=>`<tr><td>${esc(x.full_name||'-')}</td><td>${esc(x.email)}</td><td><select class="role" data-u="${x.user_id}">${['administrador','gestor_comercial','comercial','credito_financeiro','marketing','visualizacao'].map(r=>`<option ${r===x.role?'selected':''}>${r}</option>`).join('')}</select></td><td>${x.active?'Sim':'Não'}</td></tr>`).join('')}</tbody></table></div>`;
+ document.querySelectorAll('.role').forEach(s=>s.onchange=async()=>{let{error}=await supabase.from('yepii_team_members').update({role:s.value}).eq('user_id',s.dataset.u);if(error)alert(error.message);else await refresh()});
+ $('#invite').onclick=inviteUser;
+}
+function inviteUser(){
+ let d=modal(`<h2>Adicionar usuário</h2><p class="muted">A pessoa receberá um convite por e-mail para acessar o CRM.</p><div class="field"><label>Nome</label><input id="nm"></div><div class="field"><label>E-mail</label><input id="em" type="email"></div><div class="field"><label>Perfil</label><select id="rl"><option value="gestor_comercial">Gestor Comercial</option><option value="comercial">Comercial</option><option value="credito_financeiro">Crédito/Financeiro</option><option value="marketing">Marketing</option><option value="visualizacao">Visualização</option><option value="administrador">Administrador</option></select></div><button class="btn" id="send">Enviar convite</button><div id="st" class="muted" style="margin-top:10px"></div>`);
+ d.querySelector('#send').onclick=async()=>{const email=d.querySelector('#em').value.trim();if(!email){d.querySelector('#st').textContent='Informe o e-mail.';return}d.querySelector('#send').disabled=true;d.querySelector('#st').textContent='Enviando convite...';try{const {data:{session}}=await supabase.auth.getSession();const {data,error}=await supabase.functions.invoke('yepii-invite-user',{body:{user_token:session.access_token,email,full_name:d.querySelector('#nm').value.trim(),role:d.querySelector('#rl').value}});if(error)throw error;if(data?.error)throw new Error(data.error);d.querySelector('#st').textContent='Convite enviado com sucesso.';await refresh();setTimeout(()=>{d.remove();team()},700)}catch(e){d.querySelector('#st').textContent='Erro: '+(e?.message||e)}finally{d.querySelector('#send').disabled=false}};
+}
+
+async function refresh(){await load();render()}
+async function init(){
+ let{data:{session}}=await supabase.auth.getSession();
+ if(!session){login();return}
+ me=session.user;
+ await load();
+ if(role==='comercial' && dashboardScope==='geral') dashboardScope='me';
+ if(!cache.team.find(x=>x.user_id===me.id)){
+   try{
+     await supabase.rpc('yepii_bootstrap_admin',{p_full_name:me.email?.split('@')[0]||'Administrador'});
+     await load();
+   }catch(e){}
+ }
+ shell(); render();
+}
+supabase.auth.onAuthStateChange(()=>setTimeout(init,0));
+init();
+</script>
+</body></html>

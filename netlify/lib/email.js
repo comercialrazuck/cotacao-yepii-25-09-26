@@ -1,3 +1,4 @@
+const {buyerEmails}=require('./buyer-recipients');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
 const PROD_BASE='https://cotacaoyepii.com.br';
 const LOGO_URL='https://raw.githubusercontent.com/comercialrazuck/cotacao-yepii-25-09-26/a4f21a40a45dae0478076d89a70a25cc90f4c145/assets/yepii-logo.png';
@@ -11,7 +12,7 @@ function brandHeader(){return `<div style="margin:0 0 22px"><img src="${esc(LOGO
 function signature(){return `<div style="margin-top:30px;padding-top:18px;border-top:1px solid #eee"><img src="${esc(SIGNATURE_URL)}" alt="Equipe Yepii" width="400" style="display:block;width:400px;max-width:100%;height:auto;border:0;outline:none;text-decoration:none"></div>`}
 async function sendQuoteEmail(q,{headline,message,detailsHtml='',toOverride=null,buttonLabel='Ver minha cotação',subjectOverride=null,includeButton=true}){
   const key=process.env.RESEND_API_KEY,from=process.env.RESEND_FROM_EMAIL;
-  const to=toOverride?[...new Set((Array.isArray(toOverride)?toOverride:[toOverride]).filter(Boolean).map(x=>String(x).trim()).filter(Boolean))]:recipients(q);
+  const to=toOverride?buyerEmails(toOverride):recipients(q);
   if(!key||!from||!to.length)return {sent:false,reason:'not_configured_or_no_recipient'};
   const link=clientLink(q),subject=subjectOverride||quoteSubject(q);
   const button=includeButton?`<p style="margin:26px 0"><a href="${esc(link)}" style="display:inline-block;background:#ff6600;color:#fff;text-decoration:none;padding:13px 20px;border-radius:8px;font-weight:700">${esc(buttonLabel)}</a></p>`:'';

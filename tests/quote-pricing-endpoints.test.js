@@ -42,3 +42,12 @@ test('chosen CRM buyer controls recipient and saved snapshot; another company co
  h.state.yepii_contacts[0].email='alterado@example.com';assert.equal(h.state.quotes[0].client_email,'segundo@example.com');
  const writes=h.state.writes;e.body=JSON.stringify(body);const stale=await h.save(e);assert.equal(stale.statusCode,409,stale.body);assert.equal(h.state.writes,writes);body.quote.contact_id='belongs-to-other-company';e.body=JSON.stringify(body);const rejected=await h.save(e);assert.equal(rejected.statusCode,400,rejected.body);assert.equal(h.state.writes,writes);
 });
+
+test('multiple CRM buyers persist and reopen with deduplicated delivery recipients',async()=>{
+ const h=harness();h.state.yepii_leads.push({id:'lead1',deleted_at:null,company_name:'Empresa',lead_code:'CL1'});h.state.yepii_contacts.push({id:'c1',lead_id:'lead1',full_name:'Ana',email:'ana@example.com'},{id:'c2',lead_id:'lead1',full_name:'Bruno',email:'bruno@example.com'});
+ const e=event({description:'Produto',quantity:1,unit_price:10}),body=JSON.parse(e.body);Object.assign(body.quote,{lead_id:'lead1',contact_ids:['c1','c2'],client_email:'ANA@example.com; bruno@example.com, ana@example.com',valid_until:'2050-01-01'});body.action='send';e.body=JSON.stringify(body);
+ const result=await h.save(e);assert.equal(result.statusCode,200,result.body);assert.equal(h.state.quotes[0].client_email,'ana@example.com, bruno@example.com');assert.equal(h.state.sent[0].opts.toOverride,'ana@example.com, bruno@example.com');assert.match(h.state.sent[0].opts.message,/Olá, equipe/);assert.deepEqual(h.state.quote_events.find(x=>x.event_type==='sent').event_data.recipients,['ana@example.com','bruno@example.com']);
+ const reopened=JSON.parse((await h.admin({httpMethod:'GET',queryStringParameters:{id:'q1'}})).body);assert.equal(reopened.quote.client_email,'ana@example.com, bruno@example.com');
+ h.state.yepii_contacts[1].email='novo@example.com';const writes=h.state.writes;const stale=await h.save(e);assert.equal(stale.statusCode,409,stale.body);assert.equal(h.state.writes,writes);
+ body.quote.contact_ids=['c1','other-company'];e.body=JSON.stringify(body);assert.equal((await h.save(e)).statusCode,400);assert.equal(h.state.writes,writes);
+});

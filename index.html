@@ -321,7 +321,7 @@ td{padding:12px 10px;border-bottom:1px solid #F0EFEE;vertical-align:middle}
           <div class="field"><label>CNPJ:</label><input id="cnpj" class="editable"></div>
           <div class="field"><label>Empresa:</label><input id="company" class="editable"></div>
           <div id="crmBuyerControls" class="admin crm-controls">
-            <label for="crmContact">Enviar proposta para</label><select id="crmContact"><option value="">Selecione uma empresa ou preencha o e-mail abaixo</option></select>
+            <div id="crmContactLabel" class="crm-contact-label">Enviar proposta para</div><p>Marque um ou mais compradores desta empresa.</p><div id="crmContact" class="crm-contact-list" role="group" aria-labelledby="crmContactLabel"></div>
             <button id="crmRefreshContacts" type="button" class="btn outline" style="margin-top:10px">Atualizar compradores</button>
             <details id="crmNewContact"><summary id="crmAddContact">+ Cadastrar comprador no CRM</summary><div class="crm-contact-form">
               <label for="crmNewName">Nome do comprador</label><input id="crmNewName" maxlength="200" required>
@@ -333,7 +333,7 @@ td{padding:12px 10px;border-bottom:1px solid #F0EFEE;vertical-align:middle}
           <div class="field"><label>Nome do comprador / contato:</label><input id="clientName" class="editable" placeholder="Nome do destinatário"></div>
           <div class="field"><label>Endereço:</label><textarea id="address" rows="3" class="editable"></textarea></div>
           <div class="field"><label>Telefone:</label><input id="phone" class="editable"></div>
-          <p id="crmRecipient" class="admin crm-recipient" role="status"></p><div class="field"><label>E-mail do comprador:</label><input id="clientEmail" type="email" class="editable" placeholder="comprador@empresa.com.br"></div>
+          <p id="crmRecipient" class="admin crm-recipient" role="status"></p><div class="field"><label>E-mails dos compradores:</label><input id="clientEmail" type="email" multiple class="editable" placeholder="comprador@empresa.com.br, outro@empresa.com.br"></div>
         </div>
       </div>
 
